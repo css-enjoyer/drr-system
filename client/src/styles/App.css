@@ -15,4 +15,5 @@ body #root {
 }
 body #root .App {
   height: 100%;
+  overflow: hidden;
 }/*# sourceMappingURL=App.css.map */

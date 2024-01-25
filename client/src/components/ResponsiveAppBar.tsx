@@ -30,7 +30,7 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
     };
 
     return (
-        <AppBar position="static">
+        <AppBar position="sticky">
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     {/* Logo with Text */}
@@ -103,7 +103,7 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
                             color: 'inherit',
                             textDecoration: 'none',
                         }}>
-                        LOGO
+                        {logoTitle}
                     </Typography>
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                         {pages.map((page) => (
