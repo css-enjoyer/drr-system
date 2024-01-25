@@ -2,6 +2,7 @@ import { useState } from 'react';
 import ResponsiveAppBar from './components/ResponsiveAppBar'
 import Login from './components/logbuttons/Login';
 import { Scheduler } from '@aldabil/react-scheduler';
+import './styles/App.css'
 
 function App() {
 
@@ -31,7 +32,7 @@ function App() {
 
 	return (
 		<div>
-			<ResponsiveAppBar></ResponsiveAppBar>
+			<ResponsiveAppBar logoTitle={"DRRS"}></ResponsiveAppBar>
 			{authorized ? (
 				<Login>
 
@@ -65,8 +66,7 @@ function App() {
 						idField: "room_id",
 						textField: "title",
 					}}
-				resourceViewMode = "tabs"
-				>
+				resourceViewMode = "tabs">
 				</Scheduler>
 			)}
 		</div>

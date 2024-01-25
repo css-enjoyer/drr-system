@@ -15,7 +15,11 @@ import AdbIcon from '@mui/icons-material/Adb';
 
 const pages = ['Sections', 'Guide', 'About'];
 
-function ResponsiveAppBar() {
+type AppBarProps = {
+    logoTitle: string;
+}
+
+function ResponsiveAppBar({ logoTitle }: AppBarProps) {
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -24,7 +28,7 @@ function ResponsiveAppBar() {
     const handleCloseNavMenu = () => {
         setAnchorElNav(null);
     };
-    
+
     return (
         <AppBar position="static">
             <Container maxWidth="xl">
@@ -44,9 +48,8 @@ function ResponsiveAppBar() {
                             letterSpacing: '.3rem',
                             color: 'inherit',
                             textDecoration: 'none',
-                        }}
-                    >
-                        LOGO
+                        }}>
+                        {logoTitle}
                     </Typography>
 
                     {/* Logo with Text for Mobile Views */}
@@ -76,8 +79,7 @@ function ResponsiveAppBar() {
                             onClose={handleCloseNavMenu}
                             sx={{
                                 display: { xs: 'block', md: 'none' },
-                            }}
-                        >
+                            }}>
                             {pages.map((page) => (
                                 <MenuItem key={page} onClick={handleCloseNavMenu}>
                                     <Typography textAlign="center">{page}</Typography>
@@ -113,7 +115,7 @@ function ResponsiveAppBar() {
                             </Button>
                         ))}
                     </Box>
-                    
+
                     {/* Right side Buttons */}
                     <Box sx={{ flexGrow: 0 }}>
                         <Login></Login>
