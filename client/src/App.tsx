@@ -1,23 +1,24 @@
-import { useState } from 'react';
-
 import ResponsiveAppBar from './components/ResponsiveAppBar'
-import Login from './components/logbuttons/Login';
-import LoginPage from './components/LoginPage';
 import Timeline from './components/Timeline';
-
 import './styles/App.css'
 
-function App() {
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { useThemeContext } from './theme/ThemeContextProvider';
 
-	const [authorized, setAuthorized] = useState(null);
+function App() {
+	const { theme } = useThemeContext();
 
 	return (
-		<div className="App">
+		<ThemeProvider theme={theme}>
+			<CssBaseline />
 			<ResponsiveAppBar logoTitle={"DRRS"}></ResponsiveAppBar>
-			{/* <Login></Login> */}
-			{/* <Timeline></Timeline> */}
-			<LoginPage></LoginPage>
-		</div>
+			<div className="App">
+				<Timeline></Timeline>
+				{/* <Login></Login> */}
+				{/* <LoginPage></LoginPage> */}
+			</div>
+		</ThemeProvider>
 	)
 }
 

@@ -1,9 +1,10 @@
-import { Avatar, Box, Button, Checkbox, FormControlLabel, Grid, Link, Paper, TextField, Typography } from "@mui/material";
+import { Avatar, Box, Button, Checkbox, FormControlLabel, Grid, Link, Paper, TextField, Typography} from "@mui/material";
+
 import heroImage from '../styles/images/login-hero-image.png';
 
-function Copyright(props: any) {
+function Copyright() {
     return (
-        <Typography variant="body2" color="text.secondary" align="center" {...props}>
+        <Typography variant="body2" color="text.secondary" align="center">
             {'Copyright © '}
             <Link color="inherit" href="#">Pegasus</Link>{' '}
             {new Date().getFullYear()}
@@ -75,7 +76,7 @@ function LoginPage() {
                                 <Link href="#" variant="body2"> {"Don't have an account? Sign Up"} </Link>
                             </Grid>
                         </Grid>
-                        <Copyright sx={{ mt: 5 }} />
+                        <Copyright />
                     </Box>
                 </Box>
             </Grid>
