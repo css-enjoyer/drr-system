@@ -1,20 +1,21 @@
-import { Avatar, Box, Button, Checkbox, FormControlLabel, Grid, Link, Paper, TextField, Typography} from "@mui/material";
+import { Avatar, Box, Button, Checkbox, Container, FormControlLabel, Grid, Link, Paper, TextField, Typography } from "@mui/material";
 
 import heroImage from '../styles/images/login-hero-image.png';
 
 function Copyright() {
     return (
-        <Typography variant="body2" color="text.secondary" align="center">
-            {'Copyright © '}
-            <Link color="inherit" href="#">Pegasus</Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
+        <Container sx={{mt: 5}}>
+            <Typography variant="body2" color="text.secondary" align="center">
+                {'Copyright © '}
+                <Link color="inherit" href="#">Pegasus</Link>{' '}
+                {new Date().getFullYear()}
+                {'.'}
+            </Typography>
+        </Container>
     );
 }
 
 function LoginPage() {
-
     return (
         <Grid container sx={{ height: '100vh' }} component="main">
             <Grid

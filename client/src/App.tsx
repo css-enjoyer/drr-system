@@ -5,6 +5,7 @@ import './styles/App.css'
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { useThemeContext } from './theme/ThemeContextProvider';
+import LoginPage from './components/LoginPage';
 
 function App() {
 	const { theme } = useThemeContext();
@@ -14,9 +15,9 @@ function App() {
 			<CssBaseline />
 			<ResponsiveAppBar logoTitle={"DRRS"}></ResponsiveAppBar>
 			<div className="App">
-				<Timeline></Timeline>
+				{/* <Timeline></Timeline> */}
+				<LoginPage></LoginPage>
 				{/* <Login></Login> */}
-				{/* <LoginPage></LoginPage> */}
 			</div>
 		</ThemeProvider>
 	)
