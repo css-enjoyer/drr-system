@@ -20,7 +20,8 @@ function Login() {
     return(
         <GoogleLogin 
             size="large"
-            shape="pill"
+            shape="rectangular"
+            theme="filled_blue"
             onSuccess={googleLogin}>
         </GoogleLogin>
     )
