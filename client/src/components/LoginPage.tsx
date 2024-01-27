@@ -3,7 +3,6 @@ import { Avatar, Box, Button, Checkbox, Container, FormControlLabel, Grid, Link,
 import heroImage from '../styles/images/login-hero-image.png';
 import cicsLogo from '../styles/images/cics-logo.png';
 import ustLogo from '../styles/images/ust-logo.png';
-import { BorderAll } from "@mui/icons-material";
 
 function Copyright() {
     return (
