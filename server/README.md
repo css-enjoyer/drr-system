@@ -17,8 +17,8 @@
 4. Make sure to edit the `.env` so that it is configured for your own device and usecase i.e. modify the `NODE_ENV` to `development`
 5. To run locally type `npm run dev` in the terminal
 
-## Setup backend only
-> NOTE: If you don't need to modify the database and only plan on working with the backend, follow the steps below to set it up. By default the backend uses the database server hosted online in `render.com`, you can modify the `.env` to change it to `localhost`.
+## Setup backend
+> NOTE: If you don't need to modify the database and only plan on working with the backend, follow the steps below to set it up. By default the backend uses the database server hosted online in `render.com`, you can modify the `.env` to change it otherwise.
 
 1. Open terminal type `cd server`, `npm install`
 2. To run locally type `npm run dev` in the terminal
