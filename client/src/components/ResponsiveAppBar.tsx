@@ -116,6 +116,7 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
                         <Login></Login>
                     </Box> */}
                     <Box>
+                        <Button sx={{color: 'white'}}>Log Out</Button>
                         <NightmodeToggle hasText={false} />
                     </Box>
 
