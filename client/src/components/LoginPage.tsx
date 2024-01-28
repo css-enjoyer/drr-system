@@ -1,14 +1,15 @@
-import { Avatar, Box, Button, Checkbox, Container, FormControlLabel, Grid, Link, Paper, TextField, Typography } from "@mui/material";
+import { Box, Divider, Grid, Link, Paper, Typography } from "@mui/material";
 
 import heroImage from '../styles/images/login-hero-image.png';
-import cicsLogo from '../styles/images/cics-logo.png';
+// import loginImage from '../styles/images/DRRS Login Image (Light).png';
+// import cicsLogo from '../styles/images/cics-logo.png';
 import ustLogo from '../styles/images/ust-logo.png';
 
 import Login from './logbuttons/Login';
 
 function Copyright() {
     return (
-        <Typography variant="body2" color="text.secondary" align="center" sx={{ mb: 2}}>
+        <Typography variant="body2" color="text.secondary" align="center" sx={{ m: 2 }}>
             {'Copyright © '}
             <Link color="inherit" href="#">Pegasus</Link>{' '}
             {new Date().getFullYear()}
@@ -20,43 +21,41 @@ function Copyright() {
 function LoginPage() {
     return (
         <Grid container sx={{ height: '100vh' }} component="main">
-            {/* Left hero image */}
+            {/* Background image */}
             <Grid item xs={12} sx={{
                 backgroundImage: `url("${heroImage}")`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
-            }} >
-                {/* <Grid item component={Paper} elevation={6} square /> */}
-                {/* Sign in form */}
-                <Grid item xs={12} md={8} lg={4} component={Paper} elevation={6} square>
-                    {/* University logos */}
-                    {/* <Grid container sx={{
-                        display: 'flex',
-                        gap: '200px',
-                        justifyContent: 'center',
-                        alignItems: 'center', }} >
-                        <Box component="img"
-                            sx={{ height: '100px', width: 'auto', }}
-                            alt="CICS Logo"
-                            src={cicsLogo} />
-                        <Box component="img"
-                            sx={{ height: '100px', width: 'auto', }}
-                            alt="UST Logo"
-                            src={ustLogo} />
-                    </Grid> */}
+                justifyContent: 'center'}} >
 
-                    {/* Sign in box */}
+                {/* Brand image */}
+                <Box component={Grid} item md={5} display={{xs: "none", sm: "none", md: "block"}} 
+                    sx={{
+                    display: 'flex',
+                    alignItems: 'center'}}>
+                    <Box component="img"
+                        sx={{ height: '80px', objectFit: 'contain'}}
+                        alt="CICS Logo"
+                        src={ustLogo} 
+                        display={{xs: "none", sm: "none", md: "block"}} />
+                        <Box>
+                            <Typography color="white" component="h1" variant="h3" sx={{textShadow: '-2px 2px 5px rgba(0, 0, 0, 0.4)'}} display={{xs: "none", sm: "none", md: "block"}} >Library Reservation System</Typography>
+                            <Typography color="white" component="h1" variant="h5" sx={{textShadow: '-2px 2px 5px rgba(0, 0, 0, 0.4)'}} display={{xs: "none", sm: "none", md: "block"}} >By Pegasus</Typography>
+                        </Box>
+                </Box>
+
+                {/* Sign in form */}
+                <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
                     <Box bgcolor={'primary.main'} height={10} sx={{ zIndex: 'modal' }} />
                     <Box sx={{
-                        mx: 4,
+                        mx: 3,
                         display: 'flex',
                         flexDirection: 'column',
                         gap: '10px',
-                        p: 5
-                    }} >
+                        px: 1,
+                        py: 5 }} >
                         <Typography component="h1" variant="h4" > Sign in </Typography>
                         <Typography component="p" variant="body1" > To proceed to the DRRS Website, please sign in with your UST university email account. </Typography>
                         <Box component="form" noValidate sx={{ my: 2 }}>
@@ -66,6 +65,7 @@ function LoginPage() {
                             Need help signing in? <Link href="#">Learn more</Link>
                         </Typography>
                     </Box>
+                    <Divider />
                     <Copyright />
                 </Grid>
             </Grid>
