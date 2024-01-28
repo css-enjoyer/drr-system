@@ -12,6 +12,8 @@
 3. To run locally type `npm run dev` in the terminal
 
 ## API Endpoints
+### Admin
+### Department
 ### Librarians
-### Rooms
 ### Logs
+### Rooms
