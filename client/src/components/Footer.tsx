@@ -1,4 +1,4 @@
-import { Box, Container, Grid, Typography } from '@mui/material'
+import { Box, Container, Divider, Grid, Typography } from '@mui/material'
 import React from 'react'
 
 function Footer() {
@@ -10,8 +10,8 @@ function Footer() {
                 backgroundColor: "inherit",
                 paddingTop: "1rem",
                 paddingBottom: "1rem",
-            }}
-        >
+            }}>
+            <Divider />
             <Container maxWidth="lg">
                 <Grid container direction="column" alignItems="center">
                     <Grid item xs={12}>

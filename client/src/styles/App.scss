@@ -13,8 +13,9 @@ body {
     #root {
         height: 100%;
         .App {
+            min-height: 100vh;
             height: auto;
-            padding: 20px 0;
+            // padding-bottom: 50px;
             .LoginPage {
                 .loginBackgroundImage {
                     // filter: brightness(50%);
