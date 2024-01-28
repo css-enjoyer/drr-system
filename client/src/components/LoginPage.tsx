@@ -1,7 +1,6 @@
 import { Box, Divider, Grid, Link, Paper, Typography } from "@mui/material";
 
-import heroImage from '../styles/images/login-hero-image.png';
-// import loginImage from '../styles/images/DRRS Login Image (Light).png';
+import bgImage from '../styles/images/loginBgImageDark.png';
 import cicsLogo from '../styles/images/cics-logo.png';
 import ustLogo from '../styles/images/ust-logo.png';
 
@@ -20,15 +19,16 @@ function Copyright() {
 
 function LoginPage() {
     return (
-        <Grid container sx={{ height: '100vh' }} component="main">
+        <Grid container sx={{ height: '100vh' }} component="main" className="LoginPage">
             {/* Background image */}
             <Grid item xs={12} sx={{
-                backgroundImage: `url("${heroImage}")`,
+                backgroundImage: `url("${bgImage}")`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'}} >
+                justifyContent: 'center'}} 
+                className="loginBackgroundImage">
 
                 {/* Brand image */}
                 <Box component={Grid} item md={5} display={{xs: "none", sm: "none", md: "block"}} 

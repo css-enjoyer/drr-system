@@ -14,6 +14,12 @@ body {
         height: 100%;
         .App {
             height: auto;
+            .LoginPage {
+                .loginBackgroundImage {
+                    // filter: brightness(50%);
+                    // backdrop-filter: brightness(120%);
+                }
+            }
         }   
     }
 }
