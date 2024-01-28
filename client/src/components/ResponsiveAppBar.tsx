@@ -99,7 +99,7 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
                         {logoTitle}
                     </Typography>
 
-                    {/* Right side menus */}
+                    {/* Expanded nav buttons */}
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                         {pages.map((page) => (
                             <Button
@@ -119,7 +119,6 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
                         <Button sx={{color: 'white'}}>Log Out</Button>
                         <NightmodeToggle hasText={false} />
                     </Box>
-
                 </Toolbar>
             </Container>
         </AppBar>
