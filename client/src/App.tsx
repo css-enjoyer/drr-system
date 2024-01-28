@@ -13,10 +13,10 @@ function App() {
 	return (
 		<ThemeProvider theme={theme}>
 			<CssBaseline />
-			{/* <ResponsiveAppBar logoTitle={"DRRS"}></ResponsiveAppBar> */}
+			<ResponsiveAppBar logoTitle={"DRRS"}></ResponsiveAppBar>
 			<div className="App">
-				{/* <Timeline></Timeline> */}
-				<LoginPage></LoginPage>
+				<Timeline></Timeline>
+				{/* <LoginPage></LoginPage> */}
 				{/* <Login></Login> */}
 			</div>
 		</ThemeProvider>

@@ -6,20 +6,22 @@ type ntProps = {
     hasText: boolean
 }
 
-function NightmodeToggle(hasText: ntProps) {
+function NightmodeToggle({hasText}: ntProps) {
 
     const { mode, toggleColorMode } = useThemeContext();
 
     return (
         <Button
-            variant = 'outlined'
-            startIcon={<BrightnessMedium />}
+            centerRipple = {false}
+            variant = 'text'
+            endIcon={<BrightnessMedium />}
             onClick={() => { toggleColorMode() }}
             sx={{
-                height: 20,
-                width: 50,
+                height: 40,
+                width: 40,
+                color: 'white',
             }}>
-            {hasText ? '' : `${mode} mode`}
+            {/* {hasText ? '' : `${mode} mode`} */}
         </Button>
     )
 }

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Login from './logbuttons/Login';
+// import Login from './logbuttons/Login';
 
 import { AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Button, MenuItem } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -112,11 +112,11 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
                     </Box>
                     {/* TODO: Make this responsive */}
                     {/* Right side Buttons */}
-                    <Box sx={{ flexGrow: 0 }}>
+                    {/* <Box sx={{ flexGrow: 0 }}>
                         <Login></Login>
-                    </Box>
+                    </Box> */}
                     <Box>
-                        <NightmodeToggle />
+                        <NightmodeToggle hasText={false} />
                     </Box>
 
                 </Toolbar>
