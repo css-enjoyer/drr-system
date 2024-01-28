@@ -21,21 +21,21 @@ function LoginPage() {
     return (
         <Grid container sx={{ height: '100vh' }} component="main" className="LoginPage">
             {/* Background image */}
-            <Grid item xs={12} sx={{
+            <Grid item xs={12} className="loginBackgroundImage" sx={{
                 backgroundImage: `url("${bgImage}")`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center'
-            }}
-                className="loginBackgroundImage">
+            }}>
 
                 {/* System hero */}
                 <Box component={Grid} item md={5} display={{ xs: "none", sm: "none", md: "block" }}
                     sx={{
                         display: 'flex',
-                        alignItems: 'center'
+                        alignItems: 'center',
+                        gap: 3
                     }}>
                     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                         <Box component="img"
@@ -56,7 +56,7 @@ function LoginPage() {
                 </Box>
 
                 {/* Sign in form */}
-                <Grid item xs={11} sm={8} md={5} component={Paper} elevation={6} square>
+                <Grid item xs={11} sm={8} md={5} component={Paper} elevation={6} square position='relative'>
                     <Box bgcolor={'primary.main'} height={10} sx={{ zIndex: 'modal'}} />
                     {/* System hero */}
                     <Box component={Grid} display={{ xs: 'block', sm: 'block', md: 'none' }} sx={{ display: 'flex', alignItems: 'center', mt: 2, ml: 2, gap: 2}}>
@@ -64,15 +64,15 @@ function LoginPage() {
                             <Box component="img"
                                 sx={{ height: '30px', objectFit: 'contain' }}
                                 alt="UST Logo"
-                                src={ustLogo}
+                                src={ustLogo} 
                                 display={{ xs: 'block', sm: 'block', md: 'none' }} />
                             <Box component="img"
                                 sx={{ height: '30px', objectFit: 'contain' }}
                                 alt="CICS Logo"
-                                src={cicsLogo}
+                                src={cicsLogo} 
                                 display={{ xs: 'block', sm: 'block', md: 'none' }} />
                         </Box>
-                        <Box color="black" component="p" display={{ xs: 'block', sm: 'block', md: 'none' }} >
+                        <Box component="p" display={{ xs: 'block', sm: 'block', md: 'none' }} >
                             <Typography variant="body1" sx={{ fontWeight: 'bold' }} >Library Reservation System</Typography>
                             <Typography variant="body2" >By Pegasus</Typography>
                         </Box>

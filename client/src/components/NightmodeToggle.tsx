@@ -2,16 +2,24 @@ import { Button } from "@mui/material";
 import { useThemeContext } from "../theme/ThemeContextProvider";
 import { BrightnessMedium } from "@mui/icons-material";
 
-function NightmodeToggle() {
+type ntProps = {
+    hasText: boolean
+}
+
+function NightmodeToggle(hasText: ntProps) {
+
     const { mode, toggleColorMode } = useThemeContext();
 
     return (
         <Button
-            variant="outlined"
+            variant = 'outlined'
             startIcon={<BrightnessMedium />}
             onClick={() => { toggleColorMode() }}
-            sx={{ my: 2, color: 'white'}}>
-            {mode} mode
+            sx={{
+                height: 20,
+                width: 50,
+            }}>
+            {hasText ? '' : `${mode} mode`}
         </Button>
     )
 }
