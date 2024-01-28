@@ -2,7 +2,7 @@ import { Box, Divider, Grid, Link, Paper, Typography } from "@mui/material";
 
 import heroImage from '../styles/images/login-hero-image.png';
 // import loginImage from '../styles/images/DRRS Login Image (Light).png';
-// import cicsLogo from '../styles/images/cics-logo.png';
+import cicsLogo from '../styles/images/cics-logo.png';
 import ustLogo from '../styles/images/ust-logo.png';
 
 import Login from './logbuttons/Login';
@@ -35,11 +35,18 @@ function LoginPage() {
                     sx={{
                     display: 'flex',
                     alignItems: 'center'}}>
-                    <Box component="img"
-                        sx={{ height: '80px', objectFit: 'contain'}}
-                        alt="CICS Logo"
-                        src={ustLogo} 
-                        display={{xs: "none", sm: "none", md: "block"}} />
+                    <Box sx={{display: 'flex', flexDirection: 'column'}}>
+                        <Box component="img"
+                            sx={{ height: '80px', objectFit: 'contain'}}
+                            alt="UST Logo"
+                            src={ustLogo} 
+                            display={{xs: "none", sm: "none", md: "block"}} />
+                        <Box component="img"
+                            sx={{ height: '80px', objectFit: 'contain'}}
+                            alt="CICS Logo"
+                            src={cicsLogo} 
+                            display={{xs: "none", sm: "none", md: "block"}} />
+                    </Box>
                         <Box>
                             <Typography color="white" component="h1" variant="h3" sx={{textShadow: '-2px 2px 5px rgba(0, 0, 0, 0.4)'}} display={{xs: "none", sm: "none", md: "block"}} >Library Reservation System</Typography>
                             <Typography color="white" component="h1" variant="h5" sx={{textShadow: '-2px 2px 5px rgba(0, 0, 0, 0.4)'}} display={{xs: "none", sm: "none", md: "block"}} >By Pegasus</Typography>
