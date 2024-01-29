@@ -4,13 +4,15 @@ const Pool = require("pg").Pool;
 
 const NODE_ENV = process.env.NODE_ENV;
 
+const USE_POSTGRES_SERVER = process.env.USE_POSTGRES_SERVER;
+
 let POSTGRES_USER = process.env.POSTGRES_LOCAL_USER;
 let POSTGRES_HOST = process.env.POSTGRES_LOCAL_HOST;
 let POSTGRES_DATABASE = process.env.POSTGRES_LOCAL_DATABASE;
 let POSTGRES_PASSWORD = process.env.POSTGRES_LOCAL_PASSWORD;
 let POSTGRES_PORT = process.env.POSTGRES_LOCAL_PORT;
 
-if (NODE_ENV === "production") {
+if (USE_POSTGRES_SERVER) {
     POSTGRES_USER = process.env.POSTGRES_SERVER_USER;
     POSTGRES_HOST = process.env.POSTGRES_SERVER_HOST;
     POSTGRES_DATABASE = process.env.POSTGRES_SERVER_DATABASE;

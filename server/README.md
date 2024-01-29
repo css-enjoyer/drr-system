@@ -1,4 +1,7 @@
 # DRRS Backend
+## Tutorials
+- [Build a Rest Api with NodeJS (JavaScript), Express, and PostgreSQL](https://www.youtube.com/watch?v=DihOP19LQdg)
+
 ## TODO
 - [ ] Fix OAuth login
 - [ ] Add tokens on api endpoints for security
@@ -9,12 +12,12 @@
 - [ ] Create API documentation in Swagger
 
 ## Setup database locally and backend
-> NOTE: Only follow these steps if you are planning on using a database locally, otherwise proceed to **setup backend**. The steps below create a local database server for postgres, this is useful if you plan to test or modify the database locally with your own machine using `localhost` without affecting the database server hosted online in `render.com`.
+> NOTE: Only follow these steps if you are planning on using a database locally, otherwise proceed to **Setup backend**. The steps below create a local database server for postgres, this is useful if you plan to test or modify the database locally with your own machine using `localhost` without affecting the database server hosted online in `render.com`.
 
 1. Install [postgres](https://www.postgresql.org/download/), keep clicking next and set everything as default. Use **admin** as password or create your own and configure the `.env` file
 2. Open terminal type `cd server`, `npm install`
 3. Run the `postgres-start.sql` script to create the database, tables, and insert sample data
-4. Make sure to edit the `.env` so that it is configured for your own device and usecase i.e. modify the `NODE_ENV` to `development`
+4. Make sure to edit the `.env` so that it is configured for your own device and usecase i.e. modify the `USE_POSTGRES_SERVER` to `false`
 5. To run locally type `npm run dev` in the terminal
 
 ## Setup backend
