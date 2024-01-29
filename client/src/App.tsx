@@ -1,3 +1,4 @@
+
 import ResponsiveAppBar from './components/ResponsiveAppBar'
 import Timeline from './components/Timeline';
 import './styles/App.css'
@@ -16,13 +17,13 @@ function App() {
 	return (
 		<ThemeProvider theme={theme}>
 			<CssBaseline />
-			<ResponsiveAppBar logoTitle={"DRRS"}></ResponsiveAppBar>
+			{/* <ResponsiveAppBar logoTitle={"DRRS"}></ResponsiveAppBar> */}
 			<div className="App">
-				<Timeline></Timeline>
-				{/* <LoginPage></LoginPage> */}
+				{/* <Timeline></Timeline> */}
+				<LoginPage></LoginPage>
 			</div>
-			
-			<Footer />
+
+			{/* <Footer /> */}
 		</ThemeProvider>
 	)
 }
