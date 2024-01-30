@@ -4,7 +4,8 @@ import bgImage from '../styles/images/loginBgImageDark.png';
 import cicsLogo from '../styles/images/cics-logo.png';
 import ustLogo from '../styles/images/ust-logo.png';
 
-import Login from './logbuttons/Login';
+import LoginButton from './logbuttons/LoginButton';
+import LogoutButton from "./logbuttons/LogoutButton";
 
 function Copyright() {
     return (
@@ -49,7 +50,7 @@ function LoginPage() {
                             src={cicsLogo}
                             display={{ xs: "none", sm: "none", md: "block" }} />
                     </Box>
-                    <Box color="white" component="h1" sx={{ textShadow: '-2px 2px 5px rgba(0, 0, 0, 0.4)' }} display={{ xs: "none", sm: "none", md: "block" }}>
+                    <Box color="white" sx={{ textShadow: '-2px 2px 5px rgba(0, 0, 0, 0.4)' }} display={{ xs: "none", sm: "none", md: "block" }}>
                         <Typography variant="h3" >Library Reservation System</Typography>
                         <Typography variant="h5" >By Pegasus</Typography>
                     </Box>
@@ -72,7 +73,7 @@ function LoginPage() {
                                 src={cicsLogo} 
                                 display={{ xs: 'block', sm: 'block', md: 'none' }} />
                         </Box>
-                        <Box component="p" display={{ xs: 'block', sm: 'block', md: 'none' }} >
+                        <Box display={{ xs: 'block', sm: 'block', md: 'none' }} >
                             <Typography variant="body1" sx={{ fontWeight: 'bold' }} >Library Reservation System</Typography>
                             <Typography variant="body2" >By Pegasus</Typography>
                         </Box>
@@ -88,8 +89,9 @@ function LoginPage() {
                     }} >
                         <Typography component="h1" variant="h4" sx={{ fontWeight: 'bold' }}> Sign in </Typography>
                         <Typography component="p" variant="body1" > To proceed to the DRRS Website, please sign in with your UST university email account. </Typography>
-                        <Box component="form" noValidate sx={{ my: 2 }}>
-                            <Login />
+                        <Box sx={{ my: 2 }}>
+                            <LoginButton />
+                            <LogoutButton />
                         </Box>
                         <Typography component="p" variant="caption">
                             Need help signing in? <Link href="#">Learn more</Link>
