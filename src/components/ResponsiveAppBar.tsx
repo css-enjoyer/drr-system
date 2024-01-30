@@ -5,6 +5,7 @@ import { AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Button, 
 import MenuIcon from '@mui/icons-material/Menu';
 import AdbIcon from '@mui/icons-material/Adb';
 import NightmodeToggle from './NightmodeToggle';
+import LogoutButton from './logbuttons/LogoutButton';
 
 const pages = ['Sections', 'Guide', 'About'];
 
@@ -110,13 +111,8 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
                             </Button>
                         ))}
                     </Box>
-                    {/* TODO: Make this responsive */}
-                    {/* Right side Buttons */}
-                    {/* <Box sx={{ flexGrow: 0 }}>
-                        <Login></Login>
-                    </Box> */}
                     <Box>
-                        <Button sx={{color: 'white'}}>Log Out</Button>
+                        <LogoutButton />
                         <NightmodeToggle hasText={false} />
                     </Box>
                 </Toolbar>
