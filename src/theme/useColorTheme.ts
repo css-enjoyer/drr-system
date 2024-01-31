@@ -18,7 +18,7 @@ export const useColorTheme = () => {
         palette: {
             mode: 'light',
             primary: {
-                main: '#01257D',
+                main: '#002fa5',
             },
             secondary: {
                 main: '#902F57',

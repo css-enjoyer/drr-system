@@ -1,5 +1,5 @@
 import { Scheduler } from '@aldabil/react-scheduler';
-import { Container } from '@mui/material';
+import { Button, Container } from '@mui/material';
 
 function Timeline() {
 
@@ -27,21 +27,28 @@ function Timeline() {
     ];
 
     return (
-        <Container maxWidth="xl" sx={{py: 5, pb: 20}}>
+        <Container maxWidth="xl" sx={{ py: 5, pb: 20 }}>
+            <Button sx={{
+                position: 'absolute',
+                zIndex: 999,
+                right: '800px',
+            }}>View Mode</Button>
             <Scheduler
                 view="day"
                 events={[
                     {
                         event_id: 1,
+                        room_id: 1,
                         title: "Event 1",
-                        start: new Date("2021/5/2 09:30"),
-                        end: new Date("2021/5/2 10:30"),
+                        start: new Date("2024/1/31 011:30"),
+                        end: new Date("2024/1/31 12:00"),
                     },
                     {
                         event_id: 2,
+                        room_id: 1,
                         title: "Event 2",
-                        start: new Date("2021/5/4 10:00"),
-                        end: new Date("2021/5/4 11:00"),
+                        start: new Date("2024/1/31 10:00"),
+                        end: new Date("2024/1/31 11:00"),
                     },
                 ]}
                 day={
@@ -56,7 +63,7 @@ function Timeline() {
                     idField: "room_id",
                     textField: "title",
                 }}
-                resourceViewMode="tabs">
+                resourceViewMode="default">
             </Scheduler>
         </Container>
     )
