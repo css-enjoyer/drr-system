@@ -13,9 +13,9 @@ function Footer() {
         <Box 
             sx={{
                 width: "100%",
-                height: "200px",
-                paddingTop: "1rem",
-                paddingBottom: "1rem",
+                height: "230px",
+                // paddingTop: "1rem",
+                // paddingBottom: "1rem",
                 display: 'flex',
                 alignItems: 'center',
                 color: 'white',

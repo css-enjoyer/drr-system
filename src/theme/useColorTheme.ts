@@ -1,6 +1,7 @@
 import { PaletteMode, createTheme, Theme } from "@mui/material";
 import { useMemo, useState } from "react";
 
+
 // function that triggers use and toggle of theme
 export const useColorTheme = () => {
     // create theme state initial "light"
@@ -17,14 +18,14 @@ export const useColorTheme = () => {
         palette: {
             mode: 'light',
             primary: {
-                main: '#01257D', 
+                main: '#01257D',
             },
             secondary: {
-                main: '#902F57', 
+                main: '#902F57',
             },
             background: {
-                default: '#e9e9e9', 
-                paper: '#eeeeee', 
+                default: '#e9e9e9',
+                paper: '#eeeeee',
             },
         },
     });
