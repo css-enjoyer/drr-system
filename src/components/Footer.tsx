@@ -1,17 +1,28 @@
 import { Box, Container, Divider, Grid, Typography } from '@mui/material'
 import React from 'react'
+import { useThemeContext } from '../theme/ThemeContextProvider';
 
 function Footer() {
+    let background = "";
+    const { theme } = useThemeContext();
+        if(theme.palette.mode === "dark") {
+            background = 'radial-gradient(circle, rgba(51,51,51,1) 0%, rgba(40,40,40,1) 100%)';
+        } else {
+            background = 'radial-gradient(circle, rgba(20,60,160,1) 0%, rgba(1,37,125,1) 100%)';
+        }
     return (
-        <Box
+        <Box 
             sx={{
                 width: "100%",
-                height: "auto",
-                backgroundColor: "inherit",
+                height: "200px",
                 paddingTop: "1rem",
                 paddingBottom: "1rem",
+                display: 'flex',
+                alignItems: 'center',
+                color: 'white',
+                backgroundColor: {background}
             }}>
-            <Divider />
+            <Divider/>
             <Container maxWidth="lg">
                 <Grid container direction="column" alignItems="center">
                     <Grid item xs={12}>

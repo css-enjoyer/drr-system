@@ -33,10 +33,10 @@ export const useColorTheme = () => {
         palette: {
             mode: 'dark',
             primary: {
-                main: '#e7f179',
+                main: '#2382ff',
             },
             secondary: {
-                main: '#7bb9e2',
+                main: '#e7f179',
             },
             background: {
                 default: '#000000',
