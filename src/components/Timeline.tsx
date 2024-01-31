@@ -1,12 +1,19 @@
 import { Scheduler } from '@aldabil/react-scheduler';
 import { Container } from '@mui/material';
 import { getReservations } from '../firebase/dbHandler';
+import { ResetTvRounded } from '@mui/icons-material';
 
 function Timeline() {
     var logs = getReservations();
     logs.then((log) =>{
-        console.log(JSON.stringify(log))
+        log.forEach(reservation => {
+            if ( reservation != null) {
+                console.log(reservation)
+            }
+        })
     })
+
+
     const RESOURCES = [
         {
             room_id: 1,

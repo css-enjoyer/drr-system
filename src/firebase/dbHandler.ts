@@ -1,13 +1,14 @@
-import { collection, getDocs} from 'firebase/firestore';
+import { collection, getDocs, query} from 'firebase/firestore';
 import { db } from './config';
 
 export async function getReservations() {
-    const querySnapshot = await getDocs(collection(db, "reservatio"));
+    const querySnapshot = await getDocs(collection(db, "reservation-logs"));
     
-    var logs;
-    
+    var logs = new Array(querySnapshot.size)
+    var data;
     querySnapshot.forEach((doc) => {
-        logs = doc.data()
+        data = doc.data()
+        logs.push(data)
     });
 
     return logs
