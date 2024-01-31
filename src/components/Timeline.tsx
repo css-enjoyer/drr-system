@@ -27,7 +27,7 @@ function Timeline() {
     ];
 
     return (
-        <Container maxWidth="xl" sx={{py: 5}}>
+        <Container maxWidth="xl" sx={{py: 5, pb: 20}}>
             <Scheduler
                 view="day"
                 events={[

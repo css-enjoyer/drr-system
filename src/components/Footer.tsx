@@ -1,5 +1,4 @@
 import { Box, Container, Divider, Grid, Typography } from '@mui/material'
-import React from 'react'
 import { useThemeContext } from '../theme/ThemeContextProvider';
 
 function Footer() {
