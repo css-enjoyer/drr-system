@@ -6,6 +6,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import AdbIcon from '@mui/icons-material/Adb';
 import NightmodeToggle from './NightmodeToggle';
 import LogoutButton from './logbuttons/LogoutButton';
+import { useThemeContext } from '../theme/ThemeContextProvider';
 
 const pages = ['Sections', 'Guide', 'About'];
 
@@ -23,8 +24,18 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
         setAnchorElNav(null);
     };
 
+    let background = "";
+    const { theme } = useThemeContext();
+        if(theme.palette.mode === "dark") {
+            background = 'radial-gradient(circle, rgba(51,51,51,1) 0%, rgba(40,40,40,1) 100%)';
+        } else {
+            background = 'radial-gradient(circle, rgba(20,60,160,1) 0%, rgba(1,37,125,1) 100%)';
+        }
+
     return (
-        <AppBar position="sticky" sx={{color: 'white'}}>
+        <AppBar position="sticky" sx={{
+            color: 'white', 
+            backgroundColor: {background}}}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     {/* Logo with Text */}

@@ -7,17 +7,17 @@ function Timeline() {
         {
             room_id: 1,
             title: "Room 1",
-            color: "#ab2d2d"
+            color: "darkblue"
         },
         {
             room_id: 2,
             title: "Room 2",
-            color: "#58ab2d"
+            color: "#black"
         },
         {
             room_id: 3,
             title: "Room 3",
-            color: "red"
+            color: "darkblue"
         },
         {
             room_id: 4,
@@ -27,7 +27,7 @@ function Timeline() {
     ];
 
     return (
-        <Container maxWidth="xl">
+        <Container maxWidth="xl" sx={{py: 5}}>
             <Scheduler
                 view="day"
                 events={[

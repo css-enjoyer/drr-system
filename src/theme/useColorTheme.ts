@@ -17,14 +17,14 @@ export const useColorTheme = () => {
         palette: {
             mode: 'light',
             primary: {
-                main: '#6FA1D2', 
+                main: '#01257D', 
             },
             secondary: {
-                main: '#FAD02E', 
+                main: '#902F57', 
             },
             background: {
-                default: '#F7F7F7', 
-                paper: '#FFFFFF', 
+                default: '#e9e9e9', 
+                paper: '#eeeeee', 
             },
         },
     });
@@ -33,16 +33,14 @@ export const useColorTheme = () => {
         palette: {
             mode: 'dark',
             primary: {
-                main: '#79f1e8',
-                dark: '#ffffff',
+                main: '#e7f179',
             },
             secondary: {
-                main: '#e2e07b',
-                contrastText: 'rgba(0,0,0,0.87)',
+                main: '#7bb9e2',
             },
             background: {
-                default: '#292929',
-                paper: '#333232',
+                default: '#000000',
+                paper: '#1f1f1f',
             },
         },
     });
