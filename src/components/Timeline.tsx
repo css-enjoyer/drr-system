@@ -1,8 +1,12 @@
 import { Scheduler } from '@aldabil/react-scheduler';
 import { Container } from '@mui/material';
+import { getReservations } from '../firebase/dbHandler';
 
 function Timeline() {
-
+    var logs = getReservations();
+    logs.then((log) =>{
+        console.log(JSON.stringify(log))
+    })
     const RESOURCES = [
         {
             room_id: 1,

@@ -19,8 +19,8 @@ function App() {
 			<CssBaseline />
 			{/* <ResponsiveAppBar logoTitle={"DRRS"}></ResponsiveAppBar> */}
 			<div className="App">
-				{/* <Timeline></Timeline> */}
-				<LoginPage></LoginPage>
+				<Timeline></Timeline>
+				{/* <LoginPage></LoginPage> */}
 			</div>
 
 			{/* <Footer /> */}
