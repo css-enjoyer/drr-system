@@ -16,11 +16,11 @@ function App() {
 	const { theme } = useThemeContext();
 
 	return (
-		<ThemeProvider theme={theme}>
+		<ThemeProvider theme={ theme }>
 			<CssBaseline />
 			{/* Start of content */}
 			<div className="App">
-				<LoginPage></LoginPage>
+				{/* <LoginPage></LoginPage	> */}
 
 				<ResponsiveAppBar logoTitle={"DRRS"} />
 				<Timeline></Timeline>

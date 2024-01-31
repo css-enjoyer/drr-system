@@ -10,6 +10,7 @@ function Login() {
             await signInWithPopup(auth, googleProvider);
             console.log(auth?.currentUser?.email);
             console.log(auth?.currentUser?.photoURL);
+            console.log(auth?.currentUser?.displayName);
         } catch (err) {
             console.error(err);
         }

@@ -1,4 +1,4 @@
-import { PaletteMode, createTheme } from "@mui/material";
+import { PaletteMode, createTheme, Theme } from "@mui/material";
 import { useMemo, useState } from "react";
 
 // function that triggers use and toggle of theme
@@ -10,32 +10,50 @@ export const useColorTheme = () => {
     const toggleColorMode = () => {
         setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
         console.log("Theme is", mode);
-    }
+    };
 
-    // material ui theme format
-    const theme = ({
+    // Define your light and dark themes
+    const lightTheme: Theme = createTheme({
         palette: {
-            mode: 'dark',
+            mode: 'light',
+            primary: {
+                main: '#6FA1D2', 
+            },
+            secondary: {
+                main: '#FAD02E', 
+            },
+            background: {
+                default: '#F7F7F7', 
+                paper: '#FFFFFF', 
+            },
         },
     });
-    
-    // useMemo hook allow caching to prevent recalculation of expensive resources
-    // creates a new theme on state toggle
-    const modifiedTheme = useMemo(
-        () =>
-            createTheme({
-                ...theme,
-                palette: {
-                    ...theme.palette,
-                    mode,
-                },
-            }),
-        [mode] // useMemo only fires when this mode state value changes
-    );
-    
+
+    const darkTheme: Theme = createTheme({
+        palette: {
+            mode: 'dark',
+            primary: {
+                main: '#79f1e8',
+                dark: '#ffffff',
+            },
+            secondary: {
+                main: '#e2e07b',
+                contrastText: 'rgba(0,0,0,0.87)',
+            },
+            background: {
+                default: '#292929',
+                paper: '#333232',
+            },
+        },
+    });
+
+    // useMemo hook allows caching to prevent recalculation of expensive resources
+    // Creates a new theme on state toggle
+    const modifiedTheme = useMemo(() => (mode === "light" ? lightTheme : darkTheme), [mode]);
+
     return {
         theme: modifiedTheme,
         mode,
         toggleColorMode,
     };
-}
+};
