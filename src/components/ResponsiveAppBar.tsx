@@ -24,7 +24,7 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
     };
 
     return (
-        <AppBar position="sticky">
+        <AppBar position="sticky" sx={{color: 'white'}}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     {/* Logo with Text */}
