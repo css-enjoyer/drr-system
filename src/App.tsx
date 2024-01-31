@@ -22,8 +22,6 @@ function App() {
 			<div className="App">
 				<Timeline></Timeline>
 				{/* <LoginPage></LoginPage> */}
-			</div>
-
 				<ResponsiveAppBar logoTitle={"DRRS"} />
 				<Timeline></Timeline>
 				<Footer />

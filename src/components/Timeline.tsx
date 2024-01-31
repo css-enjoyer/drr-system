@@ -2,7 +2,6 @@ import { Scheduler } from '@aldabil/react-scheduler';
 import { Container } from '@mui/material';
 import { getReservations } from '../firebase/dbHandler';
 import { ResetTvRounded } from '@mui/icons-material';
-import { Button, Container } from '@mui/material';
 
 function Timeline() {
     var logs = getReservations();
