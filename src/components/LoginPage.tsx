@@ -5,7 +5,6 @@ import cicsLogo from '../styles/images/cics-logo.png';
 import ustLogo from '../styles/images/ust-logo.png';
 
 import LoginButton from './logbuttons/LoginButton';
-import LogoutButton from "./logbuttons/LogoutButton";
 
 function Copyright() {
     return (
@@ -91,7 +90,6 @@ function LoginPage() {
                         <Typography component="p" variant="body1" > To proceed to the DRRS Website, please sign in with your UST university email account. </Typography>
                         <Box sx={{ my: 2 }}>
                             <LoginButton />
-                            <LogoutButton />
                         </Box>
                         <Typography component="p" variant="caption">
                             Need help signing in? <Link href="#">Learn more</Link>
