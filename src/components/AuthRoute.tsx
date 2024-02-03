@@ -26,9 +26,7 @@ const AuthRoute: React.FunctionComponent<IAuthRouteProps> = props => {
     }, [auth]);
 
     if (loading) {
-        return (
-            <p>Loading page...</p>
-        )
+        console.log("Rendering page");
     }
 
     return <>{ children }</>;
