@@ -13,6 +13,10 @@ import { useThemeContext } from './theme/ThemeContextProvider'
 
 // Routes
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { Protected } from './Routes/Protected'
+
+// Protected
+import { AuthContext } from './Context/AuthContext';
 
 function App() {
 	const { theme } = useThemeContext();
@@ -27,7 +31,7 @@ function App() {
 		},
 		{
 			path: "/timeline",
-			element: <Timeline></Timeline>
+			element: <Protected><Timeline/></Protected>
 		}
 	])
 
@@ -38,7 +42,9 @@ function App() {
 					{/* Start of content */}
 					<div className="App">
 						<ResponsiveAppBar logoTitle={"DRRS"} />
-							<RouterProvider router={router}></RouterProvider>
+							<AuthContext>
+								<RouterProvider router={router}></RouterProvider>
+							</AuthContext>
 						<Footer />
 					</div>
 					{/* End of content */}
