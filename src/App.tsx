@@ -13,25 +13,24 @@ import { useThemeContext } from './theme/ThemeContextProvider'
 
 // Routes
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import { Protected } from './Routes/Protected'
+import AuthRoute from './components/AuthRoute';
 
 // Protected
-import { AuthContext } from './Context/AuthContext';
 
 function App() {
 	const { theme } = useThemeContext();
 	const router = createBrowserRouter([
 		{
 			path: "/",
-			element: <LoginPage></LoginPage>
+			element: <LoginPage />
 		},
 		{
 			path: "/login",
-			element: <LoginPage></LoginPage>
+			element: <LoginPage />
 		},
 		{
 			path: "/timeline",
-			element: <Protected><Timeline/></Protected>
+			element: <AuthRoute><Timeline/></AuthRoute>
 		}
 	])
 
@@ -42,9 +41,7 @@ function App() {
 					{/* Start of content */}
 					<div className="App">
 						<ResponsiveAppBar logoTitle={"DRRS"} />
-							<AuthContext>
-								<RouterProvider router={router}></RouterProvider>
-							</AuthContext>
+							<RouterProvider router={router}></RouterProvider>
 						<Footer />
 					</div>
 					{/* End of content */}
