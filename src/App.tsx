@@ -42,9 +42,10 @@ function App() {
 				<CssBaseline />
 				{/* Start of content */}
 				<div className="App">
+					{/* Show appbar and footer only when logged in */}
 					{authContext?.user && <ResponsiveAppBar logoTitle={"DRRS"} />}
 					<RouterProvider router={router}></RouterProvider>
-					<Footer />
+					{authContext?.user && <Footer />}
 				</div>
 				{/* End of content */}
 			</ThemeProvider>
