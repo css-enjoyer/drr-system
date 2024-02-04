@@ -13,7 +13,7 @@ import { useThemeContext } from './theme/ThemeContextProvider'
 
 // Routes
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import AuthRoute from './components/AuthRoute';
+import AuthRoute from './utils/AuthRoute';
 
 // Protected
 

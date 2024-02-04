@@ -92,6 +92,7 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
                             ))}
                         </Menu>
                     </Box>
+
                     <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
                     <Typography
                         variant="h5"
@@ -117,7 +118,7 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
                             <Button
                                 key={page}
                                 onClick={handleCloseNavMenu}
-                                sx={{ my: 2, color: 'white', display: 'block' }}>
+                                sx={{ ml: 2, mr: 3, color: 'white', display: 'block' }}>
                                 {page}
                             </Button>
                         ))}
