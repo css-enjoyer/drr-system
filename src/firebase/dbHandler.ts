@@ -4,8 +4,8 @@ import { db } from './config';
 export async function getReservations() {
     const querySnapshot = await getDocs(collection(db, "reservation-logs"));
     
-    var logs = new Array(querySnapshot.size)
-    var data;
+    const logs = new Array(querySnapshot.size)
+    let data;
     querySnapshot.forEach((doc) => {
         data = doc.data()
         logs.push(data)
