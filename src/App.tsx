@@ -1,10 +1,10 @@
 import './styles/App.css'
-import Timeline from './components/Timeline';
-import ResponsiveAppBar from './components/ResponsiveAppBar'
 
 // Components
 import LoginPage from './components/LoginPage';
 import Footer from './components/Footer';
+import ResponsiveAppBar from './components/ResponsiveAppBar'
+import Timeline from './components/Timeline';
 
 // Modules
 import { ThemeProvider } from '@mui/material/styles';
@@ -14,8 +14,8 @@ import { useThemeContext } from './theme/ThemeContextProvider'
 // Routes
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { Protected } from './utils/Protected';
-
-// Protected
+import { useContext } from 'react';
+import { AuthContext } from './utils/AuthContext';
 
 function App() {
 	const { theme } = useThemeContext();
@@ -30,22 +30,24 @@ function App() {
 		},
 		{
 			path: "/timeline",
-			element: <Protected><Timeline/></Protected>
+			element: <Protected><Timeline /></Protected>
 		}
 	])
 
+	const authContext = useContext(AuthContext);
+
 	return (
 		<>
-			<ThemeProvider theme={ theme }>
-					<CssBaseline />
-					{/* Start of content */}
-					<div className="App">
-						<ResponsiveAppBar logoTitle={"DRRS"} />
-							<RouterProvider router={router}></RouterProvider>
-						<Footer />
-					</div>
-					{/* End of content */}
-				</ThemeProvider>
+			<ThemeProvider theme={theme}>
+				<CssBaseline />
+				{/* Start of content */}
+				<div className="App">
+					{authContext?.user && <ResponsiveAppBar logoTitle={"DRRS"} />}
+					<RouterProvider router={router}></RouterProvider>
+					<Footer />
+				</div>
+				{/* End of content */}
+			</ThemeProvider>
 		</>
 	)
 }

@@ -7,27 +7,37 @@ import { LoginSharp } from "@mui/icons-material";
 function Login() {
     const auth = getAuth();
     const navigate = useNavigate();
-    const [authing, setAuthing] = useState(false);
+    // const [authing, setAuthing] = useState(false);
 
-    async function signInWithGoogle() {
-        setAuthing(true);
+    // async function signInWithGoogle() {
+    //     setAuthing(true);
 
-        try {
-            await signInWithPopup(auth, new GoogleAuthProvider());
-            console.log(auth?.currentUser?.uid);
-            navigate('/timeline');
-        } catch (error) {
-            console.error(error);
-            setAuthing(false);
-        }
+    //     try {
+    //         await signInWithPopup(auth, new GoogleAuthProvider());
+    //         console.log(auth?.currentUser?.uid);
+    //         navigate('/timeline');
+    //     } catch (error) {
+    //         console.error(error);
+    //         setAuthing(false);
+    //     }
+    // }
+
+    const handleLogin = () => {
+        signInWithPopup(auth, new GoogleAuthProvider())
+            .then((userCredential) => {
+                const user = userCredential.user;
+                console.log(`${user.uid} signed in!`)
+                navigate('/timeline')
+            }).catch((error) => {
+                console.log(`Login Failed: ${error.code} ${error.message}`)
+            });
     }
 
     return (
         <Button 
-            onClick={signInWithGoogle} 
+            onClick={handleLogin} 
             variant="contained" 
-            endIcon={<LoginSharp />}
-            disabled={authing}>
+            endIcon={<LoginSharp />}>
             Sign in with Google
         </Button>
     )
