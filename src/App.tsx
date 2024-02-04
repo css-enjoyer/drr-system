@@ -13,7 +13,7 @@ import { useThemeContext } from './theme/ThemeContextProvider'
 
 // Routes
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import AuthRoute from './utils/AuthRoute';
+import { Protected } from './utils/Protected';
 
 // Protected
 
@@ -30,7 +30,7 @@ function App() {
 		},
 		{
 			path: "/timeline",
-			element: <AuthRoute><Timeline/></AuthRoute>
+			element: <Protected><Timeline/></Protected>
 		}
 	])
 
