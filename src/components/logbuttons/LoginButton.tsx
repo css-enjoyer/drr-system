@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom"
 import { Button } from "@mui/material";

@@ -35,7 +35,6 @@ export interface AuthContextValues {
     user: User | null | undefined;
     setUser: React.Dispatch<React.SetStateAction<User | null | undefined>>;
 }
-
 export const AuthContext = createContext<AuthContextValues | null>(null);
 
 

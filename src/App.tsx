@@ -16,10 +16,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { Protected } from './utils/Protected';
 import { useContext } from 'react';
 import { AuthContext } from './utils/AuthContext';
-import { Typography } from '@mui/material';
 
 // Utils
-import { formatGreeting } from './utils/formatGreeting';
 
 function App() {
 	const { theme } = useThemeContext();
