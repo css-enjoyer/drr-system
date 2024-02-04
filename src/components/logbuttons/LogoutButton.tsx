@@ -5,16 +5,24 @@ import { LogoutSharp } from "@mui/icons-material";
 function LogoutButton() {
     const auth = getAuth();
 
-    async function logOut() {
-        try {
-            await signOut(auth);
-        } catch (error) {
-            console.log(error);
-        }
+    // async function logOut() {
+    //     try {
+    //         await signOut(auth);
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // }
+    const handleLogOut = () => {
+        signOut(auth)
+            .then(() => {
+                console.log("Sign out success!")
+            }).catch((error) => {
+                console.log(error.code, error.message)
+            })
     }
 
     return (
-        <IconButton centerRipple onClick={logOut} sx={{color: 'white'}}>
+        <IconButton centerRipple onClick={handleLogOut} sx={{color: 'white'}}>
             <LogoutSharp />
         </IconButton>
     )
