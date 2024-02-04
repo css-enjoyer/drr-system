@@ -44,15 +44,12 @@ function App() {
 		<>
 			<ThemeProvider theme={theme}>
 				<CssBaseline />
-				{/* Start of content */}
 				<div className="App">
 					{/* Show appbar and footer only when logged in */}
 					{authContext?.user && <ResponsiveAppBar logoTitle={"DRRS"} />}
-					<Typography>Welcome, {formatGreeting(authContext)}</Typography>
 					<RouterProvider router={router}></RouterProvider>
 					{authContext?.user && <Footer />}
 				</div>
-				{/* End of content */}
 			</ThemeProvider>
 		</>
 	)

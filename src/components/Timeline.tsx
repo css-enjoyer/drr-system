@@ -1,17 +1,21 @@
 import { Scheduler } from '@aldabil/react-scheduler';
-import { Container } from '@mui/material';
+import { Container, Typography } from '@mui/material';
 import { getReservations } from '../firebase/dbHandler';
+import { formatGreeting } from '../utils/formatGreeting';
+import { AuthContext } from '../utils/AuthContext';
+import { useContext } from 'react';
 
 function Timeline() {
+    const authContext = useContext(AuthContext);
+
     const logs = getReservations();
-    logs.then((log) =>{
+    logs.then((log) => {
         log.forEach(reservation => {
-            if ( reservation != null) {
+            if (reservation != null) {
                 console.log(reservation)
             }
         })
     })
-
 
     const RESOURCES = [
         {
@@ -37,12 +41,11 @@ function Timeline() {
     ];
 
     return (
-        <Container maxWidth="xl" sx={{ py: 5, pb: 20 }}>
-            {/* <Button sx={{
-                position: 'absolute',
-                zIndex: 999,
-                right: '800px',
-            }}>View Mode</Button> */}
+        <Container maxWidth="xl" sx={{ py: 3, pb: 20 }}>
+            <Typography variant="h4" sx={{
+                mb: "10px",
+                fontWeight: "500"
+            }}>Welcome, {formatGreeting(authContext)}</Typography>
             <Scheduler
                 view="day"
                 events={[
