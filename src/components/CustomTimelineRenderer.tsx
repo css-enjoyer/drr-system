@@ -13,7 +13,7 @@ function CustomTimelineRenderer() {
         const [state, setState] = useState({  // set custom input fields and event properties here?
             title: "Title",
             description: "Description",
-            pax: 4
+            pax: 4,
         });
         const [error, setError] = useState("");
         const handleChange = (value: string, name: string) => {
