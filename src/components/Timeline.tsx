@@ -1,10 +1,9 @@
 import { Scheduler } from '@aldabil/react-scheduler';
-import { Button, Container, DialogActions, TextField, Typography } from '@mui/material';
+import { Container, Typography } from '@mui/material';
 import { getReservations } from '../firebase/dbHandler';
 import { formatGreeting } from '../utils/formatGreeting';
 import { AuthContext } from '../utils/AuthContext';
-import { useContext, useState } from 'react';
-import { ProcessedEvent, SchedulerHelpers } from '@aldabil/react-scheduler/types';
+import { useContext } from 'react';
 import CustomTimelineRenderer from './CustomTimelineRenderer';
 
 function Timeline() {
