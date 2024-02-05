@@ -16,7 +16,6 @@ function NightmodeToggle({ hasText }: ntProps) {
             sx={{
                 height: 40,
                 width: 40,
-                color: 'white',
             }}>
             <BrightnessMedium />
         </IconButton>

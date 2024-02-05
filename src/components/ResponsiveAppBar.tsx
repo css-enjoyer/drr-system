@@ -1,12 +1,13 @@
 import * as React from 'react';
 // import Login from './logbuttons/Login';
 
-import { AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Button, MenuItem } from '@mui/material';
+import { AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Button, MenuItem, Avatar, Tooltip } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import AdbIcon from '@mui/icons-material/Adb';
 import NightmodeToggle from './NightmodeToggle';
 import LogoutButton from './logbuttons/LogoutButton';
 import { useThemeContext } from '../theme/ThemeContextProvider';
+import { AuthContext } from '../utils/AuthContext';
 
 const pages = ['Sections', 'Guide', 'About'];
 
@@ -15,8 +16,12 @@ type AppBarProps = {
 }
 
 function ResponsiveAppBar({ logoTitle }: AppBarProps) {
-    const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
 
+    const authContext = React.useContext(AuthContext);
+    const userPhoto = authContext?.user?.photoURL;
+
+    // On-click, set reference position of navigation links to current target (menu icon)
+    const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
     };
@@ -26,16 +31,26 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
 
     let background = "";
     const { theme } = useThemeContext();
-        if(theme.palette.mode === "dark") {
-            background = 'radial-gradient(circle, rgba(51,51,51,1) 0%, rgba(40,40,40,1) 100%)';
-        } else {
-            background = 'radial-gradient(circle, rgba(20,60,160,1) 0%, rgba(1,37,125,1) 100%)';
-        }
+    if (theme.palette.mode === "dark") {
+        background = 'radial-gradient(circle, rgba(51,51,51,1) 0%, rgba(40,40,40,1) 100%)';
+    } else {
+        background = 'radial-gradient(circle, rgba(20,60,160,1) 0%, rgba(1,37,125,1) 100%)';
+    }
+
+    // On-click, set reference position of menu component to current target (avatar)
+    const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+    const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorElUser(event.currentTarget);
+    }
+    const handleCloseUserMenu = () => {
+        setAnchorElUser(null);
+    }
 
     return (
         <AppBar position="sticky" sx={{
-            color: 'white', 
-            backgroundColor: {background}}}>
+            color: 'white',
+            backgroundColor: { background }
+        }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     {/* Logo with Text */}
@@ -123,10 +138,30 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
                             </Button>
                         ))}
                     </Box>
+
                     <Box>
-                        <LogoutButton />
-                        <NightmodeToggle hasText={false} />
+                        <Tooltip title="Open user settings">
+                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                                <Avatar alt="Remy Sharp" src={`${userPhoto}`} />
+                            </IconButton>
+                        </Tooltip>
+                        <Menu open={Boolean(anchorElUser)}
+                            anchorEl={anchorElUser}
+                            onClose={handleCloseUserMenu}
+                            keepMounted
+                            sx={{
+                                width: "300px",
+                                height: "auto",
+                            }}
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'left',
+                            }}> 
+                            <LogoutButton />
+                            <NightmodeToggle hasText={true} />
+                        </Menu>
                     </Box>
+
                 </Toolbar>
             </Container>
         </AppBar>
