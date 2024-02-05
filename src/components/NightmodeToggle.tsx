@@ -1,23 +1,20 @@
 import { IconButton } from "@mui/material";
 import { useThemeContext } from "../theme/ThemeContextProvider";
 import { BrightnessMedium } from "@mui/icons-material";
+import { ReactNode } from "react";
 
 type ntProps = {
-    hasText: boolean
+    children: ReactNode
 }
 
-function NightmodeToggle({ hasText }: ntProps) {
+function NightmodeToggle(props: ntProps) {
 
     const { mode, toggleColorMode } = useThemeContext();
 
     return (
-        <IconButton
-            onClick={() => { toggleColorMode() }}
-            sx={{
-                height: 40,
-                width: 40,
-            }}>
+        <IconButton disableRipple onClick={() => { toggleColorMode() }} sx={{color: "inherit"}}>
             <BrightnessMedium />
+            {props.children}
         </IconButton>
     )
 }

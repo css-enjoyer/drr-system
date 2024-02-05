@@ -39,17 +39,15 @@ function App() {
 	const authContext = useContext(AuthContext);
 
 	return (
-		<>
-			<ThemeProvider theme={theme}>
-				<CssBaseline />
-				<div className="App">
-					{/* Show appbar and footer only when logged in */}
-					{authContext?.user && <ResponsiveAppBar logoTitle={"DRRS"} />}
-					<RouterProvider router={router}></RouterProvider>
-					{authContext?.user && <Footer />}
-				</div>
-			</ThemeProvider>
-		</>
+		<ThemeProvider theme={theme}>
+			<CssBaseline />
+			<div className="App">
+				{/* Show appbar and footer only when logged in */}
+				{authContext?.user && <ResponsiveAppBar logoTitle={"DRRS"} />}
+				<RouterProvider router={router}></RouterProvider>
+				{authContext?.user && <Footer />}
+			</div>
+		</ThemeProvider>
 	)
 }
 

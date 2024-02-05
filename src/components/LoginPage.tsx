@@ -5,6 +5,9 @@ import cicsLogo from '../styles/images/cics-logo.png';
 import ustLogo from '../styles/images/ust-logo.png';
 
 import LoginButton from './logbuttons/LoginButton';
+import { AuthContext } from "../utils/AuthContext";
+import { useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Copyright() {
     return (
@@ -18,6 +21,16 @@ function Copyright() {
 }
 
 function LoginPage() {
+    const auth = useContext(AuthContext);
+    const navigate = useNavigate();
+    
+    useEffect(() => {
+        if(auth?.user) {
+            navigate("/timeline");
+            console.log("User already logged in, redirected.");
+        }
+    })
+
     return (
         <Grid container sx={{ height: '100vh' }} component="main" className="LoginPage">
             {/* Background image */}

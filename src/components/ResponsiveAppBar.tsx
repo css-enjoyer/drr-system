@@ -8,8 +8,12 @@ import NightmodeToggle from './NightmodeToggle';
 import LogoutButton from './logbuttons/LogoutButton';
 import { useThemeContext } from '../theme/ThemeContextProvider';
 import { AuthContext } from '../utils/AuthContext';
+import BusinessIcon from '@mui/icons-material/Business';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import InfoIcon from '@mui/icons-material/Info';
 
-const pages = ['Sections', 'Guide', 'About'];
+const pages = ['Branches', 'Guide', 'About']; // change these to components in the future
+const pageIcons: React.ReactNode[] = [<BusinessIcon />, <MenuBookIcon />, <InfoIcon />]; // change these to components in the future
 
 type AppBarProps = {
     logoTitle: string;
@@ -100,9 +104,10 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
                             sx={{
                                 display: { xs: 'block', md: 'none' },
                             }}>
-                            {pages.map((page) => (
+                            {pages.map((page, index) => (
                                 <MenuItem key={page} onClick={handleCloseNavMenu}>
-                                    <Typography textAlign="center">{page}</Typography>
+                                    {pageIcons[index]}
+                                    <Typography textAlign="center" sx={{ml: "8px"}}>{page}</Typography>
                                 </MenuItem>
                             ))}
                         </Menu>
@@ -127,22 +132,24 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
                         {logoTitle}
                     </Typography>
 
-                    {/* Expanded nav buttons */}
+                    {/* Expanded nav menu */}
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        {pages.map((page) => (
+                        {pages.map((page, index) => (
                             <Button
                                 key={page}
                                 onClick={handleCloseNavMenu}
-                                sx={{ ml: 2, mr: 3, color: 'white', display: 'block' }}>
+                                startIcon={pageIcons[index]}
+                                sx={{ mx: 2, color: 'white' }}>
                                 {page}
                             </Button>
                         ))}
                     </Box>
 
+                    {/* User avatar and menu */}
                     <Box>
                         <Tooltip title="Open user settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar alt="Remy Sharp" src={`${userPhoto}`} />
+                                <Avatar alt="User Avatar" src={`${userPhoto}`} />
                             </IconButton>
                         </Tooltip>
                         <Menu open={Boolean(anchorElUser)}
@@ -152,13 +159,29 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
                             sx={{
                                 width: "300px",
                                 height: "auto",
+                                padding: 0,
+                            }} anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'right',
                             }}
                             transformOrigin={{
                                 vertical: 'top',
-                                horizontal: 'left',
-                            }}> 
-                            <LogoutButton />
-                            <NightmodeToggle hasText={true} />
+                                horizontal: 'right',
+                            }}>
+                            <MenuItem>
+                                <LogoutButton>
+                                    <Typography sx={{ ml: "5px" }}>
+                                        Logout
+                                    </Typography>
+                                </LogoutButton>
+                            </MenuItem>
+                            <MenuItem>
+                                <NightmodeToggle>
+                                    <Typography sx={{ ml: "5px" }}>
+                                        Toggle Mode
+                                    </Typography>
+                                </NightmodeToggle>
+                            </MenuItem>
                         </Menu>
                     </Box>
 
