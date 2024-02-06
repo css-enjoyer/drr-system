@@ -1,9 +1,13 @@
 import { Scheduler } from "@aldabil/react-scheduler";
 import { ProcessedEvent, SchedulerHelpers } from "@aldabil/react-scheduler/types";
-import { Button, DialogActions, TextField } from "@mui/material";
-import { useState } from "react";
+import { Button, DialogActions, Grid, TextField, Typography } from "@mui/material";
+import { useContext, useState } from "react";
+import drImage from "../styles/images/dr1.jpg";
+import { AuthContext } from "../utils/AuthContext";
 
 function CustomTimelineRenderer() {
+
+    const authContext = useContext(AuthContext);
 
     interface CustomEditorProps {
         scheduler: SchedulerHelpers;
@@ -18,6 +22,7 @@ function CustomTimelineRenderer() {
         const [error, setError] = useState("");
         const handleChange = (value: string, name: string) => {
             setState((prev) => { return { ...prev, [name]: value }; });
+            console.log(value)
         };
         const handleSubmit = async () => {
             try {
@@ -41,52 +46,73 @@ function CustomTimelineRenderer() {
             }
         };
         return ( // return custom form
-            <div>
-                <div style={{ padding: "1rem" }}>
-                    <p>Reserve Room</p>
+            <Grid
+                width={{ lg: "80vw", md: "80vw", sm: "100%" }}
+                height={{ lg: "90vh", md: "90vh", sm: "100%", }}
+                sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                }}>
+                <Grid item sx={{
+                    p: "35px",
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "20px",
+                }}>
+                    {/* <p>Reserve Room</p> */}
+                    <Typography variant="h4">Reserve Room</Typography>
                     <TextField
-                        label="Title"
-                        value={state.title}
-                        onChange={(e) => handleChange(e.target.value, "title")}
-                        error={!!error}
-                        helperText={error}
+                        label="Group Representative"
+                        value={authContext?.user?.email}
                         fullWidth
+                        contentEditable={false}
+                        inputProps={
+                            { readOnly: true, }
+                        }
                     />
                     <TextField
-                        label="Description"
-                        value={state.description}
-                        onChange={(e) => handleChange(e.target.value, "description")}
+                        label="Participant #1"
+                        variant="outlined"
                         fullWidth
+                        margin="normal"
                     />
                     <TextField
-                        label="Number of Participants"
-                        value={state.pax}
-                        onChange={(e) => handleChange(e.target.value, "pax")}
-                        fullWidth
+                        label="Reason for Reservation"
+                        placeholder="Studying for thesis, group meeting for project, presentation practice..."
+                        multiline
+                        rows={3}
                     />
-                </div>
-                <DialogActions>
-                    <Button onClick={scheduler.close}>Cancel</Button>
-                    <Button onClick={handleSubmit}>Confirm</Button>
-                </DialogActions>
-            </div>
+                    <DialogActions>
+                        <Button onClick={scheduler.close}>Cancel</Button>
+                        <Button onClick={handleSubmit}>Confirm</Button>
+                    </DialogActions>
+                </Grid>
+                <Grid item
+                    width={{ lg: "150vw", md: "120vw", sm: "80vw", xs: "0" }}
+                    height={{ lg: "90vh", md: "90vh", sm: "90vh", xs: "0" }}
+                    sx={{
+                        backgroundImage: `url("${drImage}")`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                    }} />
+            </Grid>
         );
     };
 
     return (
-        <Scheduler
+        <Scheduler dialogMaxWidth="xl"
             customEditor={(scheduler) => <CustomEditor scheduler={scheduler} />}
             viewerExtraComponent={(fields, event) => {
                 return (
-                    <div>
+                    <Grid>
                         <p>Useful to render custom fields...</p>
                         <p>Description: {event.description || "Nothing..."}</p>
-                        <p>Pax: {event.pax || "Nothing..."}</p>
-                    </div>
+                    </Grid>
                 );
             }}
         />
-    )
+    );
 }
 
 export default CustomTimelineRenderer

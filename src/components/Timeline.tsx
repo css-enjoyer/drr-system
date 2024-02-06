@@ -35,7 +35,7 @@ function Timeline() {
         <Container maxWidth="xl" sx={{ py: 3, pb: 20 }}>
             <Typography variant="h4" sx={{ mb: "10px", fontWeight: "500" }}>Welcome, {formatGreeting(authContext)}</Typography>
             <CustomTimelineRenderer />
-            <Scheduler
+            {/* <Scheduler
                 view="day"
                 events={[
                     {
@@ -47,9 +47,9 @@ function Timeline() {
                     },
                 ]}
                 day={{ startHour: 8, endHour: 21, step: 30 }}
-                resources={RESOURCES}
+                resources={ RESOURCES }
                 resourceFields={{ idField: "room_id", textField: "title", }}
-                resourceViewMode="default" />
+                resourceViewMode="default" /> */}
         </Container>
     )
 }
