@@ -12,7 +12,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { useThemeContext } from './theme/ThemeContextProvider'
 
 // Routes
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, Route, Router, RouterProvider, Routes } from 'react-router-dom'
 import { Protected } from './utils/Protected';
 import { useContext } from 'react';
 import { AuthContext } from './utils/AuthContext';
@@ -22,25 +22,6 @@ import SelectBranch from './components/SelectBranch';
 
 function App() {
 	const { theme } = useThemeContext();
-	const router = createBrowserRouter([
-		{
-			path: "/",
-			element: <LoginPage />
-		},
-		{
-			path: "/login",
-			element: <LoginPage />
-		},
-		{
-			path: "/timeline",
-			element: <Protected><Timeline /></Protected>
-		},
-		{
-			path: "/select-branch",
-			element: <Protected><SelectBranch /></Protected>
-		}
-	])
-
 	const authContext = useContext(AuthContext);
 
 	return (
@@ -49,7 +30,12 @@ function App() {
 			<div className="App">
 				{/* Show appbar and footer only when logged in */}
 				{authContext?.user && <ResponsiveAppBar logoTitle={"DRRS"} />}
-				<RouterProvider router={router}></RouterProvider>
+				<Routes>
+					<Route path="/" element={<LoginPage />} />
+					<Route path="/login" element={<LoginPage />} />
+					<Route path="/timeline" element={<Protected><Timeline /></Protected>} />
+					<Route path="/branches" element={<Protected><SelectBranch /></Protected>} />
+				</Routes>
 				{authContext?.user && <Footer />}
 			</div>
 		</ThemeProvider>

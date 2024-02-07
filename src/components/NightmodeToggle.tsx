@@ -12,7 +12,7 @@ function NightmodeToggle(props: ntProps) {
     const { mode, toggleColorMode } = useThemeContext();
 
     return (
-        <IconButton disableRipple onClick={() => { toggleColorMode() }} sx={{color: "inherit"}}>
+        <IconButton disableRipple onClick={() => { toggleColorMode() }} sx={{ color: "inherit" }}>
             <BrightnessMedium />
             {props.children}
         </IconButton>

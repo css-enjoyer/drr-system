@@ -33,7 +33,7 @@ function SelectBranch() {
                 alignItems: "center",
                 justifyContent: "center",
                 gap: "30px",
-                py: "10px",
+                py: "10px", 
             }}>
                 {branches.map((branch) => (
                     <Grid key={branch.branchId} className="branch" component={Paper} item xs

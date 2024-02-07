@@ -11,8 +11,10 @@ import { AuthContext } from '../utils/AuthContext';
 import BusinessIcon from '@mui/icons-material/Business';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import InfoIcon from '@mui/icons-material/Info';
+import { Link, useNavigate } from 'react-router-dom';
 
 const pages = ['Branches', 'Guide', 'About']; // change these to components in the future
+const pageRoutes = ['/branches'];
 const pageIcons: React.ReactNode[] = [<BusinessIcon />, <MenuBookIcon />, <InfoIcon />]; // change these to components in the future
 
 type AppBarProps = {
@@ -22,6 +24,7 @@ type AppBarProps = {
 function ResponsiveAppBar({ logoTitle }: AppBarProps) {
 
     const authContext = React.useContext(AuthContext);
+    const navigate = useNavigate();
     const userPhoto = authContext?.user?.photoURL;
 
     // On-click, set reference position of navigation links to current target (menu icon)
@@ -107,7 +110,7 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
                             {pages.map((page, index) => (
                                 <MenuItem key={page} onClick={handleCloseNavMenu}>
                                     {pageIcons[index]}
-                                    <Typography textAlign="center" sx={{ml: "8px"}}>{page}</Typography>
+                                    <Typography textAlign="center" sx={{ ml: "8px" }}>{page}</Typography>
                                 </MenuItem>
                             ))}
                         </Menu>
@@ -137,6 +140,8 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
                         {pages.map((page, index) => (
                             <Button
                                 key={page}
+                                component={Link} // Use Link component instead of button
+                                to={pageRoutes[index]} // Specify the route for each page
                                 onClick={handleCloseNavMenu}
                                 startIcon={pageIcons[index]}
                                 sx={{ mx: 2, color: 'white' }}>
