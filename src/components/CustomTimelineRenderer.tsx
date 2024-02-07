@@ -9,6 +9,19 @@ function CustomTimelineRenderer() {
 
     const authContext = useContext(AuthContext);
 
+    const RESOURCES = [
+        {
+            room_id: 1,
+            title: "Room 1",
+            color: "darkblue"
+        },
+        {
+            room_id: 2,
+            title: "Room 2",
+            color: "#black"
+        },
+    ];
+
     interface CustomEditorProps {
         scheduler: SchedulerHelpers;
     }
@@ -111,6 +124,20 @@ function CustomTimelineRenderer() {
                     </Grid>
                 );
             }}
+            view="day"
+            events={[
+                {
+                    event_id: 1,
+                    room_id: 1,
+                    title: "Event 1",
+                    start: new Date("2024/2/4 011:30"),
+                    end: new Date("2024/2/4 12:00"),
+                },
+            ]}
+            day={{ startHour: 8, endHour: 21, step: 30 }}
+            resources={RESOURCES}
+            resourceFields={{ idField: "room_id", textField: "title", }}
+            resourceViewMode="tabs"
         />
     );
 }

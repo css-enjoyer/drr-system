@@ -18,19 +18,6 @@ function Timeline() {
         })
     })
 
-    const RESOURCES = [
-        {
-            room_id: 1,
-            title: "Room 1",
-            color: "darkblue"
-        },
-        {
-            room_id: 2,
-            title: "Room 2",
-            color: "#black"
-        },
-    ];
-
     return (
         <Container maxWidth="xl" sx={{ py: 3, pb: 20 }}>
             <Typography variant="h4" sx={{ mb: "10px", fontWeight: "500" }}>Welcome, {formatGreeting(authContext)}</Typography>
