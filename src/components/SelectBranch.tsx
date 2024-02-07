@@ -1,8 +1,13 @@
-import { Grid, Paper, Typography } from '@mui/material'
+import { Box, Container, Grid, Paper, Typography } from '@mui/material'
 import { Branch, getBranches } from '../firebase/dbHandler';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { formatGreeting } from '../utils/formatGreeting';
+import { AuthContext } from '../utils/AuthContext';
 
 function SelectBranch() {
+
+    const authContext = useContext(AuthContext);
+
     const [branches, setBranches] = useState<Branch[]>([]);
     useEffect(() => {
         const fetchData = async () => {
@@ -14,29 +19,42 @@ function SelectBranch() {
 
 
     return (
-        <Grid className="SelectBranch" flexDirection={{ lg: "row", md: "row", xs: "column" }} px={{ lg: "100px" }} sx={{
+        <Container sx={{
+            minHeight: "auto",
             height: "100vh",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "50px",
-            p: "50px",
+            width: "100vw",
         }}>
-            {branches.map((branch) => (
-                <Paper key={branch.branchId} className="branch" component={Grid} item xs
-                    width={{ xs: "100%" }}
-                    sx={{
-                        height: "80vh",
-                        minWidth: "200px",
-                        display: "flex",
-                        alignItems: "end"
-                    }}>
-                    <Typography variant="h4" sx={{
-                        m: "20px",
-                    }}>{branch.branchTitle}</Typography>
-                </Paper>
-            ))}
-        </Grid>
+            <Typography variant="h4" sx={{ mt: "10px", fontWeight: "500" }}>Welcome, {formatGreeting(authContext)}</Typography>
+            <Typography variant="subtitle1">To proceed, please select a branch.</Typography>
+            <Grid className="SelectBranch" flexDirection={{ lg: "row", md: "row", xs: "column" }} px={{ lg: 0, xs: "20px" }} sx={{
+                display: "flex",
+                height: "80vh",
+                maxHeight: "auto",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "30px",
+                py: "10px",
+            }}>
+                {branches.map((branch) => (
+                    <Grid key={branch.branchId} className="branch" component={Paper} item xs
+                        width={{ xs: "100%" }}
+                        sx={{
+                            height: "100%",
+                            display: "flex",
+                            alignItems: "end"
+                        }}>
+                        <Box sx={{ m: "20px" }}>
+                            <Typography variant="h4">
+                                {branch.branchTitle}
+                            </Typography>
+                            <Typography variant="subtitle">
+                                {branch.branchLoc}
+                            </Typography>
+                        </Box>
+                    </Grid>
+                ))}
+            </Grid>
+        </Container>
     )
 }
 
