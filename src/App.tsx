@@ -16,6 +16,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { Protected } from './utils/Protected';
 import { useContext } from 'react';
 import { AuthContext } from './utils/AuthContext';
+import SelectBranch from './components/SelectBranch';
 
 // Utils
 
@@ -33,6 +34,10 @@ function App() {
 		{
 			path: "/timeline",
 			element: <Protected><Timeline /></Protected>
+		},
+		{
+			path: "/select-branch",
+			element: <Protected><SelectBranch /></Protected>
 		}
 	])
 
