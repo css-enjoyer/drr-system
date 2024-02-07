@@ -14,7 +14,7 @@ function SelectBranch() {
 
 
     return (
-        <Grid flexDirection={{ lg: "row", md: "row", xs: "column" }} px={{ lg: "100px" }} sx={{
+        <Grid className="SelectBranch" flexDirection={{ lg: "row", md: "row", xs: "column" }} px={{ lg: "100px" }} sx={{
             height: "100vh",
             display: "flex",
             alignItems: "center",
@@ -23,7 +23,8 @@ function SelectBranch() {
             p: "50px",
         }}>
             {branches.map((branch) => (
-                <Paper key={branch.branchId} component={Grid} item xs width={{ xs: "100%" }}
+                <Paper key={branch.branchId} className="branch" component={Grid} item xs
+                    width={{ xs: "100%" }}
                     sx={{
                         height: "80vh",
                         minWidth: "200px",

@@ -12,18 +12,29 @@
 body {
     height: 100vh;
     padding: 0;
+
     #root {
         height: 100%;
+
         .App {
             min-height: 100vh;
             height: auto;
-            // padding-bottom: 50px;
+
             .LoginPage {
-                .loginBackgroundImage {
-                    // filter: brightness(50%);
-                    // backdrop-filter: brightness(120%);
+                .loginBackgroundImage {}
+            }
+
+            .SelectBranch {
+                .branch {
+                    // transition-duration: 5s;
+                    // transform: translateY(0);
+                    transition: all .2s ease-in-out;
+                }
+                .branch:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0px 10px 3px rgba(black, 0.3);
                 }
             }
-        }   
+        }
     }
 }

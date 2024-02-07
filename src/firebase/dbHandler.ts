@@ -2,6 +2,8 @@ import { collection, getDocs } from 'firebase/firestore';
 import { db } from './config';
 import { getStorage, ref } from "firebase/storage";
 
+// Disregard warnings when adding new fields in Firebase, takes time to reflect -isaac
+
 export async function getReservations() {
     const querySnapshot = await getDocs(collection(db, "reservation-logs"));
 
@@ -38,7 +40,8 @@ export async function getBranches(): Promise<Branch[]> {
             branchId: branchData.branchId,
             branchName: branchData.branchName,
             thumbnail: branchData.thumbnail,
-            branchTitle: branchData.branchTitle
+            branchTitle: branchData.branchTitle,
+            branchLoc: branchData.branchLoc
         };
         console.log(branchData.branchName);
         branches.push(branch);
