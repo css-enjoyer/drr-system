@@ -27,8 +27,7 @@ function SelectBranch() {
         <Container sx={{
             minHeight: "auto",
             height: "100vh",
-            width: "100vw",
-            py: 3, pb: 20 
+            py: 3, pb: 20
         }}>
             <Typography variant="h4" sx={{ mb: "10px", fontWeight: "500" }}>Welcome, {formatGreeting(authContext)}</Typography>
             <Typography variant="subtitle1">To proceed, please select a branch.</Typography>
@@ -42,7 +41,8 @@ function SelectBranch() {
                 py: "10px",
             }}>
                 {branches.map((branch) => (
-                    <Grid key={branch.branchId} className="branch" item xs width={{ xs: "100%" }}>
+                    <Grid key={branch.branchId} className="branch" item xs width={{ xs: "100%" }}
+                        sx={{ height: "100%" }}>
                         <Paper
                             sx={{
                                 height: "100%",
