@@ -12,7 +12,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { useThemeContext } from './theme/ThemeContextProvider'
 
 // Routes
-import { createBrowserRouter, Route, Router, RouterProvider, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import { Protected } from './utils/Protected';
 import { useContext } from 'react';
 import { AuthContext } from './utils/AuthContext';
@@ -32,9 +32,10 @@ function App() {
 				{authContext?.user && <ResponsiveAppBar logoTitle={"DRRS"} />}
 				<Routes>
 					<Route path="/" element={<LoginPage />} />
+					<Route path="*" element={<Protected><SelectBranch /></Protected>} />
 					<Route path="/login" element={<LoginPage />} />
-					<Route path="/timeline" element={<Protected><Timeline /></Protected>} />
 					<Route path="/branches" element={<Protected><SelectBranch /></Protected>} />
+					<Route path="/branches/:branchId/timeline" element={<Protected><Timeline /></Protected>} />
 				</Routes>
 				{authContext?.user && <Footer />}
 			</div>

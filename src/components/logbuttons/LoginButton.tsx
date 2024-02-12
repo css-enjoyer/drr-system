@@ -12,7 +12,7 @@ function Login() {
             .then((userCredential) => {
                 const user = userCredential.user;
                 console.log(`${user.uid} signed in!`)
-                navigate('/timeline')
+                navigate('/branches')
             }).catch((error) => {
                 console.log(`Login Failed: ${error.code} ${error.message}`)
             });

@@ -1,13 +1,36 @@
 import { Scheduler } from "@aldabil/react-scheduler";
 import { ProcessedEvent, SchedulerHelpers } from "@aldabil/react-scheduler/types";
 import { Button, DialogActions, Grid, TextField, Typography } from "@mui/material";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import drImage from "../styles/images/dr1.jpg";
 import { AuthContext } from "../utils/AuthContext";
+import { BranchRoom, getBranchRooms } from "../firebase/dbHandler";
 
-function CustomTimelineRenderer() {
+type RoomProps = {
+    room_id: number,
+    title: string,
+    color: string,
+}
+
+function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
     const authContext = useContext(AuthContext);
+
+    const [rooms, setRooms] = useState<RoomProps[]>([]);
+    useEffect(() => {
+        const fetchData = async () => {
+            const branchRooms = await getBranchRooms(branchId)
+            console.log(...branchRooms + "Rooms Retrieved")
+            const transformedResources: RoomProps[] = branchRooms.map((room: BranchRoom) => ({
+                room_id: room.roomId,
+                title: room.roomName,
+                color: "red",
+            }));
+            setRooms(transformedResources);
+        };
+        console.log(...rooms + "Rooms Transformed")
+        fetchData();
+    }, []);
 
     const RESOURCES = [
         {
@@ -22,6 +45,23 @@ function CustomTimelineRenderer() {
         },
     ];
 
+    const EVENTS = [
+        {
+            event_id: 1,
+            room_id: 1,
+            title: "Event 1",
+            start: new Date("2024/2/10 11:30"),
+            end: new Date("2024/2/10 12:00"),
+        },
+        {
+            event_id: 2,
+            room_id: 2,
+            title: "Event 1",
+            start: new Date("2024/2/10 13:30"),
+            end: new Date("2024/2/10 14:00"),
+        },
+    ]
+
     interface CustomEditorProps {
         scheduler: SchedulerHelpers;
     }
@@ -33,7 +73,7 @@ function CustomTimelineRenderer() {
             pax: 4,
         });
         const [error, setError] = useState("");
-        const handleChange = (value: string, name: string) => {
+        const handleChange = (value: string, name: string) => { // retrieves fields values
             setState((prev) => { return { ...prev, [name]: value }; });
             console.log(value)
         };
@@ -58,6 +98,7 @@ function CustomTimelineRenderer() {
                 scheduler.loading(false);
             }
         };
+
         return ( // return custom form
             <Grid
                 width={{ lg: "80vw", md: "80vw", sm: "100%" }}
@@ -125,19 +166,11 @@ function CustomTimelineRenderer() {
                 );
             }}
             view="day"
-            events={[
-                {
-                    event_id: 1,
-                    room_id: 1,
-                    title: "Event 1",
-                    start: new Date("2024/2/4 011:30"),
-                    end: new Date("2024/2/4 12:00"),
-                },
-            ]}
+            events={EVENTS}
             day={{ startHour: 8, endHour: 21, step: 30 }}
-            resources={RESOURCES}
+            resources={rooms}
             resourceFields={{ idField: "room_id", textField: "title", }}
-            resourceViewMode="tabs"
+            resourceViewMode="default"
         />
     );
 }

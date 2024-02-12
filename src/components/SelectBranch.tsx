@@ -3,10 +3,12 @@ import { Branch, getBranches } from '../firebase/dbHandler';
 import { useContext, useEffect, useState } from 'react';
 import { formatGreeting } from '../utils/formatGreeting';
 import { AuthContext } from '../utils/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 function SelectBranch() {
 
     const authContext = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const [branches, setBranches] = useState<Branch[]>([]);
     useEffect(() => {
@@ -17,6 +19,9 @@ function SelectBranch() {
         fetchData();
     }, []);
 
+    const redirectToTimeline = (branchId: string) => {
+        navigate(`/branches/${branchId}/timeline/`);
+    };
 
     return (
         <Container sx={{
@@ -33,24 +38,28 @@ function SelectBranch() {
                 alignItems: "center",
                 justifyContent: "center",
                 gap: "30px",
-                py: "10px", 
+                py: "10px",
             }}>
                 {branches.map((branch) => (
-                    <Grid key={branch.branchId} className="branch" component={Paper} item xs
-                        width={{ xs: "100%" }}
-                        sx={{
-                            height: "100%",
-                            display: "flex",
-                            alignItems: "end"
-                        }}>
-                        <Box sx={{ m: "20px" }}>
-                            <Typography variant="h4">
-                                {branch.branchTitle}
-                            </Typography>
-                            <Typography variant="subtitle">
-                                {branch.branchLoc}
-                            </Typography>
-                        </Box>
+                    <Grid key={branch.branchId} className="branch" item xs width={{ xs: "100%" }}>
+                        <Paper
+                            sx={{
+                                height: "100%",
+                                display: "flex",
+                                alignItems: "end",
+                                padding: "20px",
+                                cursor: "pointer",
+                            }}
+                            onClick={() => redirectToTimeline(branch.branchId)}>
+                            <Box>
+                                <Typography variant="h4">
+                                    {branch.branchTitle}
+                                </Typography>
+                                <Typography variant="subtitle1">
+                                    {branch.branchLoc}
+                                </Typography>
+                            </Box>
+                        </Paper>
                     </Grid>
                 ))}
             </Grid>
