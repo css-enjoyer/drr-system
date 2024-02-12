@@ -28,11 +28,9 @@ function SelectBranch() {
             minHeight: "auto",
             height: "100vh",
             width: "100vw",
-            border: "1px solid",
-            borderColor: "red",
             py: 3, pb: 20 
         }}>
-            <Typography variant="h4" sx={{ mt: "10px", fontWeight: "500" }}>Welcome, {formatGreeting(authContext)}</Typography>
+            <Typography variant="h4" sx={{ mb: "10px", fontWeight: "500" }}>Welcome, {formatGreeting(authContext)}</Typography>
             <Typography variant="subtitle1">To proceed, please select a branch.</Typography>
             <Grid className="SelectBranch" flexDirection={{ lg: "row", md: "row", xs: "column" }} px={{ lg: 0, xs: "20px" }} sx={{
                 display: "flex",
