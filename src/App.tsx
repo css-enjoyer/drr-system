@@ -33,7 +33,7 @@ function App() {
         {/* Show appbar and footer only when logged in */}
         {authContext?.user && <ResponsiveAppBar logoTitle={"DRRS"} />}
         <Routes>
-          <Route path="/" element={<LibrarianReservationLogs />} />
+          <Route path="/" element={<LoginPage />} />
           <Route
             path="*"
             element={
@@ -42,7 +42,7 @@ function App() {
               </Protected>
             }
           />
-          <Route path="/login" element={<LibrarianReservationLogs />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route
             path="/branches"
             element={
