@@ -18,10 +18,11 @@ function SelectBranch() {
         };
         fetchData();
     }, []);
-
+    
     const redirectToTimeline = (branchId: string) => {
         navigate(`/branches/${branchId}/timeline/`);
     };
+
 
     return (
         <Container sx={{

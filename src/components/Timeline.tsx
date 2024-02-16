@@ -1,13 +1,9 @@
 import { Container, Typography } from '@mui/material';
-import { formatGreeting } from '../utils/formatGreeting';
-import { AuthContext } from '../utils/AuthContext';
-import { useContext } from 'react';
 import CustomTimelineRenderer from './CustomTimelineRenderer';
 import { useParams } from 'react-router-dom';
 
 function Timeline() {
     const { branchId } = useParams<{ branchId: string }>();
-    const authContext = useContext(AuthContext);
 
     return (
         <Container maxWidth="xl" sx={{ py: 3, pb: 20 }}>

@@ -1,10 +1,10 @@
 import { Scheduler } from "@aldabil/react-scheduler";
 import { ProcessedEvent, SchedulerHelpers } from "@aldabil/react-scheduler/types";
-import { Button, DialogActions, Grid, TextField, Typography } from "@mui/material";
+import { Button, CircularProgress, DialogActions, Grid, TextField, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import drImage from "../styles/images/dr1.jpg";
 import { AuthContext } from "../utils/AuthContext";
-import { BranchRoom, getBranchRooms } from "../firebase/dbHandler";
+import { Room, getRooms } from "../firebase/dbHandler";
 
 type RoomProps = {
     room_id: number,
@@ -16,34 +16,33 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
     const authContext = useContext(AuthContext);
 
-    const [rooms, setRooms] = useState<RoomProps[]>([]);
+    const [roomsState, setRoomsState] = useState<RoomProps[]>([]);
     useEffect(() => {
         const fetchData = async () => {
-            const branchRooms = await getBranchRooms(branchId)
-            console.log(...branchRooms + "Rooms Retrieved")
-            const transformedResources: RoomProps[] = branchRooms.map((room: BranchRoom) => ({
+            const rooms = await getRooms(branchId);
+            const transformedResources: RoomProps[] = rooms.map((room) => ({
                 room_id: room.roomId,
-                title: room.roomName,
+                title: room.roomTitle,
                 color: "red",
             }));
-            setRooms(transformedResources);
-        };
-        console.log(...rooms + "Rooms Transformed")
+            setRoomsState(transformedResources)
+            // console.log('Rooms in state', roomsState, roomsState.length)
+        }
         fetchData();
     }, []);
 
-    const RESOURCES = [
-        {
-            room_id: 1,
-            title: "Room 1",
-            color: "darkblue"
-        },
-        {
-            room_id: 2,
-            title: "Room 2",
-            color: "#black"
-        },
-    ];
+    // const RESOURCES = [
+    //     {
+    //         room_id: 1,
+    //         title: "Room 1",
+    //         color: "darkblue"
+    //     },
+    //     {
+    //         room_id: 2,
+    //         title: "Room 2",
+    //         color: "#black"
+    //     },
+    // ];
 
     const EVENTS = [
         {
@@ -154,6 +153,11 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         );
     };
 
+    if (roomsState.length === 0) {
+        console.log("Bruh")
+        return <CircularProgress></CircularProgress>;
+    }
+
     return (
         <Scheduler dialogMaxWidth="xl"
             customEditor={(scheduler) => <CustomEditor scheduler={scheduler} />}
@@ -168,7 +172,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             view="day"
             events={EVENTS}
             day={{ startHour: 8, endHour: 21, step: 30 }}
-            resources={rooms}
+            resources={roomsState}
             resourceFields={{ idField: "room_id", textField: "title", }}
             resourceViewMode="default"
         />
