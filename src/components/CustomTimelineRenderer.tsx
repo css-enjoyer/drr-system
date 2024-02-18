@@ -8,6 +8,7 @@ import { Room, getRooms } from "../firebase/dbHandler";
 
 type RoomProps = {
     room_id: number,
+    roomBranch: string,
     title: string,
     color: string,
 }
@@ -22,6 +23,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             const rooms = await getRooms(branchId);
             const transformedResources: RoomProps[] = rooms.map((room) => ({
                 room_id: room.roomId,
+                roomBranch: room.roomBranch,
                 title: room.roomTitle,
                 color: "red",
             }));
@@ -48,16 +50,17 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         {
             event_id: 1,
             room_id: 1,
+            // room_id: "1-scitech",  <-- new room id format?
             title: "Event 1",
-            start: new Date("2024/2/10 11:30"),
-            end: new Date("2024/2/10 12:00"),
+            start: new Date("2024/2/16 11:30"),
+            end: new Date("2024/2/16 12:00"),
         },
         {
             event_id: 2,
             room_id: 2,
             title: "Event 1",
-            start: new Date("2024/2/10 13:30"),
-            end: new Date("2024/2/10 14:00"),
+            start: new Date("2024/2/16 13:30"),
+            end: new Date("2024/2/16 14:00"),
         },
     ]
 
