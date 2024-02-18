@@ -5,8 +5,10 @@ import LoginPage from "./components/LoginPage";
 import Footer from "./components/Footer";
 import ResponsiveAppBar from "./components/ResponsiveAppBar";
 import Timeline from "./components/Timeline";
-import LibrarianReservationLogs from "./components/LibrarianReservationLogs";
-import AdminDashboard from "./components/AdminDashboard";
+import LibrarianReservationLogs from "./components/reservationlogs/LibrarianReservationLogs";
+import AdminDashboard from "./components/reservationlogs/AdminDashboard";
+import Confirmation from "./components/miscellaneous/Confirmation";
+import Cancellation from "./components/miscellaneous/Cancellation";
 
 // Modules
 import { ThemeProvider } from "@mui/material/styles";
@@ -19,6 +21,7 @@ import { Protected } from "./utils/Protected";
 import { useContext } from "react";
 import { AuthContext } from "./utils/AuthContext";
 import SelectBranch from "./components/SelectBranch";
+import { Cancel, Login } from "@mui/icons-material";
 
 // Utils
 
@@ -33,7 +36,11 @@ function App() {
         {/* Show appbar and footer only when logged in */}
         {authContext?.user && <ResponsiveAppBar logoTitle={"DRRS"} />}
         <Routes>
-          <Route path="/" element={<LoginPage />} />
+          <Route
+            path="/"
+            element={<LoginPage />}
+            // element={<Confirmation messageKey="reservationSuccess" />}
+          />
           <Route
             path="*"
             element={
@@ -42,7 +49,11 @@ function App() {
               </Protected>
             }
           />
-          <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/login"
+            element={<LoginPage />}
+            // element={<Confirmation messageKey="reservationSuccess" />}
+          />
           <Route
             path="/branches"
             element={
