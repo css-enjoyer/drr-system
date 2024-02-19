@@ -4,8 +4,7 @@ import { Button, CircularProgress, DialogActions, Grid, TextField, Typography } 
 import { useContext, useEffect, useState } from "react";
 import drImage from "../styles/images/dr1.jpg";
 import { AuthContext } from "../utils/AuthContext";
-import { Room, getReservations, getRooms } from "../firebase/dbHandler";
-import { EventSeatSharp } from "@mui/icons-material";
+import { getReservations, getRooms } from "../firebase/dbHandler";
 
 type RoomProps = {
     room_id: number,
@@ -29,7 +28,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     const [eventsState, setEventsState] = useState<EventProps[]>([]);
     useEffect(() => {
         const fetchData = async () => {
-            // ROOMS
+            // --- ROOMS --- 
             const rooms = await getRooms(branchId);
             const transformedResources: RoomProps[] = rooms.map((room) => ({
                 room_id: room.roomId,
@@ -40,9 +39,9 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             setRoomsState(transformedResources)
             // console.log('Rooms in state', roomsState, roomsState.length)
 
-            // RESERVATIONS
+            // --- RESERVATIONS --- 
             const reservations = await getReservations(branchId);
-            var event_i = 0;
+            let event_i = 0;
             const transformedRoomResources: EventProps[] = reservations.map((reservation) => ({
                 event_id: ++event_i,
                 room_id: reservation.roomId,
@@ -51,27 +50,11 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 end: reservation.reservationEndTime
             }));
             setEventsState(transformedRoomResources)
-            console.log('Reservation in state', eventsState);
+            // console.log('Reservations in state', eventsState);
         }
         fetchData();
     }, []);
 
-    // const RESOURCES = [
-    //     {
-    //         room_id: 1,
-    //         title: "Room 1",
-    //         color: "darkblue"
-    //     },
-    //     {
-    //         room_id: 2,
-    //         title: "Room 2",
-    //         color: "#black"
-    //     },
-    // ];
-
-    const EVENTS: EventProps[] = [
-
-    ];
     interface CustomEditorProps {
         scheduler: SchedulerHelpers;
     }
