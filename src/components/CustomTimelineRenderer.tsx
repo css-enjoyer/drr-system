@@ -4,7 +4,8 @@ import { Button, CircularProgress, DialogActions, Grid, TextField, Typography } 
 import { useContext, useEffect, useState } from "react";
 import drImage from "../styles/images/dr1.jpg";
 import { AuthContext } from "../utils/AuthContext";
-import { Room, getRooms } from "../firebase/dbHandler";
+import { Room, getReservations, getRooms } from "../firebase/dbHandler";
+import { EventSeatSharp } from "@mui/icons-material";
 
 type RoomProps = {
     room_id: number,
@@ -13,13 +14,22 @@ type RoomProps = {
     color: string,
 }
 
-function CustomTimelineRenderer({ branchId }: { branchId: string }) {
+type EventProps = {
+    event_id: number,
+    room_id: number,
+    title: string
+    start: Date,
+    end: Date
+}
 
+function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     const authContext = useContext(AuthContext);
 
     const [roomsState, setRoomsState] = useState<RoomProps[]>([]);
+    const [eventsState, setEventsState] = useState<EventProps[]>([]);
     useEffect(() => {
         const fetchData = async () => {
+            // ROOMS
             const rooms = await getRooms(branchId);
             const transformedResources: RoomProps[] = rooms.map((room) => ({
                 room_id: room.roomId,
@@ -29,6 +39,19 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             }));
             setRoomsState(transformedResources)
             // console.log('Rooms in state', roomsState, roomsState.length)
+
+            // RESERVATIONS
+            const reservations = await getReservations(branchId);
+            var event_i = 0;
+            const transformedRoomResources: EventProps[] = reservations.map((reservation) => ({
+                event_id: ++event_i,
+                room_id: reservation.roomId,
+                title: "TBD",
+                start: reservation.reservaitionStartTime,
+                end: reservation.reservationEndTime
+            }));
+            setEventsState(transformedRoomResources)
+            console.log('Reservation in state', eventsState);
         }
         fetchData();
     }, []);
@@ -46,24 +69,9 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     //     },
     // ];
 
-    const EVENTS = [
-        {
-            event_id: 1,
-            room_id: 1,
-            // room_id: "1-scitech",  <-- new room id format?
-            title: "Event 1",
-            start: new Date("2024/2/16 11:30"),
-            end: new Date("2024/2/16 12:00"),
-        },
-        {
-            event_id: 2,
-            room_id: 2,
-            title: "Event 1",
-            start: new Date("2024/2/16 13:30"),
-            end: new Date("2024/2/16 14:00"),
-        },
-    ]
+    const EVENTS: EventProps[] = [
 
+    ];
     interface CustomEditorProps {
         scheduler: SchedulerHelpers;
     }
@@ -79,6 +87,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             setState((prev) => { return { ...prev, [name]: value }; });
             console.log(value)
         };
+        
         const handleSubmit = async () => {
             try {
                 scheduler.loading(true);
@@ -173,7 +182,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 );
             }}
             view="day"
-            events={EVENTS}
+            events={eventsState}
             day={{ startHour: 8, endHour: 21, step: 30 }}
             resources={roomsState}
             resourceFields={{ idField: "room_id", textField: "title", }}

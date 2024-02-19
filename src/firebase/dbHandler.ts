@@ -1,19 +1,46 @@
-import { collection, collectionGroup, getDocs, query, where } from 'firebase/firestore';
+import { Timestamp, collection, collectionGroup, getDocs, query, where } from 'firebase/firestore';
 import { db } from './config';
 
 // Disregard warnings when adding new fields in Firebase, takes time to reflect -isaac
 
-export async function getReservations() {
-    const querySnapshot = await getDocs(collection(db, "reservation-logs"));
+export interface Reservation {
+    branchId: string;
+    roomId: number;
+    logDate: Date;
+    logStuRep: string;
+    reservaitionStartTime: Date;
+    reservationEndTime: Date;
+    reservationPurp: string;
+    logPax: number;
+    logRcpt: string;
+}
+
+export async function getReservations(branch: string): Promise<Reservation[]> {
+    const q = query(collection(db, "reservation-logs"), where("branchId", "==", branch))
+    const querySnapshot = await getDocs(q);
 
     const logs = new Array(querySnapshot.size)
-    let data;
-    querySnapshot.forEach((doc) => {
-        data = doc.data()
-        logs.push(data)
-    });
+    const reservations: Reservation[] = [];
 
-    return logs
+    querySnapshot.forEach((doc) => {
+        
+        const reservationData = doc.data();
+        const reservation: Reservation = {
+            branchId: reservationData.branchId,
+            roomId: reservationData.roomId,
+            logDate: (reservationData.logDate as Timestamp).toDate(),
+            logStuRep: reservationData.logStuRep,
+            reservaitionStartTime: (reservationData.logStartTime as Timestamp).toDate(),
+            reservationEndTime: (reservationData.logEndTime as Timestamp).toDate(),
+            reservationPurp: reservationData.logPurp,
+            logPax: reservationData.logPax,
+            logRcpt: reservationData.logRcpt
+        }
+
+        reservations.push(reservation);
+    });
+    console.log(...reservations)
+    return reservations
 }
 
 
@@ -49,6 +76,7 @@ export interface Room {
     roomAvailable: boolean;
     roomBranch: string;
 }
+
 export async function getRooms(branch: string): Promise<Room[]> {
     const roomsArray: Room[] = [];
 
