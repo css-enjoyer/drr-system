@@ -5,6 +5,8 @@ import { useContext, useEffect, useState } from "react";
 import drImage from "../styles/images/dr1.jpg";
 import { AuthContext } from "../utils/AuthContext";
 import { getReservations, getRooms } from "../firebase/dbHandler";
+import { DatePicker, DateTimeField, DateTimePicker, TimePicker } from "@mui/x-date-pickers";
+import { ro } from "date-fns/locale";
 
 type RoomProps = {
     room_id: number,
@@ -55,38 +57,87 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         fetchData();
     }, []);
 
+    // TODO ADD DB FUNCTIONALITY
+    function addReservation() {
+    }
+
+    function generateRandomSequence() {
+        const length = 10;
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let randomSequence = '';
+
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            randomSequence += characters.charAt(randomIndex);
+        }
+
+        return randomSequence;
+    }
+
     interface CustomEditorProps {
         scheduler: SchedulerHelpers;
     }
     const CustomEditor = ({ scheduler }: CustomEditorProps) => {
+        // console.log("find clicked room id")
+        // console.log(scheduler.state.room_id.value);
+
+        // console.log("auth context:")
+        // console.log(authContext)
+
         const event = scheduler.edited;
-        const [state, setState] = useState({  // set custom input fields and event properties here?
-            title: "Title",
-            description: "Description",
-            pax: 4,
+        const [formState, setFormState] = useState({  // set custom input fields and event properties here?
+            // should come from states
+            // TODO remove optional on non-form inputs
+            branchId: event?.branchId || branchId,
+            roomId: event?.roomId || scheduler.state.room_id.value,
+            date: event?.date || new Date(),
+
+            // should come from form inputs
+            stuRep: event?.stuRep || authContext?.user?.email,
+            start: event?.start || scheduler.state.start.value,
+            end: event?.end || scheduler.state.end.value,
+            purp: event?.purp || "",
+            pax: event?.pax || 0,
+
+            // auto-generated
+            rcpt: event?.rcpt || generateRandomSequence()
         });
+
         const [error, setError] = useState("");
         const handleChange = (value: string, name: string) => { // retrieves fields values
-            setState((prev) => { return { ...prev, [name]: value }; });
-            console.log(value)
+            setFormState((prev) => { return { ...prev, [name]: value }; });
+            // console.log(value)
         };
-        
+
+        function printState() {
+            console.log(formState);
+        }
+
+        function toTitleCase(inputString: string | null | undefined) {
+            if (inputString === null || inputString === undefined) {
+                return ""; // Or you can return a default value
+            }
+            return inputString.toLowerCase().replace(/(?:^|\s)\w/g, match => match.toUpperCase());
+        }
+
         const handleSubmit = async () => {
             try {
                 scheduler.loading(true);
-                const addedUpdatedEvent = (await new Promise((res) => {
-                    setTimeout(() => {
-                        res({
-                            event_id: event?.event_id || Math.random(),
-                            title: state.title,
-                            start: scheduler.state.start.value,
-                            end: scheduler.state.end.value,
-                            description: state.description,
-                            pax: state.pax,
-                        });
-                    }, 3000)
-                })) as ProcessedEvent;
-                scheduler.onConfirm(addedUpdatedEvent, event ? "edit" : "create"); // no idea
+                // const addedUpdatedEvent = (await new Promise((res) => {
+                //     setTimeout(() => {
+                //         res({
+                //             event_id: event?.event_id || Math.random(),
+                //             title: state.title,
+                //             start: scheduler.state.start.value,
+                //             end: scheduler.state.end.value,
+                //             description: state.description,
+                //             pax: state.pax,
+                //         });
+                //     }, 3000)
+                // })) as ProcessedEvent;
+                // scheduler.onConfirm(addedUpdatedEvent, event ? "edit" : "create"); // no idea
+                printState();
+                // addReservation();
                 scheduler.close(); // maybe the form?
             } finally {
                 scheduler.loading(false);
@@ -109,31 +160,46 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     gap: "20px",
                 }}>
                     {/* <p>Reserve Room</p> */}
-                    <Typography variant="h4">Reserve Room</Typography>
+                    <Typography variant="h4">Reserve Room {scheduler.state.room_id.value}</Typography>
                     <TextField
                         label="Group Representative"
-                        value={authContext?.user?.email}
+                        // NOTE: the email is saved to db
+                        value={toTitleCase(authContext?.user?.displayName)}
                         fullWidth
                         contentEditable={false}
                         inputProps={
                             { readOnly: true, }
                         }
                     />
+                    <TimePicker
+                        label="Start time"
+                        value={formState.start}
+                    />
+                    <TimePicker
+                        label="End time"
+                        value={formState.end}
+                    />
                     <TextField
-                        label="Participant #1"
+                        label="Number of participants"
                         variant="outlined"
                         fullWidth
                         margin="normal"
+                        type="number"
+                        value={formState.pax}
+                        onChange={(e) => handleChange(e.target.value, "pax")}
                     />
                     <TextField
                         label="Reason for Reservation"
                         placeholder="Studying for thesis, group meeting for project, presentation practice..."
                         multiline
                         rows={3}
+                        value={formState.purp}
+                        onChange={(e) => handleChange(e.target.value, "purp")}
                     />
                     <DialogActions>
                         <Button onClick={scheduler.close}>Cancel</Button>
                         <Button onClick={handleSubmit}>Confirm</Button>
+                        {/* <Button onClick={addReservation}>Confirm</Button> */}
                     </DialogActions>
                 </Grid>
                 <Grid item
@@ -166,10 +232,37 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             }}
             view="day"
             events={eventsState}
-            day={{ startHour: 8, endHour: 21, step: 30 }}
+            day={{
+                startHour: 8, endHour: 21, step: 30,
+                // causes cell design to change, idk why
+                // cellRenderer: () => {
+                //     return (
+                //         <button
+                //             onClick={() => alert("iskrrt")}
+                //         >
+                //         </button>
+                //     );
+                // }
+            }}
             resources={roomsState}
             resourceFields={{ idField: "room_id", textField: "title", }}
             resourceViewMode="default"
+            // required to access room_id
+            fields={[
+                {
+                    name: "room_id",
+                    type: "hidden",
+                    // default: roomsState[0].room_id,
+                    // options: roomsState.map((rs) => {
+                    //     return {
+                    //         id: rs.room_id,
+                    //         text: `Room ${rs.room_id}`,
+                    //         value: rs.room_id
+                    //     };
+                    // }),
+                    // config: { label: "Room", required: true }
+                },
+            ]}
         />
     );
 }
