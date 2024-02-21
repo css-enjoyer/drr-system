@@ -1,4 +1,4 @@
-import { Timestamp, collection, collectionGroup, getDocs, query, where } from 'firebase/firestore';
+import { Timestamp, addDoc, collection, collectionGroup, getDocs, query, where } from 'firebase/firestore';
 import { db } from './config';
 
 // Disregard warnings when adding new fields in Firebase, takes time to reflect -isaac
@@ -8,13 +8,31 @@ export interface Reservation {
     roomId: number;
     logDate: Date;
     logStuRep: string;
-    reservaitionStartTime: Date;
-    reservationEndTime: Date;
-    reservationPurp: string;
+    logStart: Date;
+    logEnd: Date;
+    logPurp: string;
     logPax: number;
     logRcpt: string;
 }
 
+// transformed reservation
+export interface ReservationEvent {
+    // required types for events
+    event_id: number;
+    title: string;
+    start: Date;
+    end: Date;
+
+    branchId: string;
+    roomId: number;
+    logDate: Date;
+    logStuRep: string;
+    logPurp: string;
+    logPax: number;
+    logRcpt: string;
+}
+
+// ----- GET RESERVATIONS -----
 export async function getReservations(branch: string): Promise<Reservation[]> {
     const q = query(collection(db, "reservation-logs"), where("branchId", "==", branch))
     const querySnapshot = await getDocs(q);
@@ -30,9 +48,9 @@ export async function getReservations(branch: string): Promise<Reservation[]> {
             roomId: reservationData.roomId,
             logDate: (reservationData.logDate as Timestamp).toDate(),
             logStuRep: reservationData.logStuRep,
-            reservaitionStartTime: (reservationData.logStartTime as Timestamp).toDate(),
-            reservationEndTime: (reservationData.logEndTime as Timestamp).toDate(),
-            reservationPurp: reservationData.logPurp,
+            logStart: (reservationData.logStart as Timestamp).toDate(),
+            logEnd: (reservationData.logEnd as Timestamp).toDate(),
+            logPurp: reservationData.logPurp,
             logPax: reservationData.logPax,
             logRcpt: reservationData.logRcpt
         }
@@ -43,6 +61,18 @@ export async function getReservations(branch: string): Promise<Reservation[]> {
     return reservations
 }
 
+// ----- ADD RESERVATION -----
+export async function addReservationDB(res: Reservation) {
+    console.log("Reservation: ");
+    console.log(res);
+
+    const resLogsRef = collection(db, "reservation-logs");
+    try {
+        await addDoc(resLogsRef, res);
+    } catch (error) {
+        console.error(error);
+    }
+}
 
 const branchesRef = collection(db, "branches");
 // fetch is firing twice, to fix
