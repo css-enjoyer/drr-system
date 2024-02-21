@@ -1,6 +1,6 @@
 import { Scheduler } from "@aldabil/react-scheduler";
 import { EventActions, ProcessedEvent, SchedulerHelpers } from "@aldabil/react-scheduler/types";
-import { Button, CircularProgress, DialogActions, Grid, TextField, Typography } from "@mui/material";
+import { Autocomplete, Button, CircularProgress, DialogActions, Grid, TextField, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import drImage from "../styles/images/dr1.jpg";
 import { AuthContext } from "../utils/AuthContext";
@@ -22,6 +22,12 @@ type EventProps = {
     start: Date,
     end: Date
 }
+type DurationOption = {
+    duration: number,
+    label: string
+}
+const durationOptions: DurationOption[] = [{duration:30, label:"30 Minutes"}, {duration:60, label:"1 Hour"}, {duration:90, label:"90 Minutes"}, {duration:120, label:"2 Hours"}]
+
 
 function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     const authContext = useContext(AuthContext);
@@ -108,18 +114,24 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             end: event?.end || scheduler.state.end.value,
             purp: event?.purp || "",
             pax: event?.pax || 0,
+            duration: event?.duration || durationOptions[0],
 
             // auto-generated
             rcpt: event?.rcpt || generateRandomSequence()
         });
 
         const [error, setError] = useState("");
-        const handleChange = (value: string, name: string) => { // retrieves fields values
+        const handleChange = (value: any, name: string) => { // retrieves fields values
             setFormState((prev) => { return { ...prev, [name]: value }; });
             // console.log(value)
         };
 
-        function printState() {
+        const handleDurationChange = (duration: any, start: Date) => {
+            const newDate = new Date(start.getTime() + (duration * 60 * 1000))
+            setFormState((prev) => { return {...prev, ["end"]: newDate}})
+        }
+
+        function printState() {1
             console.log(formState);
         }
 
@@ -194,6 +206,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             }
         };
 
+        
         return ( // return custom form
             <Grid
                 width={{ lg: "80vw", md: "80vw", sm: "100%" }}
@@ -225,12 +238,24 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         label="Start time"
                         value={formState.start}
                         // if null return current time + 30 minutes
-                        onChange={(e) => handleChange(e !== null ? e : new Date(new Date().getTime() + 30 * 60000), "start")}
+                        readOnly
                     />
                     <TimePicker
                         label="End time"
                         value={formState.end}
-                        onChange={(e) => handleChange(e !== null ? e : new Date(new Date().getTime() + 30 * 60000), "end")}
+                        readOnly
+                    />
+
+                    <Autocomplete
+                        options={durationOptions} 
+                        getOptionLabel={(option) => (option.label)}
+                        renderInput={(params) => (<TextField {...params} label="Duration" variant="outlined"/>)}
+                        value={formState.duration}
+                        disableClearable={true}
+                        onChange={(event: any, option: DurationOption, e: any) => {
+                            handleDurationChange(option.duration, formState.start);
+                            handleChange(option, "duration")
+                          }}
                     />
                     <TextField
                         label="Number of participants"
