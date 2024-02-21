@@ -54,7 +54,7 @@ export async function getReservations(branch: string): Promise<Reservation[]> {
             logPax: reservationData.logPax,
             logRcpt: reservationData.logRcpt
         }
-
+        console.log(`Reservation by ${reservationData.logStuRep} has unique ID: ${doc.id}`)
         reservations.push(reservation);
     });
     console.log(...reservations)
