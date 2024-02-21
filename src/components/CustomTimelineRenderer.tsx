@@ -224,10 +224,13 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     <TimePicker
                         label="Start time"
                         value={formState.start}
+                        // if null return current time + 30 minutes
+                        onChange={(e) => handleChange(e !== null ? e : new Date(new Date().getTime() + 30 * 60000), "start")}
                     />
                     <TimePicker
                         label="End time"
                         value={formState.end}
+                        onChange={(e) => handleChange(e !== null ? e : new Date(new Date().getTime() + 30 * 60000), "end")}
                     />
                     <TextField
                         label="Number of participants"
