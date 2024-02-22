@@ -1,36 +1,8 @@
 import { Timestamp, addDoc, collection, collectionGroup, getDocs, query, where } from 'firebase/firestore';
 import { db } from './config';
+import { Branch, BranchRoom, Reservation, Room } from '../Types';
 
 // Disregard warnings when adding new fields in Firebase, takes time to reflect -isaac
-
-export interface Reservation {
-    branchId: string;
-    roomId: number;
-    logDate: Date;
-    logStuRep: string;
-    logStart: Date;
-    logEnd: Date;
-    logPurp: string;
-    logPax: number;
-    logRcpt: string;
-}
-
-// transformed reservation
-export interface ReservationEvent {
-    // required types for events
-    event_id: number;
-    title: string;
-    start: Date;
-    end: Date;
-
-    branchId: string;
-    roomId: number;
-    logDate: Date;
-    logStuRep: string;
-    logPurp: string;
-    logPax: number;
-    logRcpt: string;
-}
 
 // ----- GET RESERVATIONS -----
 export async function getReservations(branch: string): Promise<Reservation[]> {
@@ -54,10 +26,10 @@ export async function getReservations(branch: string): Promise<Reservation[]> {
             logPax: reservationData.logPax,
             logRcpt: reservationData.logRcpt
         }
-        console.log(`Reservation by ${reservationData.logStuRep} has unique ID: ${doc.id}`)
+        // console.log(`Reservation by ${reservationData.logStuRep} has unique ID: ${doc.id}`)
         reservations.push(reservation);
     });
-    console.log(...reservations)
+    // console.log(...reservations)
     return reservations
 }
 
@@ -74,15 +46,11 @@ export async function addReservationDB(res: Reservation) {
     }
 }
 
-const branchesRef = collection(db, "branches");
-// fetch is firing twice, to fix
-// - save retrieved data to local if unchanged remotely
-export interface Branch {
-    branchId: string;
-    branchTitle: string;
-    branchLoc: string;
-}
 export async function getBranches(): Promise<Branch[]> {
+    const branchesRef = collection(db, "branches");
+    // fetch is firing twice, to fix
+    // - save retrieved data to local if unchanged remotely
+
     const branches: Branch[] = [];
 
     const querySnapshot = await getDocs(branchesRef);
@@ -97,14 +65,6 @@ export async function getBranches(): Promise<Branch[]> {
     });
     console.log(...branches);
     return branches;
-}
-
-export interface Room {
-    roomId: number;
-    roomTitle: string;
-    roomPax: number;
-    roomAvailable: boolean;
-    roomBranch: string;
 }
 
 export async function getRooms(branch: string): Promise<Room[]> {
@@ -127,22 +87,6 @@ export async function getRooms(branch: string): Promise<Room[]> {
     return roomsArray;
 }
 
-
-
-
-
-
-
-
-
-
-export interface BranchRoom {
-    roomId: number;
-    roomBranch: string;
-    roomName: string;
-    roomPax: number;
-    roomAvailable: boolean;
-}
 export async function getBranchRooms(branchId?: string): Promise<BranchRoom[]> {
     const branchRooms: BranchRoom[] = [];
 

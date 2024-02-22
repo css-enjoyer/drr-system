@@ -4,29 +4,12 @@ import { Autocomplete, Button, CircularProgress, DialogActions, Grid, TextField,
 import { useContext, useEffect, useState } from "react";
 import drImage from "../styles/images/dr1.jpg";
 import { AuthContext } from "../utils/AuthContext";
-import { Reservation, ReservationEvent, addReservationDB, getReservations, getRooms } from "../firebase/dbHandler";
-import { DatePicker, DateTimeField, DateTimePicker, TimePicker } from "@mui/x-date-pickers";
-import { ro } from "date-fns/locale";
+import { addReservationDB, getReservations, getRooms } from "../firebase/dbHandler";
+import { TimePicker } from "@mui/x-date-pickers";
+import { DurationOption, EventProps, Reservation, ReservationEvent, RoomProps } from "../Types";
+import { generateRandomSequence, toTitleCase } from "../utils/Utils.ts"
 
-type RoomProps = {
-    room_id: number,
-    roomBranch: string,
-    title: string,
-    color: string,
-}
-
-type EventProps = {
-    event_id: number,
-    room_id: number,
-    title: string
-    start: Date,
-    end: Date
-}
-type DurationOption = {
-    duration: number,
-    label: string
-}
-const durationOptions: DurationOption[] = [{duration:30, label:"30 Minutes"}, {duration:60, label:"1 Hour"}, {duration:90, label:"90 Minutes"}, {duration:120, label:"2 Hours"}]
+const durationOptions: DurationOption[] = [{ duration: 30, label: "30 Minutes" }, { duration: 60, label: "1 Hour" }, { duration: 90, label: "90 Minutes" }, { duration: 120, label: "2 Hours" }]
 
 
 function CustomTimelineRenderer({ branchId }: { branchId: string }) {
@@ -77,22 +60,10 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         fetchData();
     }
 
-    function generateRandomSequence() {
-        const length = 10;
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        let randomSequence = '';
-
-        for (let i = 0; i < length; i++) {
-            const randomIndex = Math.floor(Math.random() * characters.length);
-            randomSequence += characters.charAt(randomIndex);
-        }
-
-        return randomSequence;
-    }
-
     interface CustomEditorProps {
         scheduler: SchedulerHelpers;
     }
+
     const CustomEditor = ({ scheduler }: CustomEditorProps) => {
         // console.log("find clicked room id")
         // console.log(scheduler.state.room_id.value);
@@ -128,18 +99,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
         const handleDurationChange = (duration: any, start: Date) => {
             const newDate = new Date(start.getTime() + (duration * 60 * 1000))
-            setFormState((prev) => { return {...prev, ["end"]: newDate}})
-        }
-
-        function printState() {1
-            console.log(formState);
-        }
-
-        function toTitleCase(inputString: string | null | undefined) {
-            if (inputString === null || inputString === undefined) {
-                return ""; // Or you can return a default value
-            }
-            return inputString.toLowerCase().replace(/(?:^|\s)\w/g, match => match.toUpperCase());
+            setFormState((prev) => { return { ...prev, ["end"]: newDate } })
         }
 
         const handleSubmit = async () => {
@@ -206,7 +166,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             }
         };
 
-        
+
         return ( // return custom form
             <Grid
                 width={{ lg: "80vw", md: "80vw", sm: "100%" }}
@@ -247,15 +207,15 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     />
 
                     <Autocomplete
-                        options={durationOptions} 
+                        options={durationOptions}
                         getOptionLabel={(option) => (option.label)}
-                        renderInput={(params) => (<TextField {...params} label="Duration" variant="outlined"/>)}
+                        renderInput={(params) => (<TextField {...params} label="Duration" variant="outlined" />)}
                         value={formState.duration}
                         disableClearable={true}
                         onChange={(event: any, option: DurationOption, e: any) => {
                             handleDurationChange(option.duration, formState.start);
                             handleChange(option, "duration")
-                          }}
+                        }}
                     />
                     <TextField
                         label="Number of participants"
@@ -312,15 +272,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             events={eventsState}
             day={{
                 startHour: 8, endHour: 21, step: 30,
-                // causes cell design to change, idk why
-                // cellRenderer: () => {
-                //     return (
-                //         <button
-                //             onClick={() => alert("iskrrt")}
-                //         >
-                //         </button>
-                //     );
-                // }
             }}
             resources={roomsState}
             resourceFields={{ idField: "room_id", textField: "title", }}
@@ -330,15 +281,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 {
                     name: "room_id",
                     type: "hidden",
-                    // default: roomsState[0].room_id,
-                    // options: roomsState.map((rs) => {
-                    //     return {
-                    //         id: rs.room_id,
-                    //         text: `Room ${rs.room_id}`,
-                    //         value: rs.room_id
-                    //     };
-                    // }),
-                    // config: { label: "Room", required: true }
                 },
             ]}
         />
