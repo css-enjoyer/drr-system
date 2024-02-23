@@ -1,12 +1,12 @@
 import { Scheduler } from "@aldabil/react-scheduler";
-import { EventActions, ProcessedEvent, SchedulerHelpers } from "@aldabil/react-scheduler/types";
+import { ProcessedEvent, SchedulerHelpers } from "@aldabil/react-scheduler/types";
 import { Autocomplete, Button, CircularProgress, DialogActions, Grid, TextField, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import drImage from "../styles/images/dr1.jpg";
 import { AuthContext } from "../utils/AuthContext";
-import { addReservationDB, getReservations, getRooms } from "../firebase/dbHandler";
+import { addReservationEvent, getReservationEvents, getRooms } from "../firebase/dbHandler";
 import { TimePicker } from "@mui/x-date-pickers";
-import { DurationOption, EventProps, Reservation, ReservationEvent, RoomProps } from "../Types";
+import { DurationOption, ReservationEvent, RoomProps } from "../Types";
 import { generateRandomSequence, toTitleCase } from "../utils/Utils.ts"
 
 const durationOptions: DurationOption[] = [{ duration: 30, label: "30 Minutes" }, { duration: 60, label: "1 Hour" }, { duration: 90, label: "90 Minutes" }, { duration: 120, label: "2 Hours" }]
@@ -16,48 +16,39 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     const authContext = useContext(AuthContext);
 
     const [roomsState, setRoomsState] = useState<RoomProps[]>([]);
-    const [eventsState, setEventsState] = useState<EventProps[]>([]);
+    const [eventsState, setEventsState] = useState<ProcessedEvent[]>([]);
 
     useEffect(() => {
-        fetchData();
+        fetchRooms();
+        fetchReservationEvents();
     }, []);
 
-    const fetchData = async () => {
+    const fetchRooms = async () => {
         // --- ROOMS --- 
         const rooms = await getRooms(branchId);
+        console.log("rooms")
+        console.log(rooms)
         const transformedResources: RoomProps[] = rooms.map((room) => ({
             room_id: room.roomId,
             roomBranch: room.roomBranch,
             title: room.roomTitle,
             color: "red",
         }));
+        console.log("transformed rooms")
+        console.log(transformedResources)
         setRoomsState(transformedResources)
-        // console.log('Rooms in state', roomsState, roomsState.length)
-
-        // --- RESERVATIONS --- 
-        const reservations = await getReservations(branchId);
-        let event_i = 0;
-        const transformedRoomResources: EventProps[] = reservations.map((reservation) => ({
-            event_id: ++event_i,
-            room_id: reservation.roomId,
-            title: "Discussion",
-            start: reservation.logStart,
-            end: reservation.logEnd,
-        }));
-        setEventsState(transformedRoomResources)
-        // console.log('Reservations in state', eventsState);
+        console.log('Rooms in state', roomsState, roomsState.length)
     }
 
-    // TODO ADD DB FUNCTIONALITY
-    const addReservation = (res: Reservation, action: EventActions) => {
-        if (action === "create") {
-            console.log("IN CREATE RES");
-            addReservationDB(res);
-        } else if (action === "edit") {
-            console.log("IN EDIT RES");
-        }
-
-        fetchData();
+    // fetch res events
+    const fetchReservationEvents = async () => {
+        getReservationEvents(branchId)
+            .then((response: ProcessedEvent[]) => {
+                setEventsState(response);
+                console.log("response lmao")
+                console.log(response)
+            })
+            .catch((error) => console.error("Empty reservation events: ", error));
     }
 
     interface CustomEditorProps {
@@ -65,102 +56,70 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     }
 
     const CustomEditor = ({ scheduler }: CustomEditorProps) => {
-        // console.log("find clicked room id")
-        // console.log(scheduler.state.room_id.value);
-
-        // console.log("auth context:")
-        // console.log(authContext)
+        console.log("In scheduler:");
+        console.log(scheduler);
 
         const event = scheduler.edited;
-        const [formState, setFormState] = useState({  // set custom input fields and event properties here?
+        const [formState, setFormState] = useState({
+            // event fields
+            eventId: "lmao",
+            title: "Discussion",
+            start: event?.start || scheduler.state.start.value,
+            end: event?.end || scheduler.state.end.value,
+
             // should come from states
-            // TODO remove optional on non-form inputs
-            branchId: event?.branchId || branchId,
-            roomId: event?.roomId || scheduler.state.room_id.value,
-            date: event?.date || new Date(),
+            branchId: branchId,
+            roomId: scheduler.state.room_id.value,
+            date: new Date(),
 
             // should come from form inputs
             stuRep: event?.stuRep || authContext?.user?.email,
-            start: event?.start || scheduler.state.start.value,
-            end: event?.end || scheduler.state.end.value,
             purp: event?.purp || "",
             pax: event?.pax || 0,
             duration: event?.duration || durationOptions[0],
 
             // auto-generated
-            rcpt: event?.rcpt || generateRandomSequence()
+            rcpt: generateRandomSequence()
         });
 
         const [error, setError] = useState("");
-        const handleChange = (value: any, name: string) => { // retrieves fields values
+        const handleChange = (value: string | DurationOption, name: string) => { // retrieves fields values
             setFormState((prev) => { return { ...prev, [name]: value }; });
             // console.log(value)
         };
 
-        const handleDurationChange = (duration: any, start: Date) => {
+        const handleDurationChange = (duration: number, start: Date) => {
             const newDate = new Date(start.getTime() + (duration * 60 * 1000))
             setFormState((prev) => { return { ...prev, ["end"]: newDate } })
         }
 
         const handleSubmit = async () => {
+            console.log("in handle submit")
             try {
                 scheduler.loading(true);
-                // const addedUpdatedEvent = (await new Promise((res) => {
-                // setTimeout(() => {
-                //     res({
-                // event_id: event?.event_id || Math.random(),
-                // title: state.title,
-                // start: scheduler.state.start.value,
-                // end: scheduler.state.end.value,
-                // description: state.description,
-                // pax: state.pax,
-
-                //             event_id: Math.random(),
-                //             title: "Discussion",
-                //             start: formState.start,
-                //             end: formState.end,
-
-                //             branchId: formState.branchId,
-                //             roomId: formState.roomId,
-                //             logDate: formState.date,
-                //             logStuRep: formState.stuRep,
-                //             reservationPurp: formState.purp,
-                //             logPax: formState.pax,
-                //             logRcpt: formState.rcpt
-                //         });
-                //     }, 3000)
-                // })) as ProcessedEvent;
-                // scheduler.onConfirm(addedUpdatedEvent, event ? "edit" : "create"); // no idea
-                // TODO: implement promise event
                 const newResEvent: ReservationEvent = {
-                    // required types for event
-                    event_id: Math.random(),
-                    title: "Discussion",
+                    event_id: formState.eventId,
+                    title: formState.title,
                     start: formState.start,
                     end: formState.end,
 
                     branchId: formState.branchId,
-                    roomId: formState.roomId,
+                    room_id: formState.roomId,
                     logDate: formState.date,
                     logStuRep: formState.stuRep,
-                    logPurp: formState.purp,
+                    logDuration: formState.duration,
                     logPax: formState.pax,
+                    logPurp: formState.purp,
                     logRcpt: formState.rcpt
                 }
-                const newRes: Reservation = {
-                    branchId: formState.branchId,
-                    roomId: formState.roomId,
-                    logDate: formState.date,
-                    logStuRep: formState.stuRep,
-                    logStart: formState.start,
-                    logEnd: formState.end,
-                    logPurp: formState.purp,
-                    logPax: formState.pax,
-                    logRcpt: formState.rcpt
+                if (!event) {
+                    console.log("in create");
+                    addReservationEvent(newResEvent);
+                    fetchReservationEvents();
+                } else {
+                    console.log("in edit")
                 }
-                addReservation(newRes, "create");
-                // printState();
-                scheduler.close(); // maybe the form?
+                scheduler.close();
             } finally {
                 scheduler.loading(false);
             }
@@ -212,7 +171,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         renderInput={(params) => (<TextField {...params} label="Duration" variant="outlined" />)}
                         value={formState.duration}
                         disableClearable={true}
-                        onChange={(event: any, option: DurationOption, e: any) => {
+                        onChange={(e, option: DurationOption) => {
                             handleDurationChange(option.duration, formState.start);
                             handleChange(option, "duration")
                         }}
@@ -237,7 +196,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     <DialogActions>
                         <Button onClick={scheduler.close}>Cancel</Button>
                         <Button onClick={handleSubmit}>Confirm</Button>
-                        {/* <Button onClick={addReservation}>Confirm</Button> */}
                     </DialogActions>
                 </Grid>
                 <Grid item
