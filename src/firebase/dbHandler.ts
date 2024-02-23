@@ -1,6 +1,8 @@
-import { Timestamp, addDoc, collection, collectionGroup, getDocs, query, where } from 'firebase/firestore';
+import { Timestamp, addDoc, collection, collectionGroup, doc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { db } from './config';
-import { Branch, BranchRoom, Reservation, Room } from '../Types';
+import { Branch, BranchRoom, Reservation, ReservationEvent, Room } from '../Types';
+import { ResetTv } from '@mui/icons-material';
+import { ProcessedEvent } from '@aldabil/react-scheduler/types';
 
 // Disregard warnings when adding new fields in Firebase, takes time to reflect -isaac
 
@@ -13,7 +15,6 @@ export async function getReservations(branch: string): Promise<Reservation[]> {
     const reservations: Reservation[] = [];
 
     querySnapshot.forEach((doc) => {
-        
         const reservationData = doc.data();
         const reservation: Reservation = {
             branchId: reservationData.branchId,
@@ -33,17 +34,68 @@ export async function getReservations(branch: string): Promise<Reservation[]> {
     return reservations
 }
 
-// ----- ADD RESERVATION -----
-export async function addReservationDB(res: Reservation) {
-    console.log("Reservation: ");
-    console.log(res);
+// ----- ADD RESERVATION EVENT -----
+export async function addReservationEvent(resEvent: ProcessedEvent): Promise<ProcessedEvent> {
+    console.log("Reservation Event:");
+    console.log(resEvent);
 
-    const resLogsRef = collection(db, "reservation-logs");
+    const resEventLogsRef = collection(db, "reservation-event-logs");
     try {
-        await addDoc(resLogsRef, res);
+        // note: doc and setDoc is similar to addDoc
+        // create unique id for new res event logs
+        const newResEventsRef = doc(resEventLogsRef);
+        // assign unique id to new res event
+        await setDoc(newResEventsRef, resEvent);
+        // set the event id to be equivalent to firestore generated uid
+        await updateDoc(newResEventsRef, {
+            event_id: newResEventsRef.id
+        });
     } catch (error) {
-        console.error(error);
+        console.log(error);
     }
+
+    return resEvent;
+}
+
+// ----- GET RESERVATIONS EVENTS -----
+export async function getReservationEvents(branch: string): Promise<ProcessedEvent[]> {
+    const q = query(collection(db, "reservation-event-logs"), where("branchId", "==", branch))
+    const querySnapshot = await getDocs(q);
+
+    const resEvents: ReservationEvent[] = []
+
+    return new Promise((resolve, reject) => {
+        try {
+            querySnapshot.forEach((doc) => {
+                const resEventData = doc.data();
+                const resEvent: ReservationEvent = {
+                    event_id: resEventData.event_id,
+                    title: resEventData.title,
+                    start: (resEventData.start as Timestamp).toDate(),
+                    end: (resEventData.end as Timestamp).toDate(),
+
+                    branchId: resEventData.branchId,
+                    room_id: resEventData.room_id,
+                    logDate: (resEventData.logDate as Timestamp).toDate(),
+                    logStuRep: resEventData.logStuRep,
+                    logDuration: resEventData.logDuration,
+                    logPax: resEventData.logPax,
+                    logPurp: resEventData.logPurp,
+                    logRcpt: resEventData.logRcpt
+                }
+
+                resEvents.push(resEvent);
+            })
+        } catch (error) {
+            console.error(error);
+        }
+
+        if (resEvents.length > 0) {
+            resolve(resEvents);
+        } else {
+            reject(resEvents);
+        }
+    });
 }
 
 export async function getBranches(): Promise<Branch[]> {

@@ -13,17 +13,18 @@ export interface Reservation {
 // reservation event
 export interface ReservationEvent {
     // required types for events
-    event_id: number;
+    event_id: string;
     title: string;
     start: Date;
     end: Date;
 
     branchId: string;
-    roomId: number;
+    room_id: number;
     logDate: Date;
     logStuRep: string;
-    logPurp: string;
+    logDuration: DurationOption;
     logPax: number;
+    logPurp: string;
     logRcpt: string;
 }
 
@@ -59,7 +60,7 @@ export type RoomProps = {
 }
 
 export type EventProps = {
-    event_id: number,
+    event_id: number | string,
     room_id: number,
     title: string
     start: Date,
