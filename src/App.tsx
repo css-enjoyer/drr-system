@@ -27,125 +27,125 @@ import { Cancel, Login } from "@mui/icons-material";
 
 // Utils
 
-// function App() {
-//   const { theme } = useThemeContext();
-//   const authContext = React.useContext(AuthContext);
-//   const [loading, setLoading] = React.useState(true);
-//   const location = useLocation();
-
-//   React.useEffect(() => {
-//     setTimeout(() => {
-//       setLoading(false);
-//     }, 1000);
-//   }, []);
-
-//   return (
-//     <ThemeProvider theme={theme}>
-//       <CssBaseline />
-//       <div className="App">
-//         {loading ? (
-//           <Loading />
-//         ) : (
-//           <>
-//             {/* Show appbar and footer only when logged in */}
-//             {authContext?.user && <ResponsiveAppBar logoTitle={"DRRS"} />}
-//             <Routes>
-//               <Route
-//                 path="/"
-//                 element={
-//                   authContext?.user ? (
-//                     <Navigate to="/branches" />
-//                   ) : (
-//                     <LoginPage />
-//                   )
-//                 }
-//               />
-//               <Route path="/login" element={<LoginPage />} />
-//               <Route
-//                 path="/branches"
-//                 element={
-//                   authContext?.user ? (
-//                     <Protected>
-//                       <SelectBranch />
-//                     </Protected>
-//                   ) : (
-//                     <Navigate to="/" />
-//                   )
-//                 }
-//               />
-//               <Route
-//                 path="/branches/:branchId/timeline"
-//                 element={
-//                   authContext?.user ? (
-//                     <Protected>
-//                       <Timeline />
-//                     </Protected>
-//                   ) : (
-//                     <Navigate to="/" />
-//                   )
-//                 }
-//               />
-//             </Routes>
-//             {authContext?.user && <Footer />}
-//           </>
-//         )}
-//       </div>
-//     </ThemeProvider>
-//   );
-// }
-
-// export default App;
-
 function App() {
   const { theme } = useThemeContext();
-  const authContext = useContext(AuthContext);
+  const authContext = React.useContext(AuthContext);
+  const [loading, setLoading] = React.useState(true);
+  const location = useLocation();
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <div className="App">
-        {/* Show appbar and footer only when logged in */}
-        {authContext?.user && <ResponsiveAppBar logoTitle={"DRRS"} />}
-        <Routes>
-          <Route
-            path="/"
-            element={<AdminDashboard />}
-            // element={<Confirmation messageKey="reservationSuccess" />}
-          />
-          <Route
-            path="*"
-            element={
-              <Protected>
-                <SelectBranch />
-              </Protected>
-            }
-          />
-          <Route
-            path="/login"
-            element={<AdminDashboard />}
-            // element={<Confirmation messageKey="reservationSuccess" />}
-          />
-          <Route
-            path="/branches"
-            element={
-              <Protected>
-                <SelectBranch />
-              </Protected>
-            }
-          />
-          <Route
-            path="/branches/:branchId/timeline"
-            element={
-              <Protected>
-                <Timeline />
-              </Protected>
-            }
-          />
-        </Routes>
-        {authContext?.user && <Footer />}
+        {loading ? (
+          <Loading />
+        ) : (
+          <>
+            {/* Show appbar and footer only when logged in */}
+            {authContext?.user && <ResponsiveAppBar logoTitle={"DRRS"} />}
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  authContext?.user ? (
+                    <Navigate to="/branches" />
+                  ) : (
+                    <LoginPage />
+                  )
+                }
+              />
+              <Route path="/login" element={<LoginPage />} />
+              <Route
+                path="/branches"
+                element={
+                  authContext?.user ? (
+                    <Protected>
+                      <SelectBranch />
+                    </Protected>
+                  ) : (
+                    <Navigate to="/" />
+                  )
+                }
+              />
+              <Route
+                path="/branches/:branchId/timeline"
+                element={
+                  authContext?.user ? (
+                    <Protected>
+                      <Timeline />
+                    </Protected>
+                  ) : (
+                    <Navigate to="/" />
+                  )
+                }
+              />
+            </Routes>
+            {authContext?.user && <Footer />}
+          </>
+        )}
       </div>
     </ThemeProvider>
   );
 }
 
 export default App;
+
+// function App() {
+//   const { theme } = useThemeContext();
+//   const authContext = useContext(AuthContext);
+
+//   return (
+//     <ThemeProvider theme={theme}>
+//       <CssBaseline />
+//       <div className="App">
+//         {/* Show appbar and footer only when logged in */}
+//         {authContext?.user && <ResponsiveAppBar logoTitle={"DRRS"} />}
+//         <Routes>
+//           <Route
+//             path="/"
+//             element={<LoginPage />}
+//             // element={<Confirmation messageKey="reservationSuccess" />}
+//           />
+//           <Route
+//             path="*"
+//             element={
+//               <Protected>
+//                 <SelectBranch />
+//               </Protected>
+//             }
+//           />
+//           <Route
+//             path="/login"
+//             element={<LoginPage />}
+//             // element={<Confirmation messageKey="reservationSuccess" />}
+//           />
+//           <Route
+//             path="/branches"
+//             element={
+//               <Protected>
+//                 <SelectBranch />
+//               </Protected>
+//             }
+//           />
+//           <Route
+//             path="/branches/:branchId/timeline"
+//             element={
+//               <Protected>
+//                 <Timeline />
+//               </Protected>
+//             }
+//           />
+//         </Routes>
+//         {authContext?.user && <Footer />}
+//       </div>
+//     </ThemeProvider>
+//   );
+// }
+
+// export default App;
