@@ -86,7 +86,9 @@ const Muitable = () => {
     // Add more data as needed
   ];
 
-  const [rows, setRows] = useState([]);
+  const [rows, setRows] = useState<
+    { date: string; time: string; room: string; representative: string }[]
+  >([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -120,8 +122,8 @@ const Muitable = () => {
   };
 
   const sortedRows = rows.slice().sort((a, b) => {
-    const aValue = a[sortOrder.id];
-    const bValue = b[sortOrder.id];
+    const aValue = a[sortOrder.id as keyof typeof a];
+    const bValue = b[sortOrder.id as keyof typeof b];
     const multiplier = sortOrder.direction === "asc" ? 1 : -1;
     if (aValue < bValue) return -1 * multiplier;
     if (aValue > bValue) return 1 * multiplier;
@@ -186,7 +188,9 @@ const Muitable = () => {
                 .map((row, index) => (
                   <TableRow key={index}>
                     {columns.map((column) => (
-                      <TableCell key={column.id}>{row[column.id]}</TableCell>
+                      <TableCell key={column.id} align="left">
+                        {row[column.id as keyof typeof row]}
+                      </TableCell>
                     ))}
                   </TableRow>
                 ))}

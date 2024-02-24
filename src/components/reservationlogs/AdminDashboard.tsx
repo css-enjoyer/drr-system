@@ -131,8 +131,8 @@ const Muitable = () => {
   };
 
   const sortedRows = rows.slice().sort((a, b) => {
-    const aValue = a[sortOrder.id];
-    const bValue = b[sortOrder.id];
+    const aValue = a[sortOrder.id as keyof typeof a];
+    const bValue = b[sortOrder.id as keyof typeof b];
     const multiplier = sortOrder.direction === "asc" ? 1 : -1;
     if (aValue < bValue) return -1 * multiplier;
     if (aValue > bValue) return 1 * multiplier;
@@ -280,7 +280,7 @@ const Muitable = () => {
                     {columns.map((column) => (
                       <TableCell key={column.id} style={{ height: "52px" }}>
                         {column.id !== "actions" ? (
-                          row[column.id]
+                          row[column.id as keyof typeof row] // Corrected line
                         ) : (
                           <div>
                             <IconButton
