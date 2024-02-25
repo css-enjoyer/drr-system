@@ -46,7 +46,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     }
 
     const handleDelete = async (deletedId: string) => {
-        deleteReservationEvent(deletedId);
+        await deleteReservationEvent(deletedId);
         fetchReservationEvents();
     }
 
@@ -75,7 +75,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             // should come from form inputs
             stuRep: event?.stuRep || authContext?.user?.email,
             purp: event?.logPurp || "",
-            pax: event?.logPax || 0,
+            pax: event?.logPax || 4,
             duration: event?.logDuration || durationOptions[0],
 
             // auto-generated
@@ -186,6 +186,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         margin="normal"
                         type="number"
                         value={formState.pax}
+                        // TODO: add min max limit
                         onChange={(e) => handleChange(e.target.value, "pax")}
                     />
                     <TextField
