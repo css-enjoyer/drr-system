@@ -114,11 +114,11 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 }
                 if (!event) {
                     console.log("in create");
-                    addReservationEvent(newResEvent);
+                    await addReservationEvent(newResEvent);
                     fetchReservationEvents();
                 } else {
                     console.log("in edit")
-                    editReservationEvent(event.event_id + "", newResEvent);
+                    await editReservationEvent(event.event_id + "", newResEvent);
                     fetchReservationEvents();
                 }
                 scheduler.close();
