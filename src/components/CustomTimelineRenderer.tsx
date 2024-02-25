@@ -82,7 +82,8 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             rcpt: event?.rcpt || generateRandomSequence()
         });
 
-        const [error, setError] = useState("");
+        // const [error, setError] = useState(false);
+
         const handleChange = (value: string | DurationOption, name: string) => { // retrieves fields values
             setFormState((prev) => { return { ...prev, [name]: value }; });
             // console.log(value)
@@ -95,6 +96,9 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
         const handleSubmit = async () => {
             console.log("in handle submit")
+            if (formState.pax < 4 || formState.pax > 12 || formState.purp.length > 100) {
+                return;
+            }
             try {
                 scheduler.loading(true);
                 const newResEvent: ReservationEvent = {
@@ -186,7 +190,9 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         margin="normal"
                         type="number"
                         value={formState.pax}
-                        // TODO: add min max limit
+                        error={formState.pax < 4 || formState.pax > 12 ? true : false}
+                        helperText={formState.pax < 4 || formState.pax > 12 ? "Pax should be 4-12" : ""}
+                        inputProps={{ min: 4, max: 12 }}
                         onChange={(e) => handleChange(e.target.value, "pax")}
                     />
                     <TextField
@@ -195,6 +201,8 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         multiline
                         rows={3}
                         value={formState.purp}
+                        error={formState.purp.length > 100 ? true : false}
+                        helperText={formState.purp.length > 100 ? "Limited to 100 characters only" : ""}
                         onChange={(e) => handleChange(e.target.value, "purp")}
                     />
                     <DialogActions>
