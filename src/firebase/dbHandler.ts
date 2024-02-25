@@ -1,38 +1,9 @@
-import { Timestamp, addDoc, collection, collectionGroup, doc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
+import { Timestamp, collection, collectionGroup, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { db } from './config';
-import { Branch, BranchRoom, Reservation, ReservationEvent, Room } from '../Types';
-import { ResetTv } from '@mui/icons-material';
+import { Branch, BranchRoom, ReservationEvent, Room } from '../Types';
 import { ProcessedEvent } from '@aldabil/react-scheduler/types';
 
 // Disregard warnings when adding new fields in Firebase, takes time to reflect -isaac
-
-// ----- GET RESERVATIONS -----
-export async function getReservations(branch: string): Promise<Reservation[]> {
-    const q = query(collection(db, "reservation-logs"), where("branchId", "==", branch))
-    const querySnapshot = await getDocs(q);
-
-    const logs = new Array(querySnapshot.size)
-    const reservations: Reservation[] = [];
-
-    querySnapshot.forEach((doc) => {
-        const reservationData = doc.data();
-        const reservation: Reservation = {
-            branchId: reservationData.branchId,
-            roomId: reservationData.roomId,
-            logDate: (reservationData.logDate as Timestamp).toDate(),
-            logStuRep: reservationData.logStuRep,
-            logStart: (reservationData.logStart as Timestamp).toDate(),
-            logEnd: (reservationData.logEnd as Timestamp).toDate(),
-            logPurp: reservationData.logPurp,
-            logPax: reservationData.logPax,
-            logRcpt: reservationData.logRcpt
-        }
-        // console.log(`Reservation by ${reservationData.logStuRep} has unique ID: ${doc.id}`)
-        reservations.push(reservation);
-    });
-    // console.log(...reservations)
-    return reservations
-}
 
 // ----- ADD RESERVATION EVENT -----
 export async function addReservationEvent(resEvent: ProcessedEvent): Promise<ProcessedEvent> {
@@ -64,38 +35,117 @@ export async function getReservationEvents(branch: string): Promise<ProcessedEve
 
     const resEvents: ReservationEvent[] = []
 
-    return new Promise((resolve, reject) => {
-        try {
-            querySnapshot.forEach((doc) => {
-                const resEventData = doc.data();
-                const resEvent: ReservationEvent = {
-                    event_id: resEventData.event_id,
-                    title: resEventData.title,
-                    start: (resEventData.start as Timestamp).toDate(),
-                    end: (resEventData.end as Timestamp).toDate(),
+    try {
+        querySnapshot.forEach((doc) => {
+            const resEventData = doc.data();
+            const resEvent: ReservationEvent = {
+                event_id: resEventData.event_id,
+                title: resEventData.title,
+                start: (resEventData.start as Timestamp).toDate(),
+                end: (resEventData.end as Timestamp).toDate(),
 
-                    branchId: resEventData.branchId,
-                    room_id: resEventData.room_id,
-                    logDate: (resEventData.logDate as Timestamp).toDate(),
-                    logStuRep: resEventData.logStuRep,
-                    logDuration: resEventData.logDuration,
-                    logPax: resEventData.logPax,
-                    logPurp: resEventData.logPurp,
-                    logRcpt: resEventData.logRcpt
-                }
+                branchId: resEventData.branchId,
+                room_id: resEventData.room_id,
+                logDate: (resEventData.logDate as Timestamp).toDate(),
+                logStuRep: resEventData.logStuRep,
+                logDuration: resEventData.logDuration,
+                logPax: resEventData.logPax,
+                logPurp: resEventData.logPurp,
+                logRcpt: resEventData.logRcpt
+            }
 
-                resEvents.push(resEvent);
-            })
-        } catch (error) {
-            console.error(error);
+            resEvents.push(resEvent);
+        })
+    } catch (error) {
+        console.error(error);
+    }
+
+    return resEvents;
+}
+
+// ----- GET SPECIFIC RESERVATION EVENT BY ID -----
+export async function getReservationEventById(resEventId: string): Promise<ProcessedEvent> {
+    const resEventLogRef = doc(db, "reservation-event-logs", resEventId);
+    const errorEvent: ReservationEvent = {
+        event_id: 'error',
+        title: '',
+        start: new Date(),
+        end: new Date(),
+        branchId: '',
+        room_id: 0,
+        logDate: new Date(),
+        logStuRep: '',
+        logDuration: {
+            duration: 0,
+            label: ''
+        },
+        logPax: 0,
+        logPurp: '',
+        logRcpt: ''
+    };
+
+    try {
+        const docSnap = await getDoc(resEventLogRef);
+        if (docSnap.exists()) {
+            const resEventData = docSnap.data();
+            const resEvent: ReservationEvent = {
+                event_id: resEventData.event_id,
+                title: resEventData.title,
+                start: (resEventData.start as Timestamp).toDate(),
+                end: (resEventData.end as Timestamp).toDate(),
+
+                branchId: resEventData.branchId,
+                room_id: resEventData.room_id,
+                logDate: (resEventData.logDate as Timestamp).toDate(),
+                logStuRep: resEventData.logStuRep,
+                logDuration: resEventData.logDuration,
+                logPax: resEventData.logPax,
+                logPurp: resEventData.logPurp,
+                logRcpt: resEventData.logRcpt
+            }
+            console.log(resEvent);
+            return resEvent;
         }
+    } catch (error) {
+        console.error(error);
+    }
 
-        if (resEvents.length > 0) {
-            resolve(resEvents);
-        } else {
-            reject(resEvents);
-        }
-    });
+    // if there's an error it should return an empty event
+    return errorEvent;
+}
+
+// ----- EDIT RESERVATION EVENT -----
+export async function editReservationEvent(resEventId: string, resEvent: ProcessedEvent): Promise<ProcessedEvent> {
+    const resEventDoc = doc(db, "reservation-event-logs", resEventId);
+    try {
+        await updateDoc(resEventDoc, {
+            start: resEvent.start,
+            end: resEvent.end,
+            logDate: resEvent.logDate,
+            logDuration: resEvent.logDuration,
+            logPax: resEvent.logPax,
+            logPurp: resEvent.logPurp
+        });
+    } catch (error) {
+        console.log(error);
+    }
+
+    // for error checking return updated id
+    return getReservationEventById(resEventId);
+}
+
+// ----- DELETE RESERVATION EVENT -----
+export async function deleteReservationEvent(resEventId: string): Promise<string> {
+    let idDeleted: string = "";
+    const resEventDoc = doc(db, "reservation-event-logs", resEventId);
+    try {
+        await deleteDoc(resEventDoc);
+        idDeleted = resEventId;
+    } catch (error) {
+        console.error;
+    }
+
+    return idDeleted;
 }
 
 export async function getBranches(): Promise<Branch[]> {

@@ -1,15 +1,3 @@
-export interface Reservation {
-    branchId: string;
-    roomId: number;
-    logDate: Date;
-    logStuRep: string;
-    logStart: Date;
-    logEnd: Date;
-    logPurp: string;
-    logPax: number;
-    logRcpt: string;
-}
-
 // reservation event
 export interface ReservationEvent {
     // required types for events
@@ -51,20 +39,11 @@ export interface BranchRoom {
 }
 
 // ------ Prop Types -----
-
 export type RoomProps = {
     room_id: number,
     roomBranch: string,
     title: string,
     color: string,
-}
-
-export type EventProps = {
-    event_id: number | string,
-    room_id: number,
-    title: string
-    start: Date,
-    end: Date
 }
 
 export type DurationOption = {
