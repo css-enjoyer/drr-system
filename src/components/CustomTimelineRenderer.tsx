@@ -4,7 +4,7 @@ import { Autocomplete, Button, CircularProgress, DialogActions, Grid, TextField,
 import { useContext, useEffect, useState } from "react";
 import drImage from "../styles/images/dr1.jpg";
 import { AuthContext } from "../utils/AuthContext";
-import { addReservationEvent, getReservationEvents, getRooms } from "../firebase/dbHandler";
+import { addReservationEvent, deleteReservationEvent, editReservationEvent, getReservationEvents, getRooms } from "../firebase/dbHandler";
 import { TimePicker } from "@mui/x-date-pickers";
 import { DurationOption, ReservationEvent, RoomProps } from "../Types";
 import { generateRandomSequence, toTitleCase } from "../utils/Utils.ts"
@@ -40,15 +40,14 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         console.log('Rooms in state', roomsState, roomsState.length)
     }
 
-    // fetch res events
     const fetchReservationEvents = async () => {
-        getReservationEvents(branchId)
-            .then((response: ProcessedEvent[]) => {
-                setEventsState(response);
-                console.log("response lmao")
-                console.log(response)
-            })
-            .catch((error) => console.error("Empty reservation events: ", error));
+        const resEvents = await getReservationEvents(branchId);
+        setEventsState(resEvents);
+    }
+
+    const handleDelete = async (deletedId: string) => {
+        deleteReservationEvent(deletedId);
+        fetchReservationEvents();
     }
 
     interface CustomEditorProps {
@@ -60,26 +59,27 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         console.log(scheduler);
 
         const event = scheduler.edited;
+
         const [formState, setFormState] = useState({
             // event fields
-            eventId: "lmao",
-            title: "Discussion",
+            eventId: event?.event_id || "lmao",
+            title: event?.title || "Discussion",
             start: event?.start || scheduler.state.start.value,
             end: event?.end || scheduler.state.end.value,
 
             // should come from states
-            branchId: branchId,
-            roomId: scheduler.state.room_id.value,
-            date: new Date(),
+            branchId: event?.branchId || branchId,
+            roomId: event?.roomId || scheduler.state.room_id.value,
+            date: event?.logDate || new Date(),
 
             // should come from form inputs
             stuRep: event?.stuRep || authContext?.user?.email,
-            purp: event?.purp || "",
-            pax: event?.pax || 0,
-            duration: event?.duration || durationOptions[0],
+            purp: event?.logPurp || "",
+            pax: event?.logPax || 0,
+            duration: event?.logDuration || durationOptions[0],
 
             // auto-generated
-            rcpt: generateRandomSequence()
+            rcpt: event?.rcpt || generateRandomSequence()
         });
 
         const [error, setError] = useState("");
@@ -98,7 +98,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             try {
                 scheduler.loading(true);
                 const newResEvent: ReservationEvent = {
-                    event_id: formState.eventId,
+                    event_id: formState.eventId + "",
                     title: formState.title,
                     start: formState.start,
                     end: formState.end,
@@ -118,6 +118,8 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     fetchReservationEvents();
                 } else {
                     console.log("in edit")
+                    editReservationEvent(event.event_id + "", newResEvent);
+                    fetchReservationEvents();
                 }
                 scheduler.close();
             } finally {
@@ -142,7 +144,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     gap: "20px",
                 }}>
                     {/* <p>Reserve Room</p> */}
-                    <Typography variant="h4">Reserve Room {scheduler.state.room_id.value}</Typography>
+                    <Typography variant="h4">{event ? "Edit" : "Reserve"} Room {scheduler.state.room_id.value}</Typography>
                     <TextField
                         label="Group Representative"
                         // NOTE: the email is saved to db
@@ -175,6 +177,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                             handleDurationChange(option.duration, formState.start);
                             handleChange(option, "duration")
                         }}
+                        isOptionEqualToValue={(option: any, value: any) => option.id === value.id}
                     />
                     <TextField
                         label="Number of participants"
@@ -195,7 +198,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     />
                     <DialogActions>
                         <Button onClick={scheduler.close}>Cancel</Button>
-                        <Button onClick={handleSubmit}>Confirm</Button>
+                        <Button onClick={handleSubmit}>{event ? "Edit" : "Reserve"}</Button>
                     </DialogActions>
                 </Grid>
                 <Grid item
@@ -241,6 +244,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     type: "hidden",
                 },
             ]}
+            onDelete={handleDelete}
         />
     );
 }
