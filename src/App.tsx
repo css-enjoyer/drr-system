@@ -85,6 +85,63 @@ function App() {
                   )
                 }
               />
+
+              {/* librarian reservation logs */}
+              <Route
+                path="/librarianLogs"
+                element={
+                  authContext?.user ? (
+                    <Protected>
+                      <LibrarianReservationLogs />
+                    </Protected>
+                  ) : (
+                    <Navigate to="/" />
+                  )
+                }
+              />
+
+              {/* admin dashboard */}
+              <Route
+                path="/adminDashboard"
+                element={
+                  authContext?.user ? (
+                    <Protected>
+                      <AdminDashboard />
+                    </Protected>
+                  ) : (
+                    <Navigate to="/" />
+                  )
+                }
+              />
+
+              {/* confirmation page */}
+              <Route
+                path="/confirmation"
+                element={
+                  authContext?.user ? (
+                    <Protected>
+                      <Confirmation messageKey="reservationSuccess" />
+                    </Protected>
+                  ) : (
+                    <Navigate to="/" />
+                  )
+                }
+              />
+
+              {/* cancellation page */}
+              <Route
+                path="/cancellation"
+                element={
+                  authContext?.user ? (
+                    <Protected>
+                      <Cancellation />
+                    </Protected>
+                  ) : (
+                    <Navigate to="/" />
+                  )
+                }
+              />
+
             </Routes>
             {authContext?.user && <Footer />}
           </>
