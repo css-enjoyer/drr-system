@@ -255,6 +255,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         <Container sx={{display: "flex", alignItems: "center", justifyContent: "space-evenly", my: "10px"}}>
                             <Button size="small">Confirm Departure</Button>
                             <Button size="small">Confirm Arrival</Button>
+                            {/* TODO: Button onclick open larger view */}
                         </Container>
                     </Grid>
                 );

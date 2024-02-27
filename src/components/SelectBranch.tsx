@@ -5,6 +5,7 @@ import { formatGreeting } from '../utils/formatGreeting';
 import { AuthContext } from '../utils/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Branch } from '../Types';
+import genrefImg from '../styles/images/genref-section.jpg';
 
 function SelectBranch() {
 
@@ -19,7 +20,7 @@ function SelectBranch() {
         };
         fetchData();
     }, []);
-    
+
     const redirectToTimeline = (branchId: string) => {
         navigate(`/branches/${branchId}/timeline/`);
     };
@@ -52,9 +53,12 @@ function SelectBranch() {
                                 alignItems: "end",
                                 padding: "20px",
                                 cursor: "pointer",
+                                backgroundImage: `url("${branch.imgSrc}")`,
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center',
                             }}
                             onClick={() => redirectToTimeline(branch.branchId)}>
-                            <Box>
+                            <Box color="white" sx={{ textShadow: "0px 3px 3px black" }}>
                                 <Typography variant="h4">
                                     {branch.branchTitle}
                                 </Typography>

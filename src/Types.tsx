@@ -20,6 +20,7 @@ export interface Branch {
     branchId: string;
     branchTitle: string;
     branchLoc: string;
+    imgSrc: string;
 }
 
 export interface Room {

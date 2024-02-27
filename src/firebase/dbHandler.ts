@@ -161,7 +161,8 @@ export async function getBranches(): Promise<Branch[]> {
         const branch: Branch = {
             branchId: branchData.branchId,
             branchTitle: branchData.branchTitle,
-            branchLoc: branchData.branchLoc
+            branchLoc: branchData.branchLoc,
+            imgSrc: branchData.imgSrc
         };
         branches.push(branch);
     });
