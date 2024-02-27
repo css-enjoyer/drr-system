@@ -240,16 +240,16 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     }}>
                         {/* Values only reflect upon refresh */}
                         <Box sx={{ display: "flex", alignItems: "center", gap: "7px" }}>
-                            <Portrait sx={{ marginLeft: "-4px", color: "GrayText" }} />
-                            <Typography variant="caption" color="GrayText">Representative: {eventsState.find(eventState => eventState.event_id === event.event_id)?.logStuRep}</Typography>
+                            <Portrait sx={{ marginLeft: "-4px", }} />
+                            <Typography variant="caption" >Representative: {eventsState.find(eventState => eventState.event_id === event.event_id)?.logStuRep}</Typography>
                         </Box>
                         <Box sx={{ display: "flex", alignItems: "center", gap: "7px" }}>
-                            <Numbers sx={{ marginLeft: "-4px", color: "GrayText" }} />
-                            <Typography variant="caption" color="GrayText">Number of Participants: {eventsState.find(eventState => eventState.event_id === event.event_id)?.logPax}</Typography>
+                            <Numbers sx={{ marginLeft: "-4px", }} />
+                            <Typography variant="caption" >Number of Participants: {eventsState.find(eventState => eventState.event_id === event.event_id)?.logPax}</Typography>
                         </Box>
                         <Box sx={{ display: "flex", alignItems: "center", gap: "7px" }}>
-                            <TextSnippet sx={{ marginLeft: "-4px", color: "GrayText" }} />
-                            <Typography variant="caption" color="GrayText">Reason for Reservation: {eventsState.find(eventState => eventState.event_id === event.event_id)?.logPurp}</Typography>
+                            <TextSnippet sx={{ marginLeft: "-4px", }} />
+                            <Typography variant="caption" >Reason for Reservation: {eventsState.find(eventState => eventState.event_id === event.event_id)?.logPurp}</Typography>
                         </Box>
                         {/* TODO: Retrieve and display all participant emails */}
                         <Container sx={{display: "flex", alignItems: "center", justifyContent: "space-evenly", my: "10px"}}>
