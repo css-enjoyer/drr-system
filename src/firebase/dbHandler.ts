@@ -1,36 +1,10 @@
-import { Timestamp, addDoc, collection, collectionGroup, getDocs, query, where } from 'firebase/firestore';
+import { Timestamp, addDoc, collection, collectionGroup, doc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { db } from './config';
+import { Branch, BranchRoom, Reservation, ReservationEvent, Room } from '../Types';
+import { ResetTv } from '@mui/icons-material';
+import { ProcessedEvent } from '@aldabil/react-scheduler/types';
 
 // Disregard warnings when adding new fields in Firebase, takes time to reflect -isaac
-
-export interface Reservation {
-    branchId: string;
-    roomId: number;
-    logDate: Date;
-    logStuRep: string;
-    logStart: Date;
-    logEnd: Date;
-    logPurp: string;
-    logPax: number;
-    logRcpt: string;
-}
-
-// transformed reservation
-export interface ReservationEvent {
-    // required types for events
-    event_id: number;
-    title: string;
-    start: Date;
-    end: Date;
-
-    branchId: string;
-    roomId: number;
-    logDate: Date;
-    logStuRep: string;
-    logPurp: string;
-    logPax: number;
-    logRcpt: string;
-}
 
 // ----- GET RESERVATIONS -----
 export async function getReservations(branch: string): Promise<Reservation[]> {
@@ -41,7 +15,6 @@ export async function getReservations(branch: string): Promise<Reservation[]> {
     const reservations: Reservation[] = [];
 
     querySnapshot.forEach((doc) => {
-        
         const reservationData = doc.data();
         const reservation: Reservation = {
             branchId: reservationData.branchId,
@@ -54,35 +27,82 @@ export async function getReservations(branch: string): Promise<Reservation[]> {
             logPax: reservationData.logPax,
             logRcpt: reservationData.logRcpt
         }
-        console.log(`Reservation by ${reservationData.logStuRep} has unique ID: ${doc.id}`)
+        // console.log(`Reservation by ${reservationData.logStuRep} has unique ID: ${doc.id}`)
         reservations.push(reservation);
     });
-    console.log(...reservations)
+    // console.log(...reservations)
     return reservations
 }
 
-// ----- ADD RESERVATION -----
-export async function addReservationDB(res: Reservation) {
-    console.log("Reservation: ");
-    console.log(res);
+// ----- ADD RESERVATION EVENT -----
+export async function addReservationEvent(resEvent: ProcessedEvent): Promise<ProcessedEvent> {
+    console.log("Reservation Event:");
+    console.log(resEvent);
 
-    const resLogsRef = collection(db, "reservation-logs");
+    const resEventLogsRef = collection(db, "reservation-event-logs");
     try {
-        await addDoc(resLogsRef, res);
+        // note: doc and setDoc is similar to addDoc
+        // create unique id for new res event logs
+        const newResEventsRef = doc(resEventLogsRef);
+        // assign unique id to new res event
+        await setDoc(newResEventsRef, resEvent);
+        // set the event id to be equivalent to firestore generated uid
+        await updateDoc(newResEventsRef, {
+            event_id: newResEventsRef.id
+        });
     } catch (error) {
-        console.error(error);
+        console.log(error);
     }
+
+    return resEvent;
 }
 
-const branchesRef = collection(db, "branches");
-// fetch is firing twice, to fix
-// - save retrieved data to local if unchanged remotely
-export interface Branch {
-    branchId: string;
-    branchTitle: string;
-    branchLoc: string;
+// ----- GET RESERVATIONS EVENTS -----
+export async function getReservationEvents(branch: string): Promise<ProcessedEvent[]> {
+    const q = query(collection(db, "reservation-event-logs"), where("branchId", "==", branch))
+    const querySnapshot = await getDocs(q);
+
+    const resEvents: ReservationEvent[] = []
+
+    return new Promise((resolve, reject) => {
+        try {
+            querySnapshot.forEach((doc) => {
+                const resEventData = doc.data();
+                const resEvent: ReservationEvent = {
+                    event_id: resEventData.event_id,
+                    title: resEventData.title,
+                    start: (resEventData.start as Timestamp).toDate(),
+                    end: (resEventData.end as Timestamp).toDate(),
+
+                    branchId: resEventData.branchId,
+                    room_id: resEventData.room_id,
+                    logDate: (resEventData.logDate as Timestamp).toDate(),
+                    logStuRep: resEventData.logStuRep,
+                    logDuration: resEventData.logDuration,
+                    logPax: resEventData.logPax,
+                    logPurp: resEventData.logPurp,
+                    logRcpt: resEventData.logRcpt
+                }
+
+                resEvents.push(resEvent);
+            })
+        } catch (error) {
+            console.error(error);
+        }
+
+        if (resEvents.length > 0) {
+            resolve(resEvents);
+        } else {
+            reject(resEvents);
+        }
+    });
 }
+
 export async function getBranches(): Promise<Branch[]> {
+    const branchesRef = collection(db, "branches");
+    // fetch is firing twice, to fix
+    // - save retrieved data to local if unchanged remotely
+
     const branches: Branch[] = [];
 
     const querySnapshot = await getDocs(branchesRef);
@@ -97,14 +117,6 @@ export async function getBranches(): Promise<Branch[]> {
     });
     console.log(...branches);
     return branches;
-}
-
-export interface Room {
-    roomId: number;
-    roomTitle: string;
-    roomPax: number;
-    roomAvailable: boolean;
-    roomBranch: string;
 }
 
 export async function getRooms(branch: string): Promise<Room[]> {
@@ -127,22 +139,6 @@ export async function getRooms(branch: string): Promise<Room[]> {
     return roomsArray;
 }
 
-
-
-
-
-
-
-
-
-
-export interface BranchRoom {
-    roomId: number;
-    roomBranch: string;
-    roomName: string;
-    roomPax: number;
-    roomAvailable: boolean;
-}
 export async function getBranchRooms(branchId?: string): Promise<BranchRoom[]> {
     const branchRooms: BranchRoom[] = [];
 
