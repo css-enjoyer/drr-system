@@ -1,6 +1,6 @@
 import { Scheduler } from "@aldabil/react-scheduler";
 import { ProcessedEvent, SchedulerHelpers } from "@aldabil/react-scheduler/types";
-import { Autocomplete, Button, CircularProgress, DialogActions, Grid, TextField, Typography } from "@mui/material";
+import { Autocomplete, Box, Button, CircularProgress, Container, DialogActions, Grid, TextField, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import drImage from "../styles/images/dr1.jpg";
 import { AuthContext } from "../utils/AuthContext";
@@ -8,6 +8,7 @@ import { addReservationEvent, deleteReservationEvent, editReservationEvent, getR
 import { TimePicker } from "@mui/x-date-pickers";
 import { DurationOption, ReservationEvent, RoomProps } from "../Types";
 import { generateRandomSequence, toTitleCase } from "../utils/Utils.ts"
+import { Numbers, Portrait, TextSnippet } from "@mui/icons-material";
 
 const durationOptions: DurationOption[] = [{ duration: 30, label: "30 Minutes" }, { duration: 60, label: "1 Hour" }, { duration: 90, label: "90 Minutes" }, { duration: 120, label: "2 Hours" }]
 
@@ -32,7 +33,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             room_id: room.roomId,
             roomBranch: room.roomBranch,
             title: room.roomTitle,
-            color: "red",
+            color: "darkblue", //TODO: Change this dynamically based on event type (Reservation, Occupied, Unavailable)
         }));
         console.log("transformed rooms")
         console.log(transformedResources)
@@ -53,7 +54,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     interface CustomEditorProps {
         scheduler: SchedulerHelpers;
     }
-
     const CustomEditor = ({ scheduler }: CustomEditorProps) => {
         console.log("In scheduler:");
         console.log(scheduler);
@@ -63,7 +63,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         const [formState, setFormState] = useState({
             // event fields
             eventId: event?.event_id || "lmao",
-            title: event?.title || "Discussion",
+            title: event?.title || "Discussion", //TODO: Change dynamically (Reservation, Occupied, Unavailable)
             start: event?.start || scheduler.state.start.value,
             end: event?.end || scheduler.state.end.value,
 
@@ -231,9 +231,31 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             customEditor={(scheduler) => <CustomEditor scheduler={scheduler} />}
             viewerExtraComponent={(fields, event) => {
                 return (
-                    <Grid>
-                        <p>Useful to render custom fields...</p>
-                        <p>Description: {event.description || "Nothing..."}</p>
+                    <Grid sx={{
+                        width: "100%",
+                        padding: "5px",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "5px"
+                    }}>
+                        {/* Values only reflect upon refresh */}
+                        <Box sx={{ display: "flex", alignItems: "center", gap: "7px" }}>
+                            <Portrait sx={{ marginLeft: "-4px", color: "GrayText" }} />
+                            <Typography variant="caption" color="GrayText">Representative: {eventsState.find(eventState => eventState.event_id === event.event_id)?.logStuRep}</Typography>
+                        </Box>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: "7px" }}>
+                            <Numbers sx={{ marginLeft: "-4px", color: "GrayText" }} />
+                            <Typography variant="caption" color="GrayText">Number of Participants: {eventsState.find(eventState => eventState.event_id === event.event_id)?.logPax}</Typography>
+                        </Box>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: "7px" }}>
+                            <TextSnippet sx={{ marginLeft: "-4px", color: "GrayText" }} />
+                            <Typography variant="caption" color="GrayText">Reason for Reservation: {eventsState.find(eventState => eventState.event_id === event.event_id)?.logPurp}</Typography>
+                        </Box>
+                        {/* TODO: Retrieve and display all participant emails */}
+                        <Container sx={{display: "flex", alignItems: "center", justifyContent: "space-evenly", my: "10px"}}>
+                            <Button size="small">Confirm Departure</Button>
+                            <Button size="small">Confirm Arrival</Button>
+                        </Container>
                     </Grid>
                 );
             }}
