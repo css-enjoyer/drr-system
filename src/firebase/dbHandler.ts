@@ -5,16 +5,20 @@ import { ProcessedEvent } from '@aldabil/react-scheduler/types';
 
 // Disregard warnings when adding new fields in Firebase, takes time to reflect -isaac
 
+/*********************
+ * RESERVATION EVENT
+**********************/
+
 // ----- ADD RESERVATION EVENT -----
 export async function addReservationEvent(resEvent: ProcessedEvent): Promise<ProcessedEvent> {
     console.log("Reservation Event:");
     console.log(resEvent);
 
-    const resEventLogsRef = collection(db, "reservation-event-logs");
+    const resEventRef = collection(db, "reservation-event");
     try {
         // note: doc and setDoc is similar to addDoc
-        // create unique id for new res event logs
-        const newResEventsRef = doc(resEventLogsRef);
+        // create unique id for new res event
+        const newResEventsRef = doc(resEventRef);
         // assign unique id to new res event
         await setDoc(newResEventsRef, resEvent);
         // set the event id to be equivalent to firestore generated uid
@@ -30,7 +34,7 @@ export async function addReservationEvent(resEvent: ProcessedEvent): Promise<Pro
 
 // ----- GET RESERVATIONS EVENTS -----
 export async function getReservationEvents(branch: string): Promise<ProcessedEvent[]> {
-    const q = query(collection(db, "reservation-event-logs"), where("branchId", "==", branch))
+    const q = query(collection(db, "reservation-event"), where("branchId", "==", branch))
     const querySnapshot = await getDocs(q);
 
     const resEvents: ReservationEvent[] = []
@@ -46,12 +50,12 @@ export async function getReservationEvents(branch: string): Promise<ProcessedEve
 
                 branchId: resEventData.branchId,
                 room_id: resEventData.room_id,
-                logDate: (resEventData.logDate as Timestamp).toDate(),
-                logStuRep: resEventData.logStuRep,
-                logDuration: resEventData.logDuration,
-                logPax: resEventData.logPax,
-                logPurp: resEventData.logPurp,
-                logRcpt: resEventData.logRcpt
+                date: (resEventData.date as Timestamp).toDate(),
+                stuRep: resEventData.stuRep,
+                duration: resEventData.duration,
+                pax: resEventData.pax,
+                purp: resEventData.purp,
+                rcpt: resEventData.rcpt
             }
 
             resEvents.push(resEvent);
@@ -65,7 +69,7 @@ export async function getReservationEvents(branch: string): Promise<ProcessedEve
 
 // ----- GET SPECIFIC RESERVATION EVENT BY ID -----
 export async function getReservationEventById(resEventId: string): Promise<ProcessedEvent> {
-    const resEventLogRef = doc(db, "reservation-event-logs", resEventId);
+    const resEventRef = doc(db, "reservation-event", resEventId);
     const errorEvent: ReservationEvent = {
         event_id: 'error',
         title: '',
@@ -73,19 +77,19 @@ export async function getReservationEventById(resEventId: string): Promise<Proce
         end: new Date(),
         branchId: '',
         room_id: 0,
-        logDate: new Date(),
-        logStuRep: '',
-        logDuration: {
+        date: new Date(),
+        stuRep: '',
+        duration: {
             duration: 0,
             label: ''
         },
-        logPax: 0,
-        logPurp: '',
-        logRcpt: ''
+        pax: 0,
+        purp: '',
+        rcpt: ''
     };
 
     try {
-        const docSnap = await getDoc(resEventLogRef);
+        const docSnap = await getDoc(resEventRef);
         if (docSnap.exists()) {
             const resEventData = docSnap.data();
             const resEvent: ReservationEvent = {
@@ -96,12 +100,12 @@ export async function getReservationEventById(resEventId: string): Promise<Proce
 
                 branchId: resEventData.branchId,
                 room_id: resEventData.room_id,
-                logDate: (resEventData.logDate as Timestamp).toDate(),
-                logStuRep: resEventData.logStuRep,
-                logDuration: resEventData.logDuration,
-                logPax: resEventData.logPax,
-                logPurp: resEventData.logPurp,
-                logRcpt: resEventData.logRcpt
+                date: (resEventData.date as Timestamp).toDate(),
+                stuRep: resEventData.stuRep,
+                duration: resEventData.duration,
+                pax: resEventData.pax,
+                purp: resEventData.purp,
+                rcpt: resEventData.rcpt
             }
             console.log(resEvent);
             return resEvent;
@@ -116,15 +120,15 @@ export async function getReservationEventById(resEventId: string): Promise<Proce
 
 // ----- EDIT RESERVATION EVENT -----
 export async function editReservationEvent(resEventId: string, resEvent: ProcessedEvent): Promise<ProcessedEvent> {
-    const resEventDoc = doc(db, "reservation-event-logs", resEventId);
+    const resEventDoc = doc(db, "reservation-event", resEventId);
     try {
         await updateDoc(resEventDoc, {
             start: resEvent.start,
             end: resEvent.end,
-            logDate: resEvent.logDate,
-            logDuration: resEvent.logDuration,
-            logPax: resEvent.logPax,
-            logPurp: resEvent.logPurp
+            date: resEvent.date,
+            duration: resEvent.duration,
+            pax: resEvent.pax,
+            purp: resEvent.purp
         });
     } catch (error) {
         console.log(error);
@@ -137,7 +141,7 @@ export async function editReservationEvent(resEventId: string, resEvent: Process
 // ----- DELETE RESERVATION EVENT -----
 export async function deleteReservationEvent(resEventId: string): Promise<string> {
     let idDeleted: string = "";
-    const resEventDoc = doc(db, "reservation-event-logs", resEventId);
+    const resEventDoc = doc(db, "reservation-event", resEventId);
     try {
         await deleteDoc(resEventDoc);
         idDeleted = resEventId;
@@ -147,6 +151,10 @@ export async function deleteReservationEvent(resEventId: string): Promise<string
 
     return idDeleted;
 }
+
+/*********************
+ * BRANCHES
+ *********************/
 
 export async function getBranches(): Promise<Branch[]> {
     const branchesRef = collection(db, "branches");
