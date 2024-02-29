@@ -14,6 +14,10 @@ function SelectBranch() {
     const authContext = useContext(AuthContext);
     const navigate = useNavigate();
 
+    // * CHECKER
+    console.log("is SHS?");
+    console.log(isSHS(authContext?.user?.email));
+
     const [branches, setBranches] = useState<Branch[]>([]);
     useEffect(() => {
         const fetchData = async () => {

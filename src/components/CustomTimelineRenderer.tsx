@@ -4,10 +4,10 @@ import { Autocomplete, Box, Button, CircularProgress, Container, DialogActions, 
 import { useContext, useEffect, useState } from "react";
 import drImage from "../styles/images/dr1.jpg";
 import { AuthContext } from "../utils/AuthContext";
-import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getReservationEvents, getRooms } from "../firebase/dbHandler";
+import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getAdmins, getLibrarians, getReservationEvents, getRooms } from "../firebase/dbHandler";
 import { TimePicker } from "@mui/x-date-pickers";
-import { DurationOption, ReservationEvent, RoomProps } from "../Types";
-import { generateRandomSequence } from "../utils/Utils.ts"
+import { DurationOption, ReservationEvent, RoomProps, User } from "../Types";
+import { generateRandomSequence, isAdmin, isLibrarian } from "../utils/Utils.ts"
 import { Numbers, Portrait, TextSnippet } from "@mui/icons-material";
 
 const durationOptions: DurationOption[] = [{ duration: 30, label: "30 Minutes" }, { duration: 60, label: "1 Hour" }, { duration: 90, label: "90 Minutes" }, { duration: 120, label: "2 Hours" }]
@@ -23,6 +23,31 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         fetchRooms();
         fetchReservationEvents();
     }, []);
+
+    const [admins, setAdmins] = useState<User[]>([]);
+    useEffect(() => {
+        const fetchData = async() => {
+            const adminsData = await getAdmins();
+            setAdmins(adminsData);
+        }
+        fetchData();
+    }, []);
+
+    const [librarians, setLibrarians] = useState<User[]>([]);
+    useEffect(() => {
+        const fetchData = async() => {
+            const librariansData = await getLibrarians();
+            setLibrarians(librariansData);
+        }
+        fetchData();
+    }, []);
+
+    // * CHECKER 
+    console.log("is Admin?");
+    console.log(isAdmin(authContext?.user?.email, admins));
+
+    console.log("is Librarian?");
+    console.log(isLibrarian(authContext?.user?.email, librarians));
 
     const fetchRooms = async () => {
         // --- ROOMS --- 
@@ -287,14 +312,10 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 },
             ]}
             onDelete={handleDelete}
-            /* TASK 2
-                ---- VERIFY IF CURRENT USER IS A STUDENT
-                if (isStudent)
-                    deletable={false}
-                    editable={false}
-                else
-                    do nothing
-            */
+            deletable={isAdmin(authContext?.user?.email, admins)
+                || isLibrarian(authContext?.user?.email, librarians)}
+            editable={isAdmin(authContext?.user?.email, admins)
+                || isLibrarian(authContext?.user?.email, librarians)}
         />
     );
 }
