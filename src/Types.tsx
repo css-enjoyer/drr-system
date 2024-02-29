@@ -55,6 +55,10 @@ export interface BranchRoom {
     roomAvailable: boolean;
 }
 
+export interface User {
+    userEmail: string;
+}
+
 // ------ Prop Types -----
 export type RoomProps = {
     room_id: number,
