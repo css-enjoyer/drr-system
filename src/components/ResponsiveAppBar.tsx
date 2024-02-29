@@ -60,7 +60,7 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
       "radial-gradient(circle, rgba(51,51,51,1) 0%, rgba(40,40,40,1) 100%)";
   } else {
     background =
-      "radial-gradient(circle, rgba(20,60,160,1) 0%, rgba(1,37,125,1) 100%)";
+      "radial-gradient(circle, rgba(61, 48, 53, 1) 0%, rgba(40, 40, 40, 1) 100%)";
   }
 
   // On-click, set reference position of menu component to current target (avatar)

@@ -1,5 +1,5 @@
 import React from "react";
-import { PropagateLoader } from "react-spinners";
+import { BarLoader } from "react-spinners";
 
 const Loading = () => {
   const containerStyle: React.CSSProperties = {
@@ -17,7 +17,7 @@ const Loading = () => {
 
   return (
     <div style={containerStyle}>
-      <PropagateLoader color={"#36D7B7"} loading={true} />
+      <BarLoader color={"#736060"} loading={true} />
     </div>
   );
 };
