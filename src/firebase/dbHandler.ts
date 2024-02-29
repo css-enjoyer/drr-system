@@ -138,6 +138,21 @@ export async function editReservationEvent(resEventId: string, resEvent: Process
     return getReservationEventById(resEventId);
 }
 
+// ----- UPDATE TITLE IN RESERVATION EVENT
+export async function editReservationEventTitle(resEventId: string, value: string): Promise<ProcessedEvent> {
+    const resEventDoc = doc(db, "reservation-event", resEventId);
+    try {
+        await updateDoc(resEventDoc, {
+            title: value
+        });
+    } catch (error) {
+        console.log(error);
+    }
+
+    // for error checking return updated id
+    return getReservationEventById(resEventId);
+}
+
 // ----- DELETE RESERVATION EVENT -----
 export async function deleteReservationEvent(resEventId: string): Promise<string> {
     let idDeleted: string = "";
