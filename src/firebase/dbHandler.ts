@@ -1,6 +1,6 @@
 import { Timestamp, collection, collectionGroup, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { db } from './config';
-import { Branch, BranchRoom, ReservationEvent, Room } from '../Types';
+import { Branch, BranchRoom, ReservationEvent, Room, User } from '../Types';
 import { ProcessedEvent } from '@aldabil/react-scheduler/types';
 
 // Disregard warnings when adding new fields in Firebase, takes time to reflect -isaac
@@ -218,4 +218,42 @@ export async function getBranchRooms(branchId?: string): Promise<BranchRoom[]> {
     })
     console.log(...branchRooms);
     return branchRooms;
+}
+
+/*********************
+ * USERS
+ *********************/
+
+export async function getAdmins(): Promise<User[]> {
+    const adminsRef = collection(db, "admins");
+
+    const admins: User[] = [];
+
+    const querySnapshot = await getDocs(adminsRef);
+    querySnapshot.forEach(doc => {
+        const adminData = doc.data();
+        const admin: User = {
+            userEmail: adminData.adminEmail
+        };
+        admins.push(admin);
+    });
+    console.log(...admins);
+    return admins;
+}
+
+export async function getLibrarians(): Promise<User[]> {
+    const librariansRef = collection(db, "librarians");
+
+    const librarians: User[] = [];
+
+    const querySnapshot = await getDocs(librariansRef);
+    querySnapshot.forEach(doc => {
+        const librarianData = doc.data();
+        const librarian: User = {
+            userEmail: librarianData.librarianEmail
+        };
+        librarians.push(librarian);
+    });
+    console.log(...librarians);
+    return librarians;
 }
