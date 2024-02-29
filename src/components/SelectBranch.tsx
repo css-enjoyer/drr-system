@@ -5,7 +5,9 @@ import { formatGreeting } from '../utils/formatGreeting';
 import { AuthContext } from '../utils/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Branch } from '../Types';
+import { isSHS } from '../utils/Utils';
 import genrefImg from '../styles/images/genref-section.jpg';
+import { auth } from '../firebase/config';
 
 function SelectBranch() {
 
@@ -16,7 +18,10 @@ function SelectBranch() {
     useEffect(() => {
         const fetchData = async () => {
             const branchesData = await getBranches();
-            setBranches(branchesData);
+            const filteredBranches = !isSHS(authContext?.user?.email) 
+                ? branchesData.filter((branch) => branch.branchId !== "shs") 
+                : branchesData;
+            setBranches(filteredBranches);
         };
         fetchData();
     }, []);
