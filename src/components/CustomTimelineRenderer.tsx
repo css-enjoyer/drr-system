@@ -7,7 +7,7 @@ import { AuthContext } from "../utils/AuthContext";
 import { addReservationEvent, deleteReservationEvent, editReservationEvent, getReservationEvents, getRooms } from "../firebase/dbHandler";
 import { TimePicker } from "@mui/x-date-pickers";
 import { DurationOption, ReservationEvent, RoomProps } from "../Types";
-import { generateRandomSequence, toTitleCase } from "../utils/Utils.ts"
+import { generateRandomSequence } from "../utils/Utils.ts"
 import { Numbers, Portrait, TextSnippet } from "@mui/icons-material";
 
 const durationOptions: DurationOption[] = [{ duration: 30, label: "30 Minutes" }, { duration: 60, label: "1 Hour" }, { duration: 90, label: "90 Minutes" }, { duration: 120, label: "2 Hours" }]
@@ -70,13 +70,13 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             // should come from states
             branchId: event?.branchId || branchId,
             roomId: event?.roomId || scheduler.state.room_id.value,
-            date: event?.logDate || new Date(),
+            date: event?.date || new Date(),
 
             // should come from form inputs
             stuRep: event?.stuRep || authContext?.user?.email,
-            purp: event?.logPurp || "",
-            pax: event?.logPax || 4,
-            duration: event?.logDuration || durationOptions[0],
+            purp: event?.purp || "",
+            pax: event?.pax || 4,
+            duration: event?.duration || durationOptions[0],
 
             // auto-generated
             rcpt: event?.rcpt || generateRandomSequence()
@@ -109,12 +109,12 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
                     branchId: formState.branchId,
                     room_id: formState.roomId,
-                    logDate: formState.date,
-                    logStuRep: formState.stuRep,
-                    logDuration: formState.duration,
-                    logPax: formState.pax,
-                    logPurp: formState.purp,
-                    logRcpt: formState.rcpt
+                    date: formState.date,
+                    stuRep: formState.stuRep,
+                    duration: formState.duration,
+                    pax: formState.pax,
+                    purp: formState.purp,
+                    rcpt: formState.rcpt
                 }
                 if (!event) {
                     console.log("in create");
@@ -166,7 +166,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     <TimePicker
                         label="Start time"
                         value={formState.start}
-                        // if null return current time + 30 minutes
                         readOnly
                     />
                     <TimePicker
@@ -244,20 +243,21 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         gap: "5px"
                     }}>
                         {/* Values only reflect upon refresh */}
+                        {/* FIXME: store in useState */}
                         <Box sx={{ display: "flex", alignItems: "center", gap: "7px" }}>
                             <Portrait sx={{ marginLeft: "-4px", }} />
-                            <Typography variant="caption" >Representative: {eventsState.find(eventState => eventState.event_id === event.event_id)?.logStuRep}</Typography>
+                            <Typography variant="caption" >Representative: {eventsState.find(eventState => eventState.event_id === event.event_id)?.stuRep}</Typography>
                         </Box>
                         <Box sx={{ display: "flex", alignItems: "center", gap: "7px" }}>
                             <Numbers sx={{ marginLeft: "-4px", }} />
-                            <Typography variant="caption" >Number of Participants: {eventsState.find(eventState => eventState.event_id === event.event_id)?.logPax}</Typography>
+                            <Typography variant="caption" >Number of Participants: {eventsState.find(eventState => eventState.event_id === event.event_id)?.pax}</Typography>
                         </Box>
                         <Box sx={{ display: "flex", alignItems: "center", gap: "7px" }}>
                             <TextSnippet sx={{ marginLeft: "-4px", }} />
-                            <Typography variant="caption" >Reason for Reservation: {eventsState.find(eventState => eventState.event_id === event.event_id)?.logPurp}</Typography>
+                            <Typography variant="caption" >Reason for Reservation: {eventsState.find(eventState => eventState.event_id === event.event_id)?.purp}</Typography>
                         </Box>
                         {/* TODO: Retrieve and display all participant emails */}
-                        <Container sx={{display: "flex", alignItems: "center", justifyContent: "space-evenly", my: "10px"}}>
+                        <Container sx={{ display: "flex", alignItems: "center", justifyContent: "space-evenly", my: "10px" }}>
                             <Button size="small">Confirm Departure</Button>
                             <Button size="small">Confirm Arrival</Button>
                             {/* TODO: Button onclick open larger view */}
