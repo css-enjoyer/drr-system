@@ -18,3 +18,13 @@ export function toTitleCase(inputString: string | null | undefined) {
     }
     return inputString.toLowerCase().replace(/(?:^|\s)\w/g, match => match.toUpperCase());
 }
+
+export function isSHS(email: string | null | undefined): boolean {
+    if (!email) {
+        console.log("Error: Not logged in");
+        return false;
+    }
+    const verify = /shs/;
+    console.log(verify.test(email));
+    return verify.test(email);
+}
