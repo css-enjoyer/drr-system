@@ -4,7 +4,7 @@ import { Autocomplete, Box, Button, CircularProgress, Container, DialogActions, 
 import { useContext, useEffect, useState } from "react";
 import drImage from "../styles/images/dr1.jpg";
 import { AuthContext } from "../utils/AuthContext";
-import { addReservationEvent, deleteReservationEvent, editReservationEvent, getAdmins, getLibrarians, getReservationEvents, getRooms } from "../firebase/dbHandler";
+import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getAdmins, getLibrarians, getReservationEvents, getRooms } from "../firebase/dbHandler";
 import { TimePicker } from "@mui/x-date-pickers";
 import { DurationOption, ReservationEvent, RoomProps, User } from "../Types";
 import { generateRandomSequence, isAdmin, isLibrarian } from "../utils/Utils.ts"
@@ -76,6 +76,11 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         fetchReservationEvents();
     }
 
+    const updateEventTitle = async (resId: string, newTitle: string) => {
+        await editReservationEventTitle(resId, newTitle);
+        fetchReservationEvents();
+    }
+
     interface CustomEditorProps {
         scheduler: SchedulerHelpers;
     }
@@ -88,7 +93,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         const [formState, setFormState] = useState({
             // event fields
             eventId: event?.event_id || "lmao",
-            title: event?.title || "Discussion", //TODO: Change dynamically (Reservation, Occupied, Unavailable)
+            title: event?.title || "Reserved", //TODO DONE: Change dynamically (Reservation, Occupied, Unavailable)
             start: event?.start || scheduler.state.start.value,
             end: event?.end || scheduler.state.end.value,
 
@@ -283,8 +288,9 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         </Box>
                         {/* TODO: Retrieve and display all participant emails */}
                         <Container sx={{ display: "flex", alignItems: "center", justifyContent: "space-evenly", my: "10px" }}>
-                            <Button size="small">Confirm Departure</Button>
-                            <Button size="small">Confirm Arrival</Button>
+                            <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Unavailable")}>Set as Unavailable</Button>
+                            <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Departed")}>Confirm Departure</Button>
+                            <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Occupied")}>Confirm Arrival</Button>
                             {/* TODO: Button onclick open larger view */}
                         </Container>
                     </Grid>
