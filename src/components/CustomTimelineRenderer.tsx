@@ -118,6 +118,11 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 }
                 if (!event) {
                     console.log("in create");
+                    /* TASK 3
+                        ---- ADD A VERIFIER
+                        if (isTimeSlotBetween(targetSlot, existingSlot))
+                            throw error
+                    */
                     await addReservationEvent(newResEvent);
                     fetchReservationEvents();
                 } else {
@@ -276,6 +281,14 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 },
             ]}
             onDelete={handleDelete}
+            /* TASK 2
+                ---- VERIFY IF CURRENT USER IS A STUDENT
+                if (isStudent)
+                    deletable={false}
+                    editable={false}
+                else
+                    do nothing
+            */
         />
     );
 }
