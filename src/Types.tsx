@@ -8,6 +8,22 @@ export interface ReservationEvent {
 
     branchId: string;
     room_id: number;
+    date: Date;
+    stuRep: string;
+    duration: DurationOption;
+    pax: number;
+    purp: string;
+    rcpt: string;
+}
+
+export interface ReservationEventLog {
+    // for logs
+    logEvent_id: string;
+    logTitle: string;
+    logStart: Date;
+    logEnd: Date;
+    logBranchId: string;
+    logRoom_id: number;
     logDate: Date;
     logStuRep: string;
     logDuration: DurationOption;
