@@ -1,9 +1,11 @@
 import React from "react";
-import { PropagateLoader } from "react-spinners";
+import { BarLoader } from "react-spinners";
+import { useThemeContext } from "../../theme/ThemeContextProvider";
 
 const Loading = () => {
+  const { mode } = useThemeContext();
+
   const containerStyle: React.CSSProperties = {
-    // Explicitly specify type as React.CSSProperties
     position: "fixed",
     top: 0,
     left: 0,
@@ -12,12 +14,13 @@ const Loading = () => {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    backgroundColor: mode === "light" ? "white" : "black",
   };
+
 
   return (
     <div style={containerStyle}>
-      <PropagateLoader color={"#36D7B7"} loading={true} />
+      <BarLoader color={"darkblue"} loading={true} />
     </div>
   );
 };

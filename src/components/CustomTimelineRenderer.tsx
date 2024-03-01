@@ -1,6 +1,6 @@
 import { Scheduler } from "@aldabil/react-scheduler";
 import { ProcessedEvent, SchedulerHelpers } from "@aldabil/react-scheduler/types";
-import { Autocomplete, Box, Button, CircularProgress, Container, DialogActions, Grid, TextField, Typography } from "@mui/material";
+import { Autocomplete, Box, Button, Container, DialogActions, Grid, TextField, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import drImage from "../styles/images/dr1.jpg";
 import { AuthContext } from "../utils/AuthContext";
@@ -9,6 +9,7 @@ import { TimePicker } from "@mui/x-date-pickers";
 import { DurationOption, ReservationEvent, RoomProps, User } from "../Types";
 import { generateRandomSequence, isAdmin, isLibrarian } from "../utils/Utils.ts"
 import { Numbers, Portrait, TextSnippet } from "@mui/icons-material";
+import Loading from "./miscellaneous/Loading";
 
 const durationOptions: DurationOption[] = [{ duration: 30, label: "30 Minutes" }, { duration: 60, label: "1 Hour" }, { duration: 90, label: "90 Minutes" }, { duration: 120, label: "2 Hours" }]
 
@@ -256,9 +257,22 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     };
 
     if (roomsState.length === 0) {
-        console.log("Bruh")
-        return <CircularProgress></CircularProgress>;
-    }
+        console.log("Bruh");
+        // Render loading component
+        return (
+          <div
+            style={{
+              minHeight: "100vh",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+            }}
+          >
+            {/* Loading content */}
+            <Loading />
+          </div>
+        );
+      }
 
     return (
         <Scheduler dialogMaxWidth="xl"
