@@ -56,6 +56,8 @@ export async function getReservationEvents(branch: string): Promise<ProcessedEve
                 start: (resEventData.start as Timestamp).toDate(),
                 end: (resEventData.end as Timestamp).toDate(),
 
+                color: resEventData.color,
+
                 branchId: resEventData.branchId,
                 room_id: resEventData.room_id,
                 date: (resEventData.date as Timestamp).toDate(),
@@ -83,6 +85,7 @@ export async function getReservationEventById(resEventId: string): Promise<Proce
         title: '',
         start: new Date(),
         end: new Date(),
+        color: '',
         branchId: '',
         room_id: 0,
         date: new Date(),
@@ -105,6 +108,8 @@ export async function getReservationEventById(resEventId: string): Promise<Proce
                 title: resEventData.title,
                 start: (resEventData.start as Timestamp).toDate(),
                 end: (resEventData.end as Timestamp).toDate(),
+
+                color: resEventData.color,
 
                 branchId: resEventData.branchId,
                 room_id: resEventData.room_id,
@@ -159,12 +164,25 @@ export async function editReservationEvent(resEventId: string, resEvent: Process
 export async function editReservationEventTitle(resEventId: string, value: string): Promise<ProcessedEvent> {
     const resEventDoc = doc(db, "reservation-event", resEventId);
     const resEventLogDoc = doc(db, "reservation-event-logs", resEventId);
+
+    let color = "darkblue";
+
+    if (value === "Unavailable") {
+        color = "gray";
+    } else if (value === "Departed") {
+        color = "red";
+    } else if (value === "Occupied") {
+        color = "green";
+    }
+
     try {
         await updateDoc(resEventDoc, {
-            title: value
+            title: value,
+            color: color
         });
         await updateDoc(resEventLogDoc, {
-            title: value
+            title: value,
+            color: color
         });
     } catch (error) {
         console.log(error);
@@ -207,6 +225,8 @@ export async function getReservationEventsLogs(branch: string): Promise<Processe
                 title: resEventData.title,
                 start: (resEventData.start as Timestamp).toDate(),
                 end: (resEventData.end as Timestamp).toDate(),
+
+                color: resEventData.color,
 
                 branchId: resEventData.branchId,
                 room_id: resEventData.room_id,
