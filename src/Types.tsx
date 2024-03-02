@@ -6,6 +6,9 @@ export interface ReservationEvent {
     start: Date;
     end: Date;
 
+    // optional types for events
+    color: string,
+
     branchId: string;
     room_id: number;
     date: Date;

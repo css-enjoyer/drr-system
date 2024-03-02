@@ -59,7 +59,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             room_id: room.roomId,
             roomBranch: room.roomBranch,
             title: room.roomTitle,
-            color: "darkblue", //TODO: Change this dynamically based on event type (Reservation, Occupied, Unavailable)
+            color: "darkblue", //TODO DONE: Change this dynamically based on event type (Reservation, Occupied, Unavailable)
         }));
         console.log("transformed rooms")
         console.log(transformedResources)
@@ -97,6 +97,9 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             title: event?.title || "Reserved", //TODO DONE: Change dynamically (Reservation, Occupied, Unavailable)
             start: event?.start || scheduler.state.start.value,
             end: event?.end || scheduler.state.end.value,
+
+            // optional event fields
+            color: event?.color || "darkblue",
 
             // should come from states
             branchId: event?.branchId || branchId,
@@ -137,6 +140,8 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     title: formState.title,
                     start: formState.start,
                     end: formState.end,
+
+                    color: formState.color,
 
                     branchId: formState.branchId,
                     room_id: formState.roomId,
