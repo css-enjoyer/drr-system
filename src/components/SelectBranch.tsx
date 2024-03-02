@@ -8,32 +8,43 @@ import { Branch } from '../Types';
 import { isSHS } from '../utils/Utils';
 import genrefImg from '../styles/images/genref-section.jpg';
 import { auth } from '../firebase/config';
+import Loading from './miscellaneous/Loading';
 
 function SelectBranch() {
 
     const authContext = useContext(AuthContext);
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true); // State to track loading status
+    const [branches, setBranches] = useState<Branch[]>([]);
 
     // * CHECKER
     console.log("is SHS?");
     console.log(isSHS(authContext?.user?.email));
 
-    const [branches, setBranches] = useState<Branch[]>([]);
     useEffect(() => {
         const fetchData = async () => {
+            try {
             const branchesData = await getBranches();
             const filteredBranches = !isSHS(authContext?.user?.email) 
                 ? branchesData.filter((branch) => branch.branchId !== "shs") 
                 : branchesData;
             setBranches(filteredBranches);
+            } catch(error) {
+                console.error('Error fetching branches:', error);
+            } finally {
+                setLoading(false);
+            }
         };
         fetchData();
-    }, []);
+    }, [authContext]);
 
     const redirectToTimeline = (branchId: string) => {
         navigate(`/branches/${branchId}/timeline/`);
     };
 
+    if(loading) {
+        return <Loading />;
+    }
 
     return (
         <Container sx={{
@@ -83,4 +94,4 @@ function SelectBranch() {
     )
 }
 
-export default SelectBranch
+export default SelectBranch;
