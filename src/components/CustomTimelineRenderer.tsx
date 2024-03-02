@@ -4,7 +4,7 @@ import { Autocomplete, Box, Button, Container, DialogActions, Grid, TextField, T
 import { useContext, useEffect, useState } from "react";
 import drImage from "../styles/images/dr1.jpg";
 import { AuthContext } from "../utils/AuthContext";
-import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getAdmins, getLibrarians, getReservationEvents, getRooms } from "../firebase/dbHandler";
+import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getAdmins, getLibrarians, getReservationEvents, getRooms, toggleEventEditable } from "../firebase/dbHandler";
 import { TimePicker } from "@mui/x-date-pickers";
 import { DurationOption, ReservationEvent, RoomProps, User } from "../Types";
 import { generateRandomSequence, isAdmin, isLibrarian } from "../utils/Utils.ts"
@@ -19,24 +19,24 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
     const [roomsState, setRoomsState] = useState<RoomProps[]>([]);
     const [eventsState, setEventsState] = useState<ProcessedEvent[]>([]);
+    const [admins, setAdmins] = useState<User[]>([]);
+    const [librarians, setLibrarians] = useState<User[]>([]);
 
     useEffect(() => {
         fetchRooms();
         fetchReservationEvents();
     }, []);
 
-    const [admins, setAdmins] = useState<User[]>([]);
     useEffect(() => {
-        const fetchData = async() => {
+        const fetchData = async () => {
             const adminsData = await getAdmins();
             setAdmins(adminsData);
         }
         fetchData();
     }, []);
 
-    const [librarians, setLibrarians] = useState<User[]>([]);
     useEffect(() => {
-        const fetchData = async() => {
+        const fetchData = async () => {
             const librariansData = await getLibrarians();
             setLibrarians(librariansData);
         }
@@ -100,6 +100,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
             // optional event fields
             color: event?.color || "darkblue",
+            editable: event?.editable || false,
 
             // should come from states
             branchId: event?.branchId || branchId,
@@ -142,6 +143,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     end: formState.end,
 
                     color: formState.color,
+                    editable: formState.editable,
 
                     branchId: formState.branchId,
                     room_id: formState.roomId,
@@ -265,19 +267,19 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         console.log("Bruh");
         // Render loading component
         return (
-          <div
-            style={{
-              minHeight: "100vh",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-            }}
-          >
-            {/* Loading content */}
-            <Loading />
-          </div>
+            <div
+                style={{
+                    minHeight: "100vh",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                }}
+            >
+                {/* Loading content */}
+                <Loading />
+            </div>
         );
-      }
+    }
 
     return (
         <Scheduler dialogMaxWidth="xl"
@@ -306,6 +308,12 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                             <Typography variant="caption" >Reason for Reservation: {eventsState.find(eventState => eventState.event_id === event.event_id)?.purp}</Typography>
                         </Box>
                         {/* TODO: Retrieve and display all participant emails */}
+                        <Container sx={{ display: "flex", alignItems: "center", justifyContent: "space-evenly", my: "10px" }}>
+                            <Button size="small" onClick={() => {
+                                toggleEventEditable(event.event_id + "");
+                                fetchReservationEvents();
+                            }}>Toggle Event Editor</Button>
+                        </Container>
                         <Container sx={{ display: "flex", alignItems: "center", justifyContent: "space-evenly", my: "10px" }}>
                             <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Unavailable")}>Set as Unavailable</Button>
                             <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Departed")}>Confirm Departure</Button>
