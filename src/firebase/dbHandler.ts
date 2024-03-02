@@ -15,6 +15,7 @@ export async function addReservationEvent(resEvent: ProcessedEvent): Promise<Pro
     console.log(resEvent);
 
     const resEventRef = collection(db, "reservation-event");
+
     try {
         // note: doc and setDoc is similar to addDoc
         // create unique id for new res event
@@ -23,6 +24,13 @@ export async function addReservationEvent(resEvent: ProcessedEvent): Promise<Pro
         await setDoc(newResEventsRef, resEvent);
         // set the event id to be equivalent to firestore generated uid
         await updateDoc(newResEventsRef, {
+            event_id: newResEventsRef.id
+        });
+
+        // add to logs
+        await setDoc(doc(db, "reservation-event-logs", newResEventsRef.id), resEvent);
+        // update event id
+        await updateDoc(doc(db, "reservation-event-logs", newResEventsRef.id), {
             event_id: newResEventsRef.id
         });
     } catch (error) {
@@ -121,8 +129,17 @@ export async function getReservationEventById(resEventId: string): Promise<Proce
 // ----- EDIT RESERVATION EVENT -----
 export async function editReservationEvent(resEventId: string, resEvent: ProcessedEvent): Promise<ProcessedEvent> {
     const resEventDoc = doc(db, "reservation-event", resEventId);
+    const resEventLogDoc = doc(db, "reservation-event-logs", resEventId);
     try {
         await updateDoc(resEventDoc, {
+            start: resEvent.start,
+            end: resEvent.end,
+            date: resEvent.date,
+            duration: resEvent.duration,
+            pax: resEvent.pax,
+            purp: resEvent.purp
+        });
+        await updateDoc(resEventLogDoc, {
             start: resEvent.start,
             end: resEvent.end,
             date: resEvent.date,
@@ -141,8 +158,12 @@ export async function editReservationEvent(resEventId: string, resEvent: Process
 // ----- UPDATE TITLE IN RESERVATION EVENT
 export async function editReservationEventTitle(resEventId: string, value: string): Promise<ProcessedEvent> {
     const resEventDoc = doc(db, "reservation-event", resEventId);
+    const resEventLogDoc = doc(db, "reservation-event-logs", resEventId);
     try {
         await updateDoc(resEventDoc, {
+            title: value
+        });
+        await updateDoc(resEventLogDoc, {
             title: value
         });
     } catch (error) {
@@ -165,6 +186,45 @@ export async function deleteReservationEvent(resEventId: string): Promise<string
     }
 
     return idDeleted;
+}
+
+/**************************************************
+ *  RESERVATION EVENT LOGS
+ **************************************************/
+
+// ----- GET RESERVATIONS EVENTS LOGS -----
+export async function getReservationEventsLogs(branch: string): Promise<ProcessedEvent[]> {
+    const q = query(collection(db, "reservation-event-logs"), where("branchId", "==", branch))
+    const querySnapshot = await getDocs(q);
+
+    const resEvents: ReservationEvent[] = []
+
+    try {
+        querySnapshot.forEach((doc) => {
+            const resEventData = doc.data();
+            const resEvent: ReservationEvent = {
+                event_id: resEventData.event_id,
+                title: resEventData.title,
+                start: (resEventData.start as Timestamp).toDate(),
+                end: (resEventData.end as Timestamp).toDate(),
+
+                branchId: resEventData.branchId,
+                room_id: resEventData.room_id,
+                date: (resEventData.date as Timestamp).toDate(),
+                stuRep: resEventData.stuRep,
+                duration: resEventData.duration,
+                pax: resEventData.pax,
+                purp: resEventData.purp,
+                rcpt: resEventData.rcpt
+            }
+
+            resEvents.push(resEvent);
+        })
+    } catch (error) {
+        console.error(error);
+    }
+
+    return resEvents;
 }
 
 /*********************
