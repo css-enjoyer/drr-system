@@ -308,18 +308,23 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                             <Typography variant="caption" >Reason for Reservation: {eventsState.find(eventState => eventState.event_id === event.event_id)?.purp}</Typography>
                         </Box>
                         {/* TODO: Retrieve and display all participant emails */}
-                        <Container sx={{ display: "flex", alignItems: "center", justifyContent: "space-evenly", my: "10px" }}>
-                            <Button size="small" onClick={() => {
-                                toggleEventEditable(event.event_id + "");
-                                fetchReservationEvents();
-                            }}>Toggle Event Editor</Button>
-                        </Container>
-                        <Container sx={{ display: "flex", alignItems: "center", justifyContent: "space-evenly", my: "10px" }}>
-                            <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Unavailable")}>Set as Unavailable</Button>
-                            <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Departed")}>Confirm Departure</Button>
-                            <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Occupied")}>Confirm Arrival</Button>
-                            {/* TODO: Button onclick open larger view */}
-                        </Container>
+                        {isAdmin(authContext?.user?.email, admins) || isLibrarian(authContext?.user?.email, librarians) ?
+                            <Container>
+                                <Container sx={{ display: "flex", alignItems: "center", justifyContent: "space-evenly", my: "10px" }}>
+                                    <Button size="small" onClick={() => {
+                                        toggleEventEditable(event.event_id + "");
+                                        fetchReservationEvents();
+                                    }}>Toggle Event Editor</Button>
+                                </Container>
+                                <Container sx={{ display: "flex", alignItems: "center", justifyContent: "space-evenly", my: "10px" }}>
+                                    <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Unavailable")}>Set as Unavailable</Button>
+                                    <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Departed")}>Confirm Departure</Button>
+                                    <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Occupied")}>Confirm Arrival</Button>
+                                    {/* // TODO: Button onclick open larger view */}
+                                </Container>
+                            </Container>
+                            : <Container></Container>
+                        }
                     </Grid>
                 );
             }}
@@ -341,8 +346,8 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             onDelete={handleDelete}
             deletable={isAdmin(authContext?.user?.email, admins)
                 || isLibrarian(authContext?.user?.email, librarians)}
-            editable={isAdmin(authContext?.user?.email, admins)
-                || isLibrarian(authContext?.user?.email, librarians)}
+        // editable={isAdmin(authContext?.user?.email, admins)
+        //     || isLibrarian(authContext?.user?.email, librarians)}
         />
     );
 }

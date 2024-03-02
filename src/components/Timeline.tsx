@@ -14,6 +14,10 @@ function Timeline() {
         variant="subtitle1"
         sx={{ mb: "10px", fontWeight: "500" }}
       >{`Now viewing ${branchId}, select a vacant timeframe for reservation.`}</Typography>
+      <Typography
+        variant="subtitle1"
+        sx={{ mb: "10px", fontWeight: "500" }}
+      >{`NOTE: To have access to edit and delete, add your email to admins/ librarian db in firestore`}</Typography>
       {/* TODO: Route when branchId is not valid */}
       <CustomTimelineRenderer branchId={branchId || ""} />
       {/* <CustomTimelineRenderer branchId={branchId} /> */}
