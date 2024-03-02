@@ -57,6 +57,7 @@ export async function getReservationEvents(branch: string): Promise<ProcessedEve
                 end: (resEventData.end as Timestamp).toDate(),
 
                 color: resEventData.color,
+                editable: resEventData.editable,
 
                 branchId: resEventData.branchId,
                 room_id: resEventData.room_id,
@@ -86,6 +87,7 @@ export async function getReservationEventById(resEventId: string): Promise<Proce
         start: new Date(),
         end: new Date(),
         color: '',
+        editable: false,
         branchId: '',
         room_id: 0,
         date: new Date(),
@@ -110,6 +112,7 @@ export async function getReservationEventById(resEventId: string): Promise<Proce
                 end: (resEventData.end as Timestamp).toDate(),
 
                 color: resEventData.color,
+                editable: resEventData.editable,
 
                 branchId: resEventData.branchId,
                 room_id: resEventData.room_id,
@@ -206,6 +209,27 @@ export async function deleteReservationEvent(resEventId: string): Promise<string
     return idDeleted;
 }
 
+// ----- TOGGLE EVENTS TO EDITABLE
+export async function toggleEventEditable(resEventId: string): Promise<ProcessedEvent> {
+    const resEventDoc = doc(db, "reservation-event", resEventId);
+    const resEventLogDoc = doc(db, "reservation-event-logs", resEventId);
+    try {
+        const resEvent: ProcessedEvent = await getReservationEventById(resEventId);
+
+        await updateDoc(resEventDoc, {
+            editable: !resEvent.editable
+        });
+        await updateDoc(resEventLogDoc, {
+            editable: !resEvent.editable
+        });
+    } catch (error) {
+        console.log(error);
+    }
+
+    // for error checking return updated id
+    return getReservationEventById(resEventId);
+}
+
 /**************************************************
  *  RESERVATION EVENT LOGS
  **************************************************/
@@ -227,6 +251,7 @@ export async function getReservationEventsLogs(branch: string): Promise<Processe
                 end: (resEventData.end as Timestamp).toDate(),
 
                 color: resEventData.color,
+                editable: false,
 
                 branchId: resEventData.branchId,
                 room_id: resEventData.room_id,
