@@ -7,7 +7,7 @@ function Footer() {
         if(theme.palette.mode === "dark") {
             background = 'radial-gradient(circle, rgba(51,51,51,1) 0%, rgba(40,40,40,1) 100%)';
         } else {
-            background = 'radial-gradient(circle, rgba(20,60,160,1) 0%, rgba(1,37,125,1) 100%)';
+            background = 'radial-gradient(circle, rgba(43,43,43,1) 0%, rgba(43,43,43,1) 100%)';
         }
     return (
         <Box 

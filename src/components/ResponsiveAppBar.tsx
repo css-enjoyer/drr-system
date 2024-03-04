@@ -26,7 +26,7 @@ import InfoIcon from "@mui/icons-material/Info";
 import { Link, useNavigate } from "react-router-dom";
 
 const pages = ["Branches", "Guide", "About"]; // change these to components in the future
-const pageRoutes = ["/branches"];
+const pageRoutes = ["/branches", "/FAQs", "/About"];
 const pageIcons: React.ReactNode[] = [
   <BusinessIcon />,
   <MenuBookIcon />,
@@ -56,11 +56,11 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
   let background = "";
   const { theme } = useThemeContext();
   if (theme.palette.mode === "dark") {
-    background =
-      "radial-gradient(circle, rgba(51,51,51,1) 0%, rgba(40,40,40,1) 100%)";
+      background =
+      "radial-gradient(circle,#F2AF29 100%, #ffea76 20%, #fff394 30%)";  
   } else {
-    background =
-      "radial-gradient(circle, rgba(20,60,160,1) 0%, rgba(1,37,125,1) 100%)";
+    background = 
+      "radial-gradient(circle,#F2AF29 100%, #ffea76 20%, #fff394 30%)";  
   }
 
   // On-click, set reference position of menu component to current target (avatar)
