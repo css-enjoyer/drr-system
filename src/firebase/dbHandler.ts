@@ -294,7 +294,6 @@ export async function getBranches(): Promise<Branch[]> {
         };
         branches.push(branch);
     });
-    console.log(...branches);
     return branches;
 }
 
@@ -336,7 +335,6 @@ export async function getBranchRooms(branchId?: string): Promise<BranchRoom[]> {
         }
         console.log(`Selected branch room id: ${branchId}`)
     })
-    console.log(...branchRooms);
     return branchRooms;
 }
 
@@ -357,11 +355,9 @@ export async function getAdmins(): Promise<User[]> {
         };
         admins.push(admin);
     });
-    console.log(...admins);
     return admins;
 }
 
-// 
 export async function getLibrarians(): Promise<Librarian[]> {
     const librariansRef = collection(db, "librarians");
 
@@ -378,10 +374,8 @@ export async function getLibrarians(): Promise<Librarian[]> {
         };
         librarians.push(librarian);
     });
-    console.log(...librarians);
     return librarians;
 }
-
 
 // Add Librarian
 export async function addLibrarian(librarian: Librarian): Promise<Librarian> {
@@ -393,10 +387,10 @@ export async function addLibrarian(librarian: Librarian): Promise<Librarian> {
     } catch (error) {
         console.error(error)
     }
-    
 
     return librarian;
 }
+
 // Edit Librarian (via Email)
 export async function editLibrarian(userEmail: string, librarian: Librarian): Promise<Librarian> {
     const librarianRef = collection(db, "librarians");
@@ -423,7 +417,6 @@ export async function deleteLibrarian(userEmail: string): Promise<string> {
         librarianIdToDelete = doc.id
     })    
     const librarianToDeleteRef = doc(db, "librarians", librarianIdToDelete);
-
 
     try {
         await deleteDoc(librarianToDeleteRef);
