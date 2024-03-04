@@ -1,6 +1,6 @@
-import { Timestamp, collection, collectionGroup, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
+import { Timestamp, addDoc, collection, collectionGroup, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { db } from './config';
-import { Branch, BranchRoom, ReservationEvent, Room, User } from '../Types';
+import { Branch, BranchRoom, ReservationEvent, Room, User, Librarian} from '../Types';
 import { ProcessedEvent } from '@aldabil/react-scheduler/types';
 
 // Disregard warnings when adding new fields in Firebase, takes time to reflect -isaac
@@ -361,19 +361,76 @@ export async function getAdmins(): Promise<User[]> {
     return admins;
 }
 
-export async function getLibrarians(): Promise<User[]> {
+// 
+export async function getLibrarians(): Promise<Librarian[]> {
     const librariansRef = collection(db, "librarians");
 
-    const librarians: User[] = [];
+    const librarians: Librarian[] = [];
 
     const querySnapshot = await getDocs(librariansRef);
     querySnapshot.forEach(doc => {
         const librarianData = doc.data();
-        const librarian: User = {
-            userEmail: librarianData.librarianEmail
+        const librarian: Librarian = {
+            dateAdded: librarianData.dateAdded,
+            librarianName: librarianData.librarianName,
+            userEmail: librarianData.userEmail,
+            librarianBranch: librarianData.librarianBranch
         };
         librarians.push(librarian);
     });
     console.log(...librarians);
     return librarians;
+}
+
+
+// Add Librarian
+export async function addLibrarian(librarian: Librarian): Promise<Librarian> {
+    const librarianRef = collection(db, "librarians");
+    // new id for librarian
+    try {
+        const newLibrarianRef = doc(librarianRef);
+        await setDoc(newLibrarianRef, librarian);
+    } catch (error) {
+        console.error(error)
+    }
+    
+
+    return librarian;
+}
+// Edit Librarian (via Email)
+export async function editLibrarian(userEmail: string, librarian: Librarian): Promise<Librarian> {
+    const librarianRef = collection(db, "librarians");
+    const librarianSnapshot = await getDocs(query(librarianRef, where('userEmail', '==', userEmail)))
+    // TODO if (librarianSnapshot.empty) {}
+    var librarianIdToEdit = ""
+    librarianSnapshot.forEach((doc) => {
+        librarianIdToEdit = doc.id
+    })    
+    const librarianToEditRef = doc(db, "librarians", librarianIdToEdit);
+
+    const updatedLibrarian = await updateDoc(librarianToEditRef, librarian as any)
+    return librarian
+}
+
+// Remove Librarian (via Email)
+export async function deleteLibrarian(userEmail: string): Promise<string> {
+    let idDeleted: string = "";
+    const librarianRef = collection(db, "librarians");
+    const librarianSnapshot = await getDocs(query(librarianRef, where('userEmail', '==', userEmail)))
+    // TODO if (librarianSnapshot.empty) {}
+    var librarianIdToDelete = ""
+    librarianSnapshot.forEach((doc) => {
+        librarianIdToDelete = doc.id
+    })    
+    const librarianToDeleteRef = doc(db, "librarians", librarianIdToDelete);
+
+
+    try {
+        await deleteDoc(librarianToDeleteRef);
+        idDeleted = librarianIdToDelete;
+    } catch (error) {
+        console.error;
+    }
+
+    return idDeleted;
 }

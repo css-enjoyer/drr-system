@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Paper,
   Table,
@@ -22,7 +22,10 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
+import { ArrowUpward, ArrowDownward, DepartureBoard } from "@mui/icons-material";
+import { LibrarianProp, Librarian } from "../../Types";
+import { FieldValue, Timestamp } from "firebase/firestore";
+import { addLibrarian, deleteLibrarian, editLibrarian, getLibrarians } from "../../firebase/dbHandler";
 
 const Muitable = () => {
   const columns = [
@@ -34,78 +37,44 @@ const Muitable = () => {
   ];
 
   // Hardcoded data
-  const MockData = [
-    {
-      date: "02-03-2024",
-      name: "Edriech Balajadia",
-      department: "MDBL-ST",
-      email: "librarian@ust.edu.ph",
-    },
-    {
-      date: "02-03-2024",
-      name: "Ralph Alba Jerson",
-      department: "MDBL-ST",
-      email: "librarian@ust.edu.ph",
-    },
-    {
-      date: "02-02-2024",
-      name: "James Ivan Opao",
-      department: "MDBL-GR",
-      email: "librarian@ust.edu.ph",
-    },
-    {
-      date: "01-28-2024",
-      name: "Isaac John Reyes",
-      department: "MDBL-ST",
-      email: "librarian@ust.edu.ph",
-    },
-    {
-      date: "01-28-2024",
-      name: "Reece Jaucquin Valera",
-      department: "FRST-SHS",
-      email: "librarian@ust.edu.ph",
-    },
-    {
-      date: "01-28-2024",
-      name: "Ryan Louis Refugia",
-      department: "MDBL-GR",
-      email: "librarian@ust.edu.ph",
-    },
-    {
-      date: "01-27-2024",
-      name: "Kyle Molinyawe",
-      department: "FRST-SHS",
-      email: "librarian@ust.edu.ph",
-    },
-    {
-      date: "01-27-2024",
-      name: "Patrick Louis Rivera",
-      department: "MDBL-GR",
-      email: "librarian@ust.edu.ph",
-    },
-    {
-      date: "01-27-2024",
-      name: "Dave Chapelle",
-      department: "MDBL-ST",
-      email: "librarian@ust.edu.ph",
-    },
-    {
-      date: "01-27-2024",
-      name: "Marie Santos",
-      department: "MDBL-ST",
-      email: "librarian@ust.edu.ph",
-    },
-    // Add more data as needed
+  const MockData: LibrarianProp[] = [
   ];
 
-  const [rows, setRows] = useState(MockData);
+  const [rows, setRows] = useState<LibrarianProp[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [librarianEmail, setLibrarianEmail] = useState("");
-  const [selectedSection, setSelectedSection] = useState("");
   const [sortOrder, setSortOrder] = useState({ id: "", direction: "" });
+
+  const [librarianName, setLibrarianName] = useState("");
+  const [librarianEmail, setLibrarianEmail] = useState("");
+  const [librarianDepartment, setLibrarianDepartment] = useState("");
+  const [librarianEmailToEdit, setLibrarianEmailToEdit] = useState("");
+  const [openAddDialog, setopenAddDialog] = useState(false);
+  const [openEditDialog, setopenEditDialog] = useState(false)
+  // TABLE HANDLERS
+  const fetchData = async () => {
+    const LibrariansData = await getLibrarians();
+    const librarianProps: LibrarianProp[] = [];
+
+    LibrariansData.forEach((librarian) => {
+      const librarianProp = {
+        date: librarian.dateAdded.toDate().toDateString(),
+        name: librarian.librarianName,
+        email: librarian.userEmail,
+        department: librarian.librarianBranch
+      }
+
+      console.log(librarian)
+
+      librarianProps.push(librarianProp);
+    })
+    setRows(librarianProps)
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, [])
 
   const handleSearchChange = (event: {
     target: { value: React.SetStateAction<string> };
@@ -139,35 +108,78 @@ const Muitable = () => {
     return 0;
   });
 
+  // HANDLE EDIT
   const handleEdit = (index: number) => {
-    // Handle edit action here
-    console.log("Edit row:", index);
+    console.log("Edit row:", rows.at(index)?.email);
+    setLibrarianEmailToEdit(rows.at(index)?.email as string)
+    setLibrarianEmail(rows.at(index)?.email as string);
+    setLibrarianName(rows.at(index)?.name as string);
+    setLibrarianDepartment(rows.at(index)?.department as string);
+    setopenEditDialog(true);
+    
   };
 
+  const handleConfirmEdit = () => {
+    const newLibrarian: Librarian = {
+      dateAdded: Timestamp.now(),
+      librarianName: librarianName,
+      userEmail: librarianEmail,
+      librarianBranch: librarianDepartment
+    }
+
+    editLibrarian(librarianEmailToEdit, newLibrarian)
+    setopenEditDialog(false);
+    resetAddDialog();
+
+    fetchData();
+  }
+
+  const handleCancelEdit = () => {
+    setopenEditDialog(false);
+    resetAddDialog();
+  };
+
+
+  // HANDLE REMOVE
   const handleRemove = (index: number) => {
     // Handle remove action here
-    console.log("Remove row:", index);
+    console.log("Remove row:", rows.at(index)?.email);
+    deleteLibrarian(rows.at(index)?.email as string);
+    fetchData();
   };
 
+  // HANDLE ADD
   const handleAddLibrarian = () => {
-    setOpenDialog(true);
+    setopenAddDialog(true);
   };
+
+  function resetAddDialog() {
+    setLibrarianEmail("");
+    setLibrarianName("");
+    setLibrarianDepartment("");
+  }
 
   const handleConfirmAdd = () => {
-    // Handle adding librarian here
-    console.log("Email:", librarianEmail);
-    console.log("Section:", selectedSection);
-    setOpenDialog(false);
+    const newLibrarian: Librarian = {
+      dateAdded: Timestamp.now(),
+      librarianName: librarianName,
+      userEmail: librarianEmail,
+      librarianBranch: librarianDepartment
+    }
+    
+    console.log(newLibrarian)
+
+    addLibrarian(newLibrarian);
+    setopenAddDialog(false);
     // Reset input values
-    setLibrarianEmail("");
-    setSelectedSection("");
+    resetAddDialog;
+    fetchData();
   };
 
   const handleCancelAdd = () => {
-    setOpenDialog(false);
+    setopenAddDialog(false);
     // Reset input values
-    setLibrarianEmail("");
-    setSelectedSection("");
+    resetAddDialog();
   };
 
   const filteredRows = sortedRows.filter((row) =>
@@ -314,10 +326,18 @@ const Muitable = () => {
           onRowsPerPageChange={handleRowsPerPage}
         />
       </Paper>
-
-      <Dialog open={openDialog} onClose={handleCancelAdd} maxWidth="lg">
+{/* ADD DIALOG -------------------------------------------------------------------------*/}
+      <Dialog open={openAddDialog} onClose={handleCancelAdd} maxWidth="lg">
         <DialogTitle>Add Librarian</DialogTitle>
-        <DialogContent style={{ width: "500px", height: "200px" }}>
+        <DialogContent style={{ width: "500px", height: "275px" }}>
+          <TextField
+            label="Name"
+            variant="outlined"
+            value={librarianName}
+            onChange={(e) => setLibrarianName(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
           <TextField
             label="Email"
             variant="outlined"
@@ -330,17 +350,17 @@ const Muitable = () => {
             <InputLabel id="section-label">Department</InputLabel>
             <Select
               labelId="section-label"
-              value={selectedSection}
-              onChange={(e) => setSelectedSection(e.target.value)}
+              value={librarianDepartment}
+              onChange={(e) => setLibrarianDepartment(e.target.value)}
               label="Department"
             >
-              <MenuItem value={1}>
+              <MenuItem value={"gen-ref"}>
                 Miguel de Benavides Library - General References
               </MenuItem>
-              <MenuItem value={2}>
+              <MenuItem value={"sci-tech"}>
                 Miguel de Benavides Library - Science and Technology
               </MenuItem>
-              <MenuItem value={3}>
+              <MenuItem value={"shs"}>
                 Blessed Pier Giorgio Frassati - Senior High-School
               </MenuItem>
             </Select>
@@ -353,7 +373,66 @@ const Muitable = () => {
           </Button>
         </DialogActions>
       </Dialog>
+{/* EDIT DIALOG -------------------------------------------------------------------------*/}
+      <Dialog open={openEditDialog} onClose={handleCancelEdit} maxWidth="lg">
+        <DialogTitle>Edit Librarian</DialogTitle>
+        <DialogContent style={{ width: "500px", height: "340px" }}>
+          <TextField
+            label="Librarian to Edit"
+            variant="outlined"
+            value={librarianEmailToEdit}
+            contentEditable="false"
+            fullWidth
+            margin="normal"
+            suppressContentEditableWarning={true}
+          />
+          <TextField
+            label="New Name"
+            variant="outlined"
+            value={librarianName}
+            onChange={(e) => setLibrarianName(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="New Email"
+            variant="outlined"
+            value={librarianEmail}
+            onChange={(e) => setLibrarianEmail(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+          <FormControl fullWidth margin="normal" variant="outlined">
+            <InputLabel id="section-label">New Department</InputLabel>
+            <Select
+              labelId="section-label"
+              value={librarianDepartment}
+              onChange={(e) => setLibrarianDepartment(e.target.value)}
+              label="Department"
+            >
+              <MenuItem value={"gen-ref"}>
+                Miguel de Benavides Library - General References
+              </MenuItem>
+              <MenuItem value={"sci-tech"}>
+                Miguel de Benavides Library - Science and Technology
+              </MenuItem>
+              <MenuItem value={"shs"}>
+                Blessed Pier Giorgio Frassati - Senior High-School
+              </MenuItem>
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelEdit}>Cancel</Button>
+          <Button onClick={handleConfirmEdit} color="primary">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
+
+ 
+    
   );
 };
 

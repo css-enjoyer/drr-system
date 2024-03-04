@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 // reservation event
 export interface ReservationEvent {
     // required types for events
@@ -47,12 +49,26 @@ export interface User {
     userEmail: string;
 }
 
+export interface Librarian extends User {
+    dateAdded: Timestamp;
+    librarianName: string;
+    librarianBranch: string;
+}
+
+
 // ------ Prop Types -----
 export type RoomProps = {
     room_id: number,
     roomBranch: string,
     title: string,
     color: string,
+}
+
+export interface LibrarianProp {
+    date: string;
+    name: string;
+    email: string;
+    department: string;
 }
 
 export type DurationOption = {

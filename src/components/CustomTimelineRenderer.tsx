@@ -6,7 +6,7 @@ import drImage from "../styles/images/dr1.jpg";
 import { AuthContext } from "../utils/AuthContext";
 import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getAdmins, getLibrarians, getReservationEvents, getRooms, toggleEventEditable } from "../firebase/dbHandler";
 import { TimePicker } from "@mui/x-date-pickers";
-import { DurationOption, ReservationEvent, RoomProps, User } from "../Types";
+import { DurationOption, ReservationEvent, RoomProps, User, Librarian} from "../Types";
 import { generateRandomSequence, isAdmin, isLibrarian } from "../utils/Utils.ts"
 import { Numbers, Portrait, TextSnippet } from "@mui/icons-material";
 import Loading from "./miscellaneous/Loading";
