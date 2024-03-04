@@ -10,7 +10,8 @@ import LibrarianReservationLogs from "./components/reservationlogs/LibrarianRese
 import AdminDashboard from "./components/reservationlogs/AdminDashboard";
 import Confirmation from "./components/miscellaneous/Confirmation";
 import Cancellation from "./components/miscellaneous/Cancellation";
-
+import About from "./components/miscellaneous/About";
+import FAQs from "./components/miscellaneous/FAQs";
 
 // Modules
 import { ThemeProvider } from "@mui/material/styles";
@@ -25,6 +26,7 @@ import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "./utils/AuthContext";
 import SelectBranch from "./components/SelectBranch";
 import { Cancel, Login } from "@mui/icons-material";
+
 
 
 // Utils
@@ -142,6 +144,35 @@ function App() {
               )
             }
           />
+
+          {/* FAQs page */}
+          <Route
+            path="/FAQs"
+            element={
+              authContext?.user ? (
+                <Protected>
+                  <FAQs />
+                </Protected>
+              ) : (
+                <Navigate to="/" />
+              )
+            }
+          />
+
+          {/* About page */}
+          <Route
+            path="/About"
+            element={
+              authContext?.user ? (
+                <Protected>
+                  <About />
+                </Protected>
+              ) : (
+                <Navigate to="/" />
+              )
+            }
+          />
+
         </Routes>
         {authContext?.user && <Footer />}
       </div>

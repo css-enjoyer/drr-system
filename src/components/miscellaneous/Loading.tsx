@@ -20,7 +20,7 @@ const Loading = () => {
 
   return (
     <div style={containerStyle}>
-      <BarLoader color={"darkblue"} loading={true} />
+      <BarLoader color={"#F2AF29"} loading={true} />
     </div>
   );
 };
