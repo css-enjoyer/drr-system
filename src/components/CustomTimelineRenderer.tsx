@@ -43,13 +43,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         fetchData();
     }, []);
 
-    // * CHECKER 
-    console.log("is Admin?");
-    console.log(isAdmin(authContext?.user?.email, admins));
-
-    console.log("is Librarian?");
-    console.log(isLibrarian(authContext?.user?.email, librarians));
-
     const fetchRooms = async () => {
         // --- ROOMS --- 
         const rooms = await getRooms(branchId);
@@ -344,10 +337,16 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 },
             ]}
             onDelete={handleDelete}
-            deletable={isAdmin(authContext?.user?.email, admins)
-                || isLibrarian(authContext?.user?.email, librarians)}
-        // editable={isAdmin(authContext?.user?.email, admins)
-        //     || isLibrarian(authContext?.user?.email, librarians)}
+
+            /* * BUGFIX
+                - state does not save user type & admin/librarian list
+                - use a query to verify if user exists in database(s)            
+            */
+
+            // deletable={isAdmin(authContext?.user?.email, admins)
+            //     || isLibrarian(authContext?.user?.email, librarians)}
+            // editable={isAdmin(authContext?.user?.email, admins)
+            //     || isLibrarian(authContext?.user?.email, librarians)}
         />
     );
 }
