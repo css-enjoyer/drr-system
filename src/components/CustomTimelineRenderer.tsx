@@ -4,9 +4,9 @@ import { Autocomplete, Box, Button, Container, DialogActions, Grid, TextField, T
 import { useContext, useEffect, useState } from "react";
 import drImage from "../styles/images/dr1.jpg";
 import { AuthContext } from "../utils/AuthContext";
-import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getAdmins, getLibrarians, getReservationEvents, getRooms, isAdmin, isLibrarian, toggleEventEditable } from "../firebase/dbHandler";
+import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getReservationEvents, getRooms, isAdmin, isLibrarian, toggleEventEditable } from "../firebase/dbHandler";
 import { TimePicker } from "@mui/x-date-pickers";
-import { DurationOption, ReservationEvent, RoomProps, User, Librarian} from "../Types";
+import { DurationOption, ReservationEvent, RoomProps} from "../Types";
 import { generateRandomSequence } from "../utils/Utils.ts"
 import { Numbers, Portrait, TextSnippet } from "@mui/icons-material";
 import Loading from "./miscellaneous/Loading";
@@ -20,8 +20,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
     const [roomsState, setRoomsState] = useState<RoomProps[]>([]);
     const [eventsState, setEventsState] = useState<ProcessedEvent[]>([]);
-    const [admins, setAdmins] = useState<User[]>([]);
-    const [librarians, setLibrarians] = useState<User[]>([]);
     const [userType, setUserType] = useState<"admin" | "librarian" | "student" | undefined> (undefined);
 
     useEffect(() => {
@@ -31,22 +29,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
     useEffect(() => {
         verifyUserType();
-    }, []);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const adminsData = await getAdmins();
-            setAdmins(adminsData);
-        }
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const librariansData = await getLibrarians();
-            setLibrarians(librariansData);
-        }
-        fetchData();
     }, []);
 
     const fetchRooms = async () => {
@@ -93,9 +75,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             : "student"
         );
     }
-    
-    console.log(`CURRENT USER: ${authContext?.user?.uid}`);
-    console.log(`USER IS: ${userType}`);
 
     interface CustomEditorProps {
         scheduler: SchedulerHelpers;
