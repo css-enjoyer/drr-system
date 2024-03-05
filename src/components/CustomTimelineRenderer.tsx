@@ -302,7 +302,8 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                             <Typography variant="caption" >Reason for Reservation: {eventsState.find(eventState => eventState.event_id === event.event_id)?.purp}</Typography>
                         </Box>
                         {/* TODO: Retrieve and display all participant emails */}
-                        {userType === "admin" || userType === "librarian" ?
+                        {/* FIXME: userType returns `undefined` */}
+                        {true ||userType === "admin" || userType === "librarian" ?
                             <Container>
                                 <Container sx={{ display: "flex", alignItems: "center", justifyContent: "space-evenly", my: "10px" }}>
                                     <Button size="small" onClick={() => {
@@ -338,8 +339,10 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 },
             ]}
             onDelete={handleDelete}
-            deletable={userType === "admin" || userType === "librarian"}
-            editable={userType === "admin" || userType === "librarian"}
+            // FIXME: userType returns `undefined`
+
+            // deletable={userType === "admin" || userType === "librarian"}
+            // editable={userType === "admin" || userType === "librarian"}
         />
     );
 }
