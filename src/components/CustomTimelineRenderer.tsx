@@ -359,14 +359,8 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 },
             ]}
             onDelete={handleDelete}
-
             deletable={userType === "admin" || userType === "librarian"}
             editable={userType === "admin" || userType === "librarian"}
-
-            // deletable={isAdmin(authContext?.user?.email, admins)
-            //     || isLibrarian(authContext?.user?.email, librarians)}
-            // editable={isAdmin(authContext?.user?.email, admins)
-            //     || isLibrarian(authContext?.user?.email, librarians)}
         />
     );
 }
