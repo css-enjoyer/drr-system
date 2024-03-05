@@ -406,6 +406,38 @@ export async function editLibrarian(userEmail: string, librarian: Librarian): Pr
     return librarian
 }
 
+export async function isAdmin(userID: string | null | undefined): Promise<boolean> {
+    try {
+        if (!userID) {
+            console.log("Error: No valid ID");
+            return false;
+        }
+
+        const querySnapshot = await getDoc(doc(db, "admins", userID));
+        return querySnapshot.exists();
+    } 
+    catch(error) {
+        console.error("Error checking admin db");
+        return false;
+    }
+}
+
+export async function isLibrarian(userID: string | null | undefined): Promise<boolean> {
+    try {
+        if (!userID) {
+            console.log("Error: No valid ID");
+            return false;
+        }
+
+        const querySnapshot = await getDoc(doc(db, "librarians", userID));
+        return querySnapshot.exists();
+    } 
+    catch(error) {
+        console.error("Error checking admin db");
+        return false;
+    }
+}
+
 // Remove Librarian (via Email)
 export async function deleteLibrarian(userEmail: string): Promise<string> {
     let idDeleted: string = "";
