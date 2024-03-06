@@ -16,8 +16,8 @@ const durationOptions: DurationOption[] = [{ duration: 30, label: "30 Minutes" }
 
 function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     const timelineRef = useRef<SchedulerRef>(null);
-    console.log("TIMELINE REF");
-    console.log(timelineRef);
+    // console.log("TIMELINE REF");
+    // console.log(timelineRef);
 
     const authContext = useContext(AuthContext);
 
