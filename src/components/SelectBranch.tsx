@@ -5,9 +5,6 @@ import { formatGreeting } from '../utils/formatGreeting';
 import { AuthContext } from '../utils/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Branch } from '../Types';
-import { isSHS } from '../utils/Utils';
-import genrefImg from '../styles/images/genref-section.jpg';
-import { auth } from '../firebase/config';
 import Loading from './miscellaneous/Loading';
 
 function SelectBranch() {
@@ -20,13 +17,11 @@ function SelectBranch() {
     // * CHECKER
     console.log("is SHS?");
     console.log(authContext?.userRole === "SHS-Student");
-    // console.log(isSHS(authContext?.user?.email));
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const branchesData = await getBranches();
-                // const filteredBranches = !isSHS(authContext?.user?.email) 
                 const filteredBranches = authContext?.userRole !== "SHS-Student"
                     ? branchesData.filter((branch) => branch.branchId !== "shs")
                     : branchesData;

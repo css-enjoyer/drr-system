@@ -5,9 +5,9 @@ import { ProcessedEvent } from '@aldabil/react-scheduler/types';
 
 // Disregard warnings when adding new fields in Firebase, takes time to reflect -isaac
 
-/*********************
- * RESERVATION EVENT
-**********************/
+/**************************
+ *  RESERVATION EVENT
+***************************/
 
 // ----- ADD RESERVATION EVENT -----
 export async function addReservationEvent(resEvent: ProcessedEvent): Promise<ProcessedEvent> {
@@ -273,7 +273,7 @@ export async function getReservationEventsLogs(branch: string): Promise<Processe
 }
 
 /*********************
- * BRANCHES
+ *  BRANCHES
  *********************/
 
 export async function getBranches(): Promise<Branch[]> {
@@ -339,7 +339,7 @@ export async function getBranchRooms(branchId?: string): Promise<BranchRoom[]> {
 }
 
 /*********************
- * USERS
+ *  USERS
  *********************/
 
 export async function getAdmins(): Promise<User[]> {
@@ -405,38 +405,6 @@ export async function editLibrarian(userEmail: string, librarian: Librarian): Pr
     const updatedLibrarian = await updateDoc(librarianToEditRef, librarian as any)
     return librarian
 }
-
-// export async function isAdmin(userID: string | null | undefined): Promise<boolean> {
-//     try {
-//         if (!userID) {
-//             console.log("Error: No valid ID");
-//             return false;
-//         }
-
-//         const querySnapshot = await getDoc(doc(db, "admins", userID));
-//         return querySnapshot.exists();
-//     } 
-//     catch(error) {
-//         console.error("Error checking admin db");
-//         return false;
-//     }
-// }
-
-// export async function isLibrarian(userID: string | null | undefined): Promise<boolean> {
-//     try {
-//         if (!userID) {
-//             console.log("Error: No valid ID");
-//             return false;
-//         }
-
-//         const querySnapshot = await getDoc(doc(db, "librarians", userID));
-//         return querySnapshot.exists();
-//     } 
-//     catch(error) {
-//         console.error("Error checking admin db");
-//         return false;
-//     }
-// }
 
 // Remove Librarian (via Email)
 export async function deleteLibrarian(userEmail: string): Promise<string> {
