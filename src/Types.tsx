@@ -75,3 +75,5 @@ export type DurationOption = {
     duration: number,
     label: string
 }
+
+export type UserRole = "Admin" | "Librarian" | "Student" | "SHS-Student" | null | undefined

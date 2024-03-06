@@ -19,17 +19,19 @@ function SelectBranch() {
 
     // * CHECKER
     console.log("is SHS?");
-    console.log(isSHS(authContext?.user?.email));
+    console.log(authContext?.userRole === "SHS-Student");
+    // console.log(isSHS(authContext?.user?.email));
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-            const branchesData = await getBranches();
-            const filteredBranches = !isSHS(authContext?.user?.email) 
-                ? branchesData.filter((branch) => branch.branchId !== "shs") 
-                : branchesData;
-            setBranches(filteredBranches);
-            } catch(error) {
+                const branchesData = await getBranches();
+                // const filteredBranches = !isSHS(authContext?.user?.email) 
+                const filteredBranches = authContext?.userRole !== "SHS-Student"
+                    ? branchesData.filter((branch) => branch.branchId !== "shs")
+                    : branchesData;
+                setBranches(filteredBranches);
+            } catch (error) {
                 console.error('Error fetching branches:', error);
             } finally {
                 setLoading(false);
@@ -42,7 +44,7 @@ function SelectBranch() {
         navigate(`/branches/${branchId}/timeline/`);
     };
 
-    if(loading) {
+    if (loading) {
         return <Loading />;
     }
 

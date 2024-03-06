@@ -1,6 +1,6 @@
 import { Timestamp, addDoc, collection, collectionGroup, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { db } from './config';
-import { Branch, BranchRoom, ReservationEvent, Room, User, Librarian} from '../Types';
+import { Branch, BranchRoom, ReservationEvent, Room, User, Librarian, UserRole} from '../Types';
 import { ProcessedEvent } from '@aldabil/react-scheduler/types';
 
 // Disregard warnings when adding new fields in Firebase, takes time to reflect -isaac
@@ -406,37 +406,37 @@ export async function editLibrarian(userEmail: string, librarian: Librarian): Pr
     return librarian
 }
 
-export async function isAdmin(userID: string | null | undefined): Promise<boolean> {
-    try {
-        if (!userID) {
-            console.log("Error: No valid ID");
-            return false;
-        }
+// export async function isAdmin(userID: string | null | undefined): Promise<boolean> {
+//     try {
+//         if (!userID) {
+//             console.log("Error: No valid ID");
+//             return false;
+//         }
 
-        const querySnapshot = await getDoc(doc(db, "admins", userID));
-        return querySnapshot.exists();
-    } 
-    catch(error) {
-        console.error("Error checking admin db");
-        return false;
-    }
-}
+//         const querySnapshot = await getDoc(doc(db, "admins", userID));
+//         return querySnapshot.exists();
+//     } 
+//     catch(error) {
+//         console.error("Error checking admin db");
+//         return false;
+//     }
+// }
 
-export async function isLibrarian(userID: string | null | undefined): Promise<boolean> {
-    try {
-        if (!userID) {
-            console.log("Error: No valid ID");
-            return false;
-        }
+// export async function isLibrarian(userID: string | null | undefined): Promise<boolean> {
+//     try {
+//         if (!userID) {
+//             console.log("Error: No valid ID");
+//             return false;
+//         }
 
-        const querySnapshot = await getDoc(doc(db, "librarians", userID));
-        return querySnapshot.exists();
-    } 
-    catch(error) {
-        console.error("Error checking admin db");
-        return false;
-    }
-}
+//         const querySnapshot = await getDoc(doc(db, "librarians", userID));
+//         return querySnapshot.exists();
+//     } 
+//     catch(error) {
+//         console.error("Error checking admin db");
+//         return false;
+//     }
+// }
 
 // Remove Librarian (via Email)
 export async function deleteLibrarian(userEmail: string): Promise<string> {
@@ -458,4 +458,36 @@ export async function deleteLibrarian(userEmail: string): Promise<string> {
     }
 
     return idDeleted;
+}
+
+// ----- GET USER ROLE -----
+export async function getUserRole(userID: string | null | undefined, email: string | null | undefined): Promise<UserRole> {
+    try {
+        if (!userID) {
+            console.log("Error: No valid ID");
+            return undefined;
+        }
+
+        let querySnapshot = await getDoc(doc(db, "admins", userID));
+        if (querySnapshot.exists()) {
+            return "Admin";
+        }
+
+        querySnapshot = await getDoc(doc(db, "librarians", userID));
+        if (querySnapshot.exists()) {
+            return "Librarian";
+        }
+
+        const verify = /\.shs/;
+        if (verify.test(String(email))) {
+            return "SHS-Student";
+        }
+    } 
+
+    catch(error) {
+        console.error("Error checking role in db");
+        return undefined;
+    }
+
+    return "Student";
 }
