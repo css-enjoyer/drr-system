@@ -57,7 +57,6 @@ export async function getReservationEvents(branch: string): Promise<ProcessedEve
                 end: (resEventData.end as Timestamp).toDate(),
 
                 color: resEventData.color,
-                editable: resEventData.editable,
 
                 branchId: resEventData.branchId,
                 room_id: resEventData.room_id,
@@ -87,7 +86,6 @@ export async function getReservationEventById(resEventId: string): Promise<Proce
         start: new Date(),
         end: new Date(),
         color: '',
-        editable: false,
         branchId: '',
         room_id: 0,
         date: new Date(),
@@ -112,7 +110,6 @@ export async function getReservationEventById(resEventId: string): Promise<Proce
                 end: (resEventData.end as Timestamp).toDate(),
 
                 color: resEventData.color,
-                editable: resEventData.editable,
 
                 branchId: resEventData.branchId,
                 room_id: resEventData.room_id,
@@ -251,7 +248,6 @@ export async function getReservationEventsLogs(branch: string): Promise<Processe
                 end: (resEventData.end as Timestamp).toDate(),
 
                 color: resEventData.color,
-                editable: false,
 
                 branchId: resEventData.branchId,
                 room_id: resEventData.room_id,
