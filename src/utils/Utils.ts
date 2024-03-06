@@ -40,11 +40,11 @@ export function toTitleCase(inputString: string | null | undefined) {
 //     return !!(librarians.find((librarian) => librarian.userEmail === email));
 // }
 
-export function isSHS(email: string | null | undefined): boolean {
-    if (!email) {
-        console.log("Error: Not logged in");
-        return false;
-    }
-    const verify = /shs/;
-    return verify.test(email);
-}
+// export function isSHS(email: string | null | undefined): boolean {
+//     if (!email) {
+//         console.log("Error: Not logged in");
+//         return false;
+//     }
+//     const verify = /\.shs/;
+//     return verify.test(email);
+// }

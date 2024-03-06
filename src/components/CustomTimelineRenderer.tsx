@@ -1,16 +1,15 @@
 import { Scheduler } from "@aldabil/react-scheduler"
 import { ProcessedEvent, SchedulerHelpers } from "@aldabil/react-scheduler/types";
-import { Autocomplete, Box, Button, Container, DialogActions, Grid, TextField, Typography, useScrollTrigger } from "@mui/material";
+import { Autocomplete, Box, Button, Container, DialogActions, Grid, TextField, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import drImage from "../styles/images/dr1.jpg";
 import { AuthContext } from "../utils/AuthContext";
-import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getReservationEvents, getRooms, isAdmin, isLibrarian, toggleEventEditable } from "../firebase/dbHandler";
+import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getReservationEvents, getRooms,toggleEventEditable } from "../firebase/dbHandler";
 import { TimePicker } from "@mui/x-date-pickers";
-import { DurationOption, ReservationEvent, RoomProps} from "../Types";
+import { DurationOption, ReservationEvent, RoomProps, UserRole} from "../Types";
 import { generateRandomSequence } from "../utils/Utils.ts"
 import { Numbers, Portrait, TextSnippet } from "@mui/icons-material";
 import Loading from "./miscellaneous/Loading";
-import { auth } from "../firebase/config.ts";
 
 const durationOptions: DurationOption[] = [{ duration: 30, label: "30 Minutes" }, { duration: 60, label: "1 Hour" }, { duration: 90, label: "90 Minutes" }, { duration: 120, label: "2 Hours" }]
 
@@ -20,15 +19,12 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
     const [roomsState, setRoomsState] = useState<RoomProps[]>([]);
     const [eventsState, setEventsState] = useState<ProcessedEvent[]>([]);
-    const [userType, setUserType] = useState<"admin" | "librarian" | "student" | undefined> (undefined);
+    const [userRole, setUserRole] = useState<UserRole>();
 
     useEffect(() => {
+        setUserRole(authContext?.userRole);
         fetchRooms();
         fetchReservationEvents();
-    }, []);
-
-    useEffect(() => {
-        verifyUserType();
     }, []);
 
     const fetchRooms = async () => {
@@ -40,7 +36,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             room_id: room.roomId,
             roomBranch: room.roomBranch,
             title: room.roomTitle,
-            color: "darkblue", //TODO DONE: Change this dynamically based on event type (Reservation, Occupied, Unavailable)
+            color: "darkblue",
         }));
         console.log("transformed rooms")
         console.log(transformedResources)
@@ -63,19 +59,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         fetchReservationEvents();
     }
 
-    const verifyUserType = async () => {
-        const adminResult = await isAdmin(authContext?.user?.uid);
-        const librarianResult = await isLibrarian(authContext?.user?.uid);
-
-        setUserType(
-            adminResult 
-            ? "admin"
-            : librarianResult
-            ? "librarian"
-            : "student"
-        );
-    }
-
     interface CustomEditorProps {
         scheduler: SchedulerHelpers;
     }
@@ -88,7 +71,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         const [formState, setFormState] = useState({
             // event fields
             eventId: event?.event_id || "lmao",
-            title: event?.title || "Reserved", //TODO DONE: Change dynamically (Reservation, Occupied, Unavailable)
+            title: event?.title || "Reserved",
             start: event?.start || scheduler.state.start.value,
             end: event?.end || scheduler.state.end.value,
 
@@ -302,13 +285,13 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                             <Typography variant="caption" >Reason for Reservation: {eventsState.find(eventState => eventState.event_id === event.event_id)?.purp}</Typography>
                         </Box>
                         {/* TODO: Retrieve and display all participant emails */}
-                        {/* FIXME: userType returns `undefined` */}
-                        {true ||userType === "admin" || userType === "librarian" ?
+                        {userRole === "Admin" || userRole === "Librarian" ?
                             <Container>
                                 <Container sx={{ display: "flex", alignItems: "center", justifyContent: "space-evenly", my: "10px" }}>
                                     <Button size="small" onClick={() => {
                                         toggleEventEditable(event.event_id + "");
                                         fetchReservationEvents();
+                                        // console.log(`User role is: ${userRole}`)
                                     }}>Toggle Event Editor</Button>
                                 </Container>
                                 <Container sx={{ display: "flex", alignItems: "center", justifyContent: "space-evenly", my: "10px" }}>
@@ -339,9 +322,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 },
             ]}
             onDelete={handleDelete}
-            // FIXME: userType returns `undefined`
-
-            // deletable={userType === "admin" || userType === "librarian"}
+            deletable={userRole === "Admin" || userRole === "Librarian"}
             // editable={userType === "admin" || userType === "librarian"}
         />
     );
