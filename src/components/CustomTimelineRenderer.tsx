@@ -53,6 +53,26 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         setEventsState(resEvents);
     }
 
+    // ----- LOADING STATE WHILE FETCHING ROOMS -----
+    if (roomsState.length === 0) {
+        console.log("Bruh");
+        // Render loading component
+        return (
+            <div
+                style={{
+                    minHeight: "100vh",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                }}
+            >
+                {/* Loading content */}
+                <Loading />
+            </div>
+        );
+    }
+
+    // ----- CUSTOM FUNCTIONS -----
     const handleDelete = async (deletedId: string) => {
         await deleteReservationEvent(deletedId);
         fetchReservationEvents();
@@ -63,6 +83,9 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         fetchReservationEvents();
     }
 
+    /******************************
+     *  CUSTOM FORM EDITOR
+     ******************************/
     interface CustomEditorProps {
         scheduler: SchedulerHelpers;
     }
@@ -154,8 +177,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             }
         };
 
-
-        return ( // return custom form
+        return (
             <Grid
                 width={{ lg: "80vw", md: "80vw", sm: "100%" }}
                 height={{ lg: "90vh", md: "90vh", sm: "100%", }}
@@ -243,24 +265,9 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         );
     };
 
-    if (roomsState.length === 0) {
-        console.log("Bruh");
-        // Render loading component
-        return (
-            <div
-                style={{
-                    minHeight: "100vh",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                }}
-            >
-                {/* Loading content */}
-                <Loading />
-            </div>
-        );
-    }
-
+    /******************************
+     *  CUSTOM EVENT VIEWER 
+     ******************************/
     const CustomViewer = (event: ProcessedEvent, close: () => void): JSX.Element => {
         return (
             <Grid sx={{
