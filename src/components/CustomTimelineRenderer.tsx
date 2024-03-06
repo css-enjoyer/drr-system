@@ -275,19 +275,17 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 flexDirection: "column",
                 gap: "5px"
             }}>
-                {/* Values only reflect upon refresh */}
-                {/* FIXME: store in useState */}
                 <Box sx={{ display: "flex", alignItems: "center", gap: "7px" }}>
                     <Portrait sx={{ marginLeft: "-4px", }} />
-                    <Typography variant="caption" >Representative: {eventsState.find(eventState => eventState.event_id === event.event_id)?.stuRep}</Typography>
+                    <Typography variant="caption" >Representative: {event?.stuRep}</Typography>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center", gap: "7px" }}>
                     <Numbers sx={{ marginLeft: "-4px", }} />
-                    <Typography variant="caption" >Number of Participants: {eventsState.find(eventState => eventState.event_id === event.event_id)?.pax}</Typography>
+                    <Typography variant="caption" >Number of Participants: {event?.pax}</Typography>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center", gap: "7px" }}>
                     <TextSnippet sx={{ marginLeft: "-4px", }} />
-                    <Typography variant="caption" >Reason for Reservation: {eventsState.find(eventState => eventState.event_id === event.event_id)?.purp}</Typography>
+                    <Typography variant="caption" >Reason for Reservation: {event?.purp}</Typography>
                 </Box>
                 {/* TODO: Retrieve and display all participant emails */}
                 {authContext?.userRole === "Admin" || authContext?.userRole === "Librarian" ?
