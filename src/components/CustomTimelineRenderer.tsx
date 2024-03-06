@@ -23,10 +23,8 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
     const [roomsState, setRoomsState] = useState<RoomProps[]>([]);
     const [eventsState, setEventsState] = useState<ProcessedEvent[]>([]);
-    const [userRole, setUserRole] = useState<UserRole>();
 
     useEffect(() => {
-        setUserRole(authContext?.userRole);
         fetchRooms();
         fetchReservationEvents();
     }, []);
@@ -292,7 +290,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     <Typography variant="caption" >Reason for Reservation: {eventsState.find(eventState => eventState.event_id === event.event_id)?.purp}</Typography>
                 </Box>
                 {/* TODO: Retrieve and display all participant emails */}
-                {userRole === "Admin" || userRole === "Librarian" ?
+                {authContext?.userRole === "Admin" || authContext?.userRole === "Librarian" ?
                     <Container>
                         <Container sx={{ display: "flex", alignItems: "center", justifyContent: "space-evenly", my: "10px" }}>
                             <Button size="small" onClick={() => {
