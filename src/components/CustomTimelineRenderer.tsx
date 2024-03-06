@@ -4,7 +4,7 @@ import { Autocomplete, Box, Button, Container, DialogActions, Grid, TextField, T
 import { useContext, useEffect, useRef, useState } from "react";
 import drImage from "../styles/images/dr1.jpg";
 import { AuthContext } from "../utils/AuthContext";
-import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getReservationEvents, getRooms, toggleEventEditable } from "../firebase/dbHandler";
+import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getReservationEvents, getRooms } from "../firebase/dbHandler";
 import { TimePicker } from "@mui/x-date-pickers";
 import { DurationOption, ReservationEvent, RoomProps, UserRole } from "../Types";
 import { generateRandomSequence } from "../utils/Utils.ts"
@@ -333,8 +333,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 },
             ]}
             onDelete={handleDelete}
-            deletable={userRole === "Admin" || userRole === "Librarian"}
-        // editable={userType === "admin" || userType === "librarian"}
         />
     );
 }
