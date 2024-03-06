@@ -10,7 +10,6 @@ export interface ReservationEvent {
 
     // optional types for events
     color: string,
-    editable: boolean,
 
     branchId: string;
     room_id: number;

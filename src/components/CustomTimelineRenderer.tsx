@@ -1,12 +1,12 @@
 import { Scheduler } from "@aldabil/react-scheduler"
-import { ProcessedEvent, SchedulerHelpers } from "@aldabil/react-scheduler/types";
+import { ProcessedEvent, SchedulerHelpers, SchedulerRef } from "@aldabil/react-scheduler/types";
 import { Autocomplete, Box, Button, Container, DialogActions, Grid, TextField, Typography } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import drImage from "../styles/images/dr1.jpg";
 import { AuthContext } from "../utils/AuthContext";
-import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getReservationEvents, getRooms,toggleEventEditable } from "../firebase/dbHandler";
+import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getReservationEvents, getRooms, toggleEventEditable } from "../firebase/dbHandler";
 import { TimePicker } from "@mui/x-date-pickers";
-import { DurationOption, ReservationEvent, RoomProps, UserRole} from "../Types";
+import { DurationOption, ReservationEvent, RoomProps, UserRole } from "../Types";
 import { generateRandomSequence } from "../utils/Utils.ts"
 import { Numbers, Portrait, TextSnippet } from "@mui/icons-material";
 import Loading from "./miscellaneous/Loading";
@@ -15,6 +15,10 @@ const durationOptions: DurationOption[] = [{ duration: 30, label: "30 Minutes" }
 
 
 function CustomTimelineRenderer({ branchId }: { branchId: string }) {
+    const timelineRef = useRef<SchedulerRef>(null);
+    console.log("TIMELINE REF");
+    console.log(timelineRef);
+
     const authContext = useContext(AuthContext);
 
     const [roomsState, setRoomsState] = useState<RoomProps[]>([]);
@@ -120,7 +124,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     end: formState.end,
 
                     color: formState.color,
-                    editable: formState.editable,
 
                     branchId: formState.branchId,
                     room_id: formState.roomId,
@@ -258,54 +261,62 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         );
     }
 
+    const CustomViewer = (event: ProcessedEvent, close: () => void): JSX.Element => {
+        return (
+            <Grid sx={{
+                width: "100%",
+                padding: "5px",
+                display: "flex",
+                flexDirection: "column",
+                gap: "5px"
+            }}>
+                {/* Values only reflect upon refresh */}
+                {/* FIXME: store in useState */}
+                <Box sx={{ display: "flex", alignItems: "center", gap: "7px" }}>
+                    <Portrait sx={{ marginLeft: "-4px", }} />
+                    <Typography variant="caption" >Representative: {eventsState.find(eventState => eventState.event_id === event.event_id)?.stuRep}</Typography>
+                </Box>
+                <Box sx={{ display: "flex", alignItems: "center", gap: "7px" }}>
+                    <Numbers sx={{ marginLeft: "-4px", }} />
+                    <Typography variant="caption" >Number of Participants: {eventsState.find(eventState => eventState.event_id === event.event_id)?.pax}</Typography>
+                </Box>
+                <Box sx={{ display: "flex", alignItems: "center", gap: "7px" }}>
+                    <TextSnippet sx={{ marginLeft: "-4px", }} />
+                    <Typography variant="caption" >Reason for Reservation: {eventsState.find(eventState => eventState.event_id === event.event_id)?.purp}</Typography>
+                </Box>
+                {/* TODO: Retrieve and display all participant emails */}
+                {userRole === "Admin" || userRole === "Librarian" ?
+                    <Container>
+                        <Container sx={{ display: "flex", alignItems: "center", justifyContent: "space-evenly", my: "10px" }}>
+                            <Button size="small" onClick={() => {
+                                console.log("In custom edit")
+                                timelineRef.current?.scheduler.triggerDialog(true, event);
+                                close();
+                            }}>Edit</Button>
+
+                            <Button size="small" onClick={() => {
+                                console.log("In custom delete")
+                                handleDelete(event.event_id + "");
+                            }}>Delete</Button>
+                        </Container>
+                        <Container sx={{ display: "flex", alignItems: "center", justifyContent: "space-evenly", my: "10px" }}>
+                            <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Unavailable")}>Set as Unavailable</Button>
+                            <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Departed")}>Confirm Departure</Button>
+                            <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Occupied")}>Confirm Arrival</Button>
+                            {/* // TODO: Button onclick open larger view */}
+                        </Container>
+                    </Container>
+                    : <Container></Container>
+                }
+            </Grid>
+        );
+    }
+
     return (
         <Scheduler dialogMaxWidth="xl"
+            ref={timelineRef}
             customEditor={(scheduler) => <CustomEditor scheduler={scheduler} />}
-            viewerExtraComponent={(fields, event) => {
-                return (
-                    <Grid sx={{
-                        width: "100%",
-                        padding: "5px",
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "5px"
-                    }}>
-                        {/* Values only reflect upon refresh */}
-                        {/* FIXME: store in useState */}
-                        <Box sx={{ display: "flex", alignItems: "center", gap: "7px" }}>
-                            <Portrait sx={{ marginLeft: "-4px", }} />
-                            <Typography variant="caption" >Representative: {eventsState.find(eventState => eventState.event_id === event.event_id)?.stuRep}</Typography>
-                        </Box>
-                        <Box sx={{ display: "flex", alignItems: "center", gap: "7px" }}>
-                            <Numbers sx={{ marginLeft: "-4px", }} />
-                            <Typography variant="caption" >Number of Participants: {eventsState.find(eventState => eventState.event_id === event.event_id)?.pax}</Typography>
-                        </Box>
-                        <Box sx={{ display: "flex", alignItems: "center", gap: "7px" }}>
-                            <TextSnippet sx={{ marginLeft: "-4px", }} />
-                            <Typography variant="caption" >Reason for Reservation: {eventsState.find(eventState => eventState.event_id === event.event_id)?.purp}</Typography>
-                        </Box>
-                        {/* TODO: Retrieve and display all participant emails */}
-                        {userRole === "Admin" || userRole === "Librarian" ?
-                            <Container>
-                                <Container sx={{ display: "flex", alignItems: "center", justifyContent: "space-evenly", my: "10px" }}>
-                                    <Button size="small" onClick={() => {
-                                        toggleEventEditable(event.event_id + "");
-                                        fetchReservationEvents();
-                                        // console.log(`User role is: ${userRole}`)
-                                    }}>Toggle Event Editor</Button>
-                                </Container>
-                                <Container sx={{ display: "flex", alignItems: "center", justifyContent: "space-evenly", my: "10px" }}>
-                                    <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Unavailable")}>Set as Unavailable</Button>
-                                    <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Departed")}>Confirm Departure</Button>
-                                    <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Occupied")}>Confirm Arrival</Button>
-                                    {/* // TODO: Button onclick open larger view */}
-                                </Container>
-                            </Container>
-                            : <Container></Container>
-                        }
-                    </Grid>
-                );
-            }}
+            customViewer={CustomViewer}
             view="day"
             events={eventsState}
             day={{
@@ -323,7 +334,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             ]}
             onDelete={handleDelete}
             deletable={userRole === "Admin" || userRole === "Librarian"}
-            // editable={userType === "admin" || userType === "librarian"}
+        // editable={userType === "admin" || userType === "librarian"}
         />
     );
 }
