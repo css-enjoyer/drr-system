@@ -7,7 +7,7 @@ import { AuthContext } from "../utils/AuthContext";
 import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getReservationEvents, getRooms } from "../firebase/dbHandler";
 import { TimePicker } from "@mui/x-date-pickers";
 import { DurationOption, ReservationEvent, RoomProps } from "../Types";
-import { generateRandomSequence } from "../utils/Utils.ts"
+import { formatDate, generateRandomSequence, isReservationOverlapping } from "../utils/Utils.ts"
 import { Numbers, Portrait, TextSnippet } from "@mui/icons-material";
 import Loading from "./miscellaneous/Loading";
 
@@ -158,45 +158,22 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 if (!event) {
                     console.log("in create");
 
-                    // *** TRANSFER
-                    function dateRangeOverlaps(
-                            a_start: Date, 
-                            a_end: Date, 
-                            b_start: Date, 
-                            b_end: Date
-                        ) {
-                        // Check for complete overlap or traditional overlap
-                        if (b_start.getTime() <= a_start.getTime() && a_end.getTime() <= b_end.getTime() ||
-                        b_start.getTime() < a_end.getTime() && a_start.getTime() < b_end.getTime()) {
-                            return true;
-                        }
-
-                        // Disallow specific scenario (08:00 - 10:00 overlapping with 09:00 - 09:30)
-                        return a_start.getTime() < b_start.getTime() && a_end.getTime() > b_end.getTime();
-                    }
-
-                    // FORMATTING DATE OF RESERVATION
                     const formattedResDate = 
-                            formState.start.getDate() 
-                            + "/" 
-                            + formState.start.getMonth() 
-                            + "/" 
-                            + formState.start.getFullYear();
-                    // console.log(`FORM RESERVATION DATE: ${formattedResDate}`);
+                        formatDate(
+                            formState.start.getDate(), 
+                            formState.start.getMonth(), 
+                            formState.start.getFullYear()
+                        );
 
-                    // FORMATTING RESERVATIONS IN DB
+                    // Filtering reservations according to room and date
                     const filteredEventsState = eventsState.filter((resEvent) => {
                         const eventDate = new Date(resEvent.start);
-
                         const formattedEventDate = 
-                            eventDate.getDate() 
-                            + "/" 
-                            + eventDate.getMonth() 
-                            + "/" 
-                            + eventDate.getFullYear();
-
-                        let x = 1;
-                        // console.log(`DB RESERVATION DATE ${x++}: ${formattedEventDate}`);
+                            formatDate(
+                                eventDate.getDate().toString(),
+                                eventDate.getMonth().toString(),
+                                eventDate.getFullYear().toString()
+                            );
 
                         return (
                             resEvent.room_id === formState.roomId
@@ -204,23 +181,14 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         );
                     });
 
-                    // console.log(filteredEventsState);
-
                     // COMPARING DATE OF RESERVATION TO RESERVATIONS IN DB
                     const isOverlapping = filteredEventsState.some((resEvent) => {
-                        const isIt = 
-                            (dateRangeOverlaps(
+                        return (
+                            isReservationOverlapping(
                                 formState.start, formState.end, 
                                 resEvent.start, resEvent.end
-                            ));
-
-                        console.log(`OVERLAPPING? ${isIt}`);
-                        console.log(`FormState Date Start: ${formState.start}`);
-                        console.log(`FormState Date End: ${formState.end}`);
-                        console.log(`ResEvent Date Start: ${resEvent.start}`);
-                        console.log(`ResEvent Date End: ${resEvent.end}`);
-
-                        return isIt;
+                            )
+                        );
                     });
 
                     if (!isOverlapping) {
@@ -230,9 +198,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     else {
                         alert("Reservation will overlap!");
                     }
-
-                    // await addReservationEvent(newResEvent);
-                    // fetchReservationEvents();
                 } else {
                     console.log("in edit")
                     await editReservationEvent(event.event_id + "", newResEvent);
