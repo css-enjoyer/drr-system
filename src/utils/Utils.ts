@@ -1,3 +1,8 @@
+// Used to format database's reservation dates
+export function formatDate(date: string, month: string, year: string) {
+    return date + "/" + month + "/" + year;
+}
+
 // used to generate receipts
 export function generateRandomSequence() {
     const length = 10;
@@ -10,6 +15,22 @@ export function generateRandomSequence() {
     }
 
     return randomSequence;
+}
+
+export function isReservationOverlapping(
+    a_start: Date, 
+    a_end: Date, 
+    b_start: Date, 
+    b_end: Date
+) {
+
+if (b_start.getTime() <= a_start.getTime() && a_end.getTime() <= b_end.getTime() 
+    ||b_start.getTime() < a_end.getTime() && a_start.getTime() < b_end.getTime()) {
+    
+    return true;
+}
+
+return a_start.getTime() < b_start.getTime() && a_end.getTime() > b_end.getTime();
 }
 
 export function toTitleCase(inputString: string | null | undefined) {
