@@ -15,8 +15,8 @@ function SelectBranch() {
     const [branches, setBranches] = useState<Branch[]>([]);
 
     // * CHECKER
-    console.log("is SHS?");
-    console.log(authContext?.userRole === "SHS-Student");
+    // console.log("is SHS?");
+    // console.log(authContext?.userRole === "SHS-Student");
 
     useEffect(() => {
         const fetchData = async () => {
