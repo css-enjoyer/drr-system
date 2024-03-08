@@ -7,7 +7,7 @@ import { AuthContext } from "../utils/AuthContext";
 import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getReservationEvents, getRooms } from "../firebase/dbHandler";
 import { TimePicker } from "@mui/x-date-pickers";
 import { DurationOption, ReservationEvent, RoomProps } from "../Types";
-import { filterReservations, formatDate, generateRandomSequence, isOverlapping, isReservationOverlapping } from "../utils/Utils.ts"
+import { checkReservationTimeOverlap, formatDate, generateRandomSequence, isReservationOverlapping } from "../utils/Utils.ts"
 import { Numbers, Portrait, TextSnippet } from "@mui/icons-material";
 import Loading from "./miscellaneous/Loading";
 
@@ -181,7 +181,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
                     const isOverlapping = filteredEventsState.some((resEvent) => {
                         return (
-                            isReservationOverlapping(
+                            checkReservationTimeOverlap(
                                 formState.start, formState.end, 
                                 resEvent.start, resEvent.end
                             )
@@ -208,18 +208,12 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         newResEvent.start.getFullYear().toString()
                     );
 
-                    const filteredEventsState = filterReservations(
-                        editRoomId,
+                    const overlapping = isReservationOverlapping(
+                        eventsState,
                         editResStart,
                         editResEnd,
-                        eventsState,
+                        editRoomId,
                         formattedNewDate
-                    );
-
-                    const overlapping = isOverlapping(
-                        filteredEventsState,
-                        editResStart,
-                        editResEnd
                     );
 
                     if (!overlapping) {
