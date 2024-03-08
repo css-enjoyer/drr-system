@@ -75,7 +75,6 @@ export function isReservationOverlapping(
         dateStart.getFullYear().toString()
     );
 
-    console.log(editOperation);
     const filteredEvents = filterReservations(
         roomId,
         formattedResDate,
