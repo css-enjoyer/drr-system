@@ -1,4 +1,3 @@
-// Used to format database's reservation dates
 export function formatDate(date: string, month: string, year: string) {
     return date + "/" + month + "/" + year;
 }
