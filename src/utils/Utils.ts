@@ -49,6 +49,7 @@ export function filterReservations(
     eventsState: ProcessedEvent[],
     dateForComparison: string
 ): ProcessedEvent[] {
+
     const res = eventsState.filter((e) => {
         const resDate = new Date(e.start);
         const formattedResDate = formatDate(
@@ -65,20 +66,23 @@ export function filterReservations(
         );
     });
 
-    // *** CHECKERS
-    // console.log(`roomId: ${roomId}`);
-    // console.log(`dateStart: ${dateStart}`);
-    // console.log(`dateEnd: ${dateEnd}`);
-    // console.log(`dateForComparison: ${dateForComparison}`);
-    // eventsState.forEach((e) => {
-    //     console.log(e.start);
-    //     console.log(e.end);
-    // });
+    return res;
+}
 
-    // res.forEach((e) => {
-    //     console.log(e.start);
-    //     console.log(e.end);
-    // });
+export function isOverlapping(
+    filteredEvents: ProcessedEvent[],
+    newStart: Date, 
+    newEnd: Date
+): boolean {
+
+    const res = filteredEvents.some((e) => {
+        return (
+            isReservationOverlapping(
+                newStart, newEnd, 
+                e.start, e.end
+            )
+        );
+    });
 
     return res;
 }
