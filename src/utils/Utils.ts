@@ -16,12 +16,39 @@ if (b_start.getTime() <= a_start.getTime() && a_end.getTime() <= b_end.getTime()
 return a_start.getTime() < b_start.getTime() && a_end.getTime() > b_end.getTime();
 }
 
+// export function filterReservations(
+//     roomId: number,
+//     dateStart: Date,
+//     dateEnd: Date,
+//     eventsState: ProcessedEvent[],
+//     dateForComparison: string
+// ): ProcessedEvent[] {
+
+//     const res = eventsState.filter((e) => {
+//         const resDate = new Date(e.start);
+//         const formattedResDate = formatDate(
+//             resDate.getDate().toString(),
+//             resDate.getMonth().toString(),
+//             resDate.getFullYear().toString()
+//         );
+
+//         return (
+//             e.room_id === roomId
+//             && formattedResDate === dateForComparison
+//             && e.start !== dateStart
+//             && e.end !== dateEnd
+//         );
+//     });
+
+//     return res;
+// }
+
 export function filterReservations(
     roomId: number,
-    dateStart: Date,
-    dateEnd: Date,
+    dateForComparison: string,
     eventsState: ProcessedEvent[],
-    dateForComparison: string
+    dateStart?: Date,
+    dateEnd?: Date
 ): ProcessedEvent[] {
 
     const res = eventsState.filter((e) => {
@@ -35,8 +62,8 @@ export function filterReservations(
         return (
             e.room_id === roomId
             && formattedResDate === dateForComparison
-            && e.start !== dateStart
-            && e.end !== dateEnd
+            && (dateStart === undefined || e.start !== dateStart)
+            && (dateEnd === undefined || e.end !== dateEnd)
         );
     });
 
@@ -66,15 +93,17 @@ export function isReservationOverlapping(
     dateStart: Date, 
     dateEnd: Date,
     roomId: number, 
-    formattedNewDate: string
+    formattedNewDate: string,
+    editOperation?: boolean
 ): boolean {
 
+    console.log(editOperation);
     const filteredEvents = filterReservations(
         roomId,
-        dateStart,
-        dateEnd,
+        formattedNewDate,
         eventsState,
-        formattedNewDate
+        editOperation ? dateStart : undefined,
+        editOperation ? dateEnd : undefined
     );
 
     const res = filteredEvents.some((e) => {
