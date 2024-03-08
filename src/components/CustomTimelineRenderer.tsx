@@ -235,12 +235,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         newResEvent.start.getFullYear().toString()
                     );
 
-                    // *** CHECKER
-                    // console.log(`START: ${newResEvent.start}`);
-                    // console.log(`END: ${newResEvent.end}`);
-                    // console.log(`DATE OF NEW: ${formattedNewDate}`);
-
-                    // Filtering reservations according to room and date
                     const filteredEventsState = eventsState.filter((resEvent) => {
                         const resEventDate = new Date(resEvent.start);
                         const formattedResEventDate = formatDate(
@@ -271,13 +265,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         );
                     });
 
-                    // *** CHECKER
-                    filteredEventsState.forEach((event) => {
-                       console.log(`EVENT START: ${event.start}`);
-                       console.log(`EVENT END: ${event.end}`);
-                    });
-                    // console.log(`OVERLAPPING: ${isOverlapping}`);
-
                     if (!isOverlapping) {
                         await editReservationEvent(event.event_id + "", newResEvent);
                         fetchReservationEvents();
@@ -286,9 +273,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         // UPDATE: Error dialog
                         alert("Editing this reservation will result in an overlap!");
                     }
-
-                    // await editReservationEvent(event.event_id + "", newResEvent);
-                    // fetchReservationEvents();
                 }
                 scheduler.close();
             } finally {
