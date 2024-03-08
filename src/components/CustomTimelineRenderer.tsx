@@ -162,18 +162,18 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     const addResRoomId = formState.roomId;
                     const addResStart = formState.start;
                     const addResEnd = formState.end;
-                    const formattedResDate = formatDate(
-                        addResStart.getDate(), 
-                        addResStart.getMonth(), 
-                        addResStart.getFullYear()
-                    );
+                    // const formattedResDate = formatDate(
+                    //     addResStart.getDate(), 
+                    //     addResStart.getMonth(), 
+                    //     addResStart.getFullYear()
+                    // );
 
                     const overlapping = isReservationOverlapping(
                         eventsState,
                         addResStart,
                         addResEnd,
                         addResRoomId,
-                        formattedResDate,
+                        // formattedResDate
                     );
 
                     if (!overlapping) {
@@ -190,18 +190,18 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     const editResRoomId = newResEvent.room_id;
                     const editResStart = newResEvent.start;
                     const editResEnd = newResEvent.end;
-                    const formattedResDate = formatDate(
-                        newResEvent.start.getDate().toString(), 
-                        newResEvent.start.getMonth().toString(), 
-                        newResEvent.start.getFullYear().toString()
-                    );
+                    // const formattedResDate = formatDate(
+                    //     newResEvent.start.getDate().toString(), 
+                    //     newResEvent.start.getMonth().toString(), 
+                    //     newResEvent.start.getFullYear().toString()
+                    // );
 
                     const overlapping = isReservationOverlapping(
                         eventsState,
                         editResStart,
                         editResEnd,
                         editResRoomId,
-                        formattedResDate,
+                        // formattedResDate,
                         true
                     );
 
