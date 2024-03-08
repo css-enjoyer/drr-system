@@ -208,22 +208,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         newResEvent.start.getFullYear().toString()
                     );
 
-                    // const filteredEventsState = eventsState.filter((resEvent) => {
-                    //     const resEventDate = new Date(resEvent.start);
-                    //     const formattedResEventDate = formatDate(
-                    //         resEventDate.getDate().toString(),
-                    //         resEventDate.getMonth().toString(),
-                    //         resEventDate.getFullYear().toString()
-                    //     );
-
-                    //     return (
-                    //         resEvent.room_id === editRoomId
-                    //         && formattedResEventDate === formattedNewDate
-                    //         && resEvent.start !== editResStart
-                    //         && resEvent.end !== editResEnd
-                    //     );
-                    // });
-
                     const filteredEventsState = filterReservations(
                         editRoomId,
                         editResStart,
@@ -232,33 +216,11 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         formattedNewDate
                     );
 
-                    // const isOverlapping = filteredEventsState.some((resEvent) => {
-                    //     // console.log(`OVERLAPPING: ${isReservationOverlapping(
-                    //     //     newResEvent.start, newResEvent.end, 
-                    //     //         resEvent.start, resEvent.end
-                    //     // )}`);
-                    //     return (
-                    //         isReservationOverlapping(
-                    //             editResStart, editResEnd, 
-                    //             resEvent.start, resEvent.end
-                    //         )
-                    //     );
-                    // });
-
                     const overlapping = isOverlapping(
                         filteredEventsState,
                         editResStart,
                         editResEnd
                     );
-
-                    // if (!isOverlapping) {
-                    //     await editReservationEvent(event.event_id + "", newResEvent);
-                    //     fetchReservationEvents();
-                    // }
-                    // else {
-                    //     // UPDATE: Error dialog
-                    //     alert("Editing this reservation will result in an overlap!");
-                    // }
 
                     if (!overlapping) {
                         await editReservationEvent(event.event_id + "", newResEvent);
