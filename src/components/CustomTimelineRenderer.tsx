@@ -196,16 +196,16 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
                     // Filtering reservations according to room and date
                     const filteredEventsState = eventsState.filter((resEvent) => {
-                        const eventDate = new Date(resEvent.start);
-                        const formattedEventDate = formatDate(
-                            eventDate.getDate().toString(),
-                            eventDate.getMonth().toString(),
-                            eventDate.getFullYear().toString()
+                        const resEventDate = new Date(resEvent.start);
+                        const formattedResEventDate = formatDate(
+                            resEventDate.getDate().toString(),
+                            resEventDate.getMonth().toString(),
+                            resEventDate.getFullYear().toString()
                         );
 
                         return (
                             resEvent.room_id === formState.roomId
-                            && formattedResDate === formattedEventDate
+                            && formattedResDate === formattedResEventDate
                         );
                     });
 
