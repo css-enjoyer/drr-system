@@ -134,35 +134,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         const handleSubmit = async () => {
             console.log("in handle submit");
 
-            // const formattedResDate = formatDate(
-            //     formState.start.getMonth(), 
-            //     formState.start.getDate(), 
-            //     formState.start.getFullYear()
-            // );
-
-            // const filteredEventsState = eventsState.filter((resEvent) => {
-            //     const eventDate = new Date(resEvent.start);
-            //     const formattedEventDate = formatDate(
-            //         eventDate.getDate().toString(), 
-            //         eventDate.getMonth().toString(), 
-            //         eventDate.getFullYear().toString()
-            //     );
-
-            //     return (
-            //         resEvent.room_id === formState.roomId
-            //         && formattedResDate === formattedEventDate
-            //     );
-            // });
-
-            // const isOverlapping = filteredEventsState.some((resEvent) => {
-            //     return (
-            //         isReservationOverlapping(
-            //             formState.start, formState.end, 
-            //             resEvent.start, resEvent.end
-            //         )
-            //     );
-            // });
-
             if (formState.pax < 4 || formState.pax > 12 || formState.purp.length > 100) {
                 return;
             }
