@@ -7,7 +7,7 @@ import { AuthContext } from "../utils/AuthContext";
 import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getReservationEvents, getRooms } from "../firebase/dbHandler";
 import { TimePicker } from "@mui/x-date-pickers";
 import { DurationOption, ReservationEvent, RoomProps } from "../Types";
-import { filterReservations, formatDate, generateRandomSequence, isReservationOverlapping } from "../utils/Utils.ts"
+import { filterReservations, formatDate, generateRandomSequence, isOverlapping, isReservationOverlapping } from "../utils/Utils.ts"
 import { Numbers, Portrait, TextSnippet } from "@mui/icons-material";
 import Loading from "./miscellaneous/Loading";
 
@@ -232,21 +232,35 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         formattedNewDate
                     );
 
-                    const isOverlapping = filteredEventsState.some((resEvent) => {
-                        console.log(`OVERLAPPING: ${isReservationOverlapping(
-                            newResEvent.start, newResEvent.end, 
-                                resEvent.start, resEvent.end
-                        )}`);
+                    // const isOverlapping = filteredEventsState.some((resEvent) => {
+                    //     // console.log(`OVERLAPPING: ${isReservationOverlapping(
+                    //     //     newResEvent.start, newResEvent.end, 
+                    //     //         resEvent.start, resEvent.end
+                    //     // )}`);
+                    //     return (
+                    //         isReservationOverlapping(
+                    //             editResStart, editResEnd, 
+                    //             resEvent.start, resEvent.end
+                    //         )
+                    //     );
+                    // });
 
-                        return (
-                            isReservationOverlapping(
-                                newResEvent.start, newResEvent.end, 
-                                resEvent.start, resEvent.end
-                            )
-                        );
-                    });
+                    const overlapping = isOverlapping(
+                        filteredEventsState,
+                        editResStart,
+                        editResEnd
+                    );
 
-                    if (!isOverlapping) {
+                    // if (!isOverlapping) {
+                    //     await editReservationEvent(event.event_id + "", newResEvent);
+                    //     fetchReservationEvents();
+                    // }
+                    // else {
+                    //     // UPDATE: Error dialog
+                    //     alert("Editing this reservation will result in an overlap!");
+                    // }
+
+                    if (!overlapping) {
                         await editReservationEvent(event.event_id + "", newResEvent);
                         fetchReservationEvents();
                     }
