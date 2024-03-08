@@ -7,7 +7,7 @@ import { AuthContext } from "../utils/AuthContext";
 import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getReservationEvents, getRooms } from "../firebase/dbHandler";
 import { TimePicker } from "@mui/x-date-pickers";
 import { DurationOption, ReservationEvent, RoomProps } from "../Types";
-import { generateRandomSequence } from "../utils/Utils.ts"
+import { checkReservationTimeOverlap, formatDate, generateRandomSequence, isReservationOverlapping } from "../utils/Utils.ts"
 import { Numbers, Portrait, TextSnippet } from "@mui/icons-material";
 import Loading from "./miscellaneous/Loading";
 
@@ -132,7 +132,8 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         }
 
         const handleSubmit = async () => {
-            console.log("in handle submit")
+            console.log("in handle submit");
+
             if (formState.pax < 4 || formState.pax > 12 || formState.purp.length > 100) {
                 return;
             }
@@ -157,17 +158,49 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 }
                 if (!event) {
                     console.log("in create");
-                    /* TASK 3
-                        ---- ADD A VERIFIER
-                        if (isTimeSlotBetween(targetSlot, existingSlot))
-                            throw error
-                    */
-                    await addReservationEvent(newResEvent);
-                    fetchReservationEvents();
+
+                    const addResRoomId = formState.roomId;
+                    const addResStart = formState.start;
+                    const addResEnd = formState.end;
+
+                    const overlapping = isReservationOverlapping(
+                        eventsState,
+                        addResStart,
+                        addResEnd,
+                        addResRoomId,
+                    );
+
+                    if (!overlapping) {
+                        await addReservationEvent(newResEvent);
+                        fetchReservationEvents();
+                    }
+                    else {
+                        // UPDATE: Error dialog
+                        alert("Reservation will overlap!");
+                    }
                 } else {
                     console.log("in edit")
-                    await editReservationEvent(event.event_id + "", newResEvent);
-                    fetchReservationEvents();
+
+                    const editResRoomId = newResEvent.room_id;
+                    const editResStart = newResEvent.start;
+                    const editResEnd = newResEvent.end;
+
+                    const overlapping = isReservationOverlapping(
+                        eventsState,
+                        editResStart,
+                        editResEnd,
+                        editResRoomId,
+                        true
+                    );
+
+                    if (!overlapping) {
+                        await editReservationEvent(event.event_id + "", newResEvent);
+                        fetchReservationEvents();
+                    }
+                    else {
+                        // UPDATE: Error dialog
+                        alert("Editing this reservation will result in an overlap!");
+                    }
                 }
                 scheduler.close();
             } finally {

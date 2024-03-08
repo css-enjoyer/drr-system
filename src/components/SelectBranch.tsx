@@ -14,10 +14,6 @@ function SelectBranch() {
     const [loading, setLoading] = useState(true); // State to track loading status
     const [branches, setBranches] = useState<Branch[]>([]);
 
-    // * CHECKER
-    console.log("is SHS?");
-    console.log(authContext?.userRole === "SHS-Student");
-
     useEffect(() => {
         const fetchData = async () => {
             try {
