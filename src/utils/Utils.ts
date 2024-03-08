@@ -16,33 +16,6 @@ if (b_start.getTime() <= a_start.getTime() && a_end.getTime() <= b_end.getTime()
 return a_start.getTime() < b_start.getTime() && a_end.getTime() > b_end.getTime();
 }
 
-// export function filterReservations(
-//     roomId: number,
-//     dateStart: Date,
-//     dateEnd: Date,
-//     eventsState: ProcessedEvent[],
-//     dateForComparison: string
-// ): ProcessedEvent[] {
-
-//     const res = eventsState.filter((e) => {
-//         const resDate = new Date(e.start);
-//         const formattedResDate = formatDate(
-//             resDate.getDate().toString(),
-//             resDate.getMonth().toString(),
-//             resDate.getFullYear().toString()
-//         );
-
-//         return (
-//             e.room_id === roomId
-//             && formattedResDate === dateForComparison
-//             && e.start !== dateStart
-//             && e.end !== dateEnd
-//         );
-//     });
-
-//     return res;
-// }
-
 export function filterReservations(
     roomId: number,
     dateForComparison: string,
