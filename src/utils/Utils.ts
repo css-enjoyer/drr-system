@@ -65,15 +65,20 @@ export function isReservationOverlapping(
     eventsState: ProcessedEvent[],
     dateStart: Date, 
     dateEnd: Date,
-    roomId: number, 
-    formattedNewDate: string,
+    roomId: number,
     editOperation?: boolean
 ): boolean {
+
+    const formattedResDate = formatDate(
+        dateStart.getDate().toString(),
+        dateStart.getMonth().toString(),
+        dateStart.getFullYear().toString()
+    );
 
     console.log(editOperation);
     const filteredEvents = filterReservations(
         roomId,
-        formattedNewDate,
+        formattedResDate,
         eventsState,
         editOperation ? dateStart : undefined,
         editOperation ? dateEnd : undefined
