@@ -1,3 +1,5 @@
+import { ProcessedEvent } from "@aldabil/react-scheduler/types";
+
 export function formatDate(date: string, month: string, year: string) {
     return date + "/" + month + "/" + year;
 }
@@ -37,4 +39,46 @@ export function toTitleCase(inputString: string | null | undefined) {
         return "";
     }
     return inputString.toLowerCase().replace(/(?:^|\s)\w/g, match => match.toUpperCase());
+}
+
+
+export function filterReservations(
+    roomId: number,
+    dateStart: Date,
+    dateEnd: Date,
+    eventsState: ProcessedEvent[],
+    dateForComparison: string
+): ProcessedEvent[] {
+    const res = eventsState.filter((e) => {
+        const resDate = new Date(e.start);
+        const formattedResDate = formatDate(
+            resDate.getDate().toString(),
+            resDate.getMonth().toString(),
+            resDate.getFullYear().toString()
+        );
+
+        return (
+            e.room_id === roomId
+            && formattedResDate === dateForComparison
+            && e.start !== dateStart
+            && e.end !== dateEnd
+        );
+    });
+
+    // *** CHECKERS
+    // console.log(`roomId: ${roomId}`);
+    // console.log(`dateStart: ${dateStart}`);
+    // console.log(`dateEnd: ${dateEnd}`);
+    // console.log(`dateForComparison: ${dateForComparison}`);
+    // eventsState.forEach((e) => {
+    //     console.log(e.start);
+    //     console.log(e.end);
+    // });
+
+    // res.forEach((e) => {
+    //     console.log(e.start);
+    //     console.log(e.end);
+    // });
+
+    return res;
 }
