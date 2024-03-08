@@ -168,26 +168,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         addResStart.getFullYear()
                     );
 
-                    // const filteredEventsState = filterReservationsForAdd(
-                    //     addResRoomId,
-                    //     formattedResDate,
-                    //     eventsState
-                    // );
-
-                    // const filteredEventsState = eventsState.filter((resEvent) => {
-                    //     const resEventDate = new Date(resEvent.start);
-                    //     const formattedResEventDate = formatDate(
-                    //         resEventDate.getDate().toString(),
-                    //         resEventDate.getMonth().toString(),
-                    //         resEventDate.getFullYear().toString()
-                    //     );
-
-                    //     return (
-                    //         resEvent.room_id === formState.roomId
-                    //         && formattedResDate === formattedResEventDate
-                    //     );
-                    // });
-
                     const overlapping = isReservationOverlapping(
                         eventsState,
                         addResStart,
@@ -195,15 +175,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         addResRoomId,
                         formattedResDate,
                     );
-
-                    // const isOverlapping = filteredEventsState.some((resEvent) => {
-                    //     return (
-                    //         checkReservationTimeOverlap(
-                    //             formState.start, formState.end, 
-                    //             resEvent.start, resEvent.end
-                    //         )
-                    //     );
-                    // });
 
                     if (!overlapping) {
                         await addReservationEvent(newResEvent);
