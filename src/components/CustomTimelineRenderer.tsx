@@ -159,36 +159,53 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 if (!event) {
                     console.log("in create");
 
+                    const addResRoomId = formState.roomId;
+                    const addResStart = formState.start;
+                    const addResEnd = formState.end;
                     const formattedResDate = formatDate(
-                        formState.start.getDate(), 
-                        formState.start.getMonth(), 
-                        formState.start.getFullYear()
+                        addResStart.getDate(), 
+                        addResStart.getMonth(), 
+                        addResStart.getFullYear()
                     );
 
-                    const filteredEventsState = eventsState.filter((resEvent) => {
-                        const resEventDate = new Date(resEvent.start);
-                        const formattedResEventDate = formatDate(
-                            resEventDate.getDate().toString(),
-                            resEventDate.getMonth().toString(),
-                            resEventDate.getFullYear().toString()
-                        );
+                    // const filteredEventsState = filterReservationsForAdd(
+                    //     addResRoomId,
+                    //     formattedResDate,
+                    //     eventsState
+                    // );
 
-                        return (
-                            resEvent.room_id === formState.roomId
-                            && formattedResDate === formattedResEventDate
-                        );
-                    });
+                    // const filteredEventsState = eventsState.filter((resEvent) => {
+                    //     const resEventDate = new Date(resEvent.start);
+                    //     const formattedResEventDate = formatDate(
+                    //         resEventDate.getDate().toString(),
+                    //         resEventDate.getMonth().toString(),
+                    //         resEventDate.getFullYear().toString()
+                    //     );
 
-                    const isOverlapping = filteredEventsState.some((resEvent) => {
-                        return (
-                            checkReservationTimeOverlap(
-                                formState.start, formState.end, 
-                                resEvent.start, resEvent.end
-                            )
-                        );
-                    });
+                    //     return (
+                    //         resEvent.room_id === formState.roomId
+                    //         && formattedResDate === formattedResEventDate
+                    //     );
+                    // });
 
-                    if (!isOverlapping) {
+                    const overlapping = isReservationOverlapping(
+                        eventsState,
+                        addResStart,
+                        addResEnd,
+                        addResRoomId,
+                        formattedResDate,
+                    );
+
+                    // const isOverlapping = filteredEventsState.some((resEvent) => {
+                    //     return (
+                    //         checkReservationTimeOverlap(
+                    //             formState.start, formState.end, 
+                    //             resEvent.start, resEvent.end
+                    //         )
+                    //     );
+                    // });
+
+                    if (!overlapping) {
                         await addReservationEvent(newResEvent);
                         fetchReservationEvents();
                     }
@@ -199,10 +216,10 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 } else {
                     console.log("in edit")
 
-                    const editRoomId = newResEvent.room_id;
+                    const editResRoomId = newResEvent.room_id;
                     const editResStart = newResEvent.start;
                     const editResEnd = newResEvent.end;
-                    const formattedNewDate = formatDate(
+                    const formattedResDate = formatDate(
                         newResEvent.start.getDate().toString(), 
                         newResEvent.start.getMonth().toString(), 
                         newResEvent.start.getFullYear().toString()
@@ -212,8 +229,9 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         eventsState,
                         editResStart,
                         editResEnd,
-                        editRoomId,
-                        formattedNewDate
+                        editResRoomId,
+                        formattedResDate,
+                        true
                     );
 
                     if (!overlapping) {
