@@ -7,7 +7,7 @@ import { AuthContext } from "../utils/AuthContext";
 import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getReservationEvents, getRooms } from "../firebase/dbHandler";
 import { TimePicker } from "@mui/x-date-pickers";
 import { DurationOption, ReservationEvent, RoomProps } from "../Types";
-import { formatDate, generateRandomSequence, isReservationOverlapping } from "../utils/Utils.ts"
+import { filterReservations, formatDate, generateRandomSequence, isReservationOverlapping } from "../utils/Utils.ts"
 import { Numbers, Portrait, TextSnippet } from "@mui/icons-material";
 import Loading from "./miscellaneous/Loading";
 
@@ -165,7 +165,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         formState.start.getFullYear()
                     );
 
-                    // Filtering reservations according to room and date
                     const filteredEventsState = eventsState.filter((resEvent) => {
                         const resEventDate = new Date(resEvent.start);
                         const formattedResEventDate = formatDate(
@@ -200,27 +199,38 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 } else {
                     console.log("in edit")
 
+                    const editRoomId = newResEvent.room_id;
+                    const editResStart = newResEvent.start;
+                    const editResEnd = newResEvent.end;
                     const formattedNewDate = formatDate(
                         newResEvent.start.getDate().toString(), 
                         newResEvent.start.getMonth().toString(), 
                         newResEvent.start.getFullYear().toString()
                     );
 
-                    const filteredEventsState = eventsState.filter((resEvent) => {
-                        const resEventDate = new Date(resEvent.start);
-                        const formattedResEventDate = formatDate(
-                            resEventDate.getDate().toString(),
-                            resEventDate.getMonth().toString(),
-                            resEventDate.getFullYear().toString()
-                        );
+                    // const filteredEventsState = eventsState.filter((resEvent) => {
+                    //     const resEventDate = new Date(resEvent.start);
+                    //     const formattedResEventDate = formatDate(
+                    //         resEventDate.getDate().toString(),
+                    //         resEventDate.getMonth().toString(),
+                    //         resEventDate.getFullYear().toString()
+                    //     );
 
-                        return (
-                            resEvent.room_id === newResEvent.room_id
-                            && formattedResEventDate === formattedNewDate
-                            && resEvent.start !== newResEvent.start
-                            && resEvent.end !== newResEvent.end
-                        );
-                    });
+                    //     return (
+                    //         resEvent.room_id === editRoomId
+                    //         && formattedResEventDate === formattedNewDate
+                    //         && resEvent.start !== editResStart
+                    //         && resEvent.end !== editResEnd
+                    //     );
+                    // });
+
+                    const filteredEventsState = filterReservations(
+                        editRoomId,
+                        editResStart,
+                        editResEnd,
+                        eventsState,
+                        formattedNewDate
+                    );
 
                     const isOverlapping = filteredEventsState.some((resEvent) => {
                         console.log(`OVERLAPPING: ${isReservationOverlapping(
