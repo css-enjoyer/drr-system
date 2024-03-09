@@ -61,6 +61,16 @@ export function generateRandomSequence() {
     return randomSequence;
 }
 
+export function isReservationBeyondOpeningHrs(resEnd: Date): boolean {
+    // year/mos/day/hr:min:sec
+    const closingHrs = new Date(resEnd.getFullYear(), resEnd.getMonth(), resEnd.getDate(), 20, 30, 0);
+
+    if (resEnd > closingHrs) {
+        return true;
+    }
+    return false;
+}
+
 export function isReservationOverlapping(
     eventsState: ProcessedEvent[],
     dateStart: Date, 

@@ -7,7 +7,7 @@ import { AuthContext } from "../utils/AuthContext";
 import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getReservationEvents, getRooms } from "../firebase/dbHandler";
 import { TimePicker } from "@mui/x-date-pickers";
 import { DurationOption, ReservationEvent, RoomProps } from "../Types";
-import { checkReservationTimeOverlap, formatDate, generateRandomSequence, isReservationOverlapping } from "../utils/Utils.ts"
+import { generateRandomSequence, isReservationBeyondOpeningHrs, isReservationOverlapping } from "../utils/Utils.ts"
 import { Numbers, Portrait, TextSnippet } from "@mui/icons-material";
 import Loading from "./miscellaneous/Loading";
 
@@ -127,14 +127,20 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         };
 
         const handleDurationChange = (duration: number, start: Date) => {
-            const newDate = new Date(start.getTime() + (duration * 60 * 1000))
-            setFormState((prev) => { return { ...prev, ["end"]: newDate } })
+            const newDate = new Date(start.getTime() + (duration * 60 * 1000));
+            setFormState((prev) => { return { ...prev, ["end"]: newDate }});
         }
 
         const handleSubmit = async () => {
             console.log("in handle submit");
 
-            if (formState.pax < 4 || formState.pax > 12 || formState.purp.length > 100) {
+            if (formState.pax < 4 
+                || formState.pax > 12 
+                || formState.purp.length > 100
+                || isReservationBeyondOpeningHrs(formState.end)) {
+
+                // UPDATE: Error dialog
+                alert("Error! Your reservation exceeds library hours.");
                 return;
             }
             try {
