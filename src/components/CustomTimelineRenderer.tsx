@@ -1,6 +1,6 @@
 import { Scheduler } from "@aldabil/react-scheduler"
 import { ProcessedEvent, SchedulerHelpers, SchedulerRef } from "@aldabil/react-scheduler/types";
-import { Autocomplete, Box, Button, Container, DialogActions, Grid, TextField, Typography } from "@mui/material";
+import { Alert, Autocomplete, Box, Button, Container, DialogActions, Grid, TextField, Typography } from "@mui/material";
 import { useContext, useEffect, useRef, useState } from "react";
 import drImage from "../styles/images/dr1.jpg";
 import { AuthContext } from "../utils/AuthContext";
@@ -119,7 +119,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             rcpt: event?.rcpt || generateRandomSequence()
         });
 
-        // const [error, setError] = useState(false);
+        const [errorMessage, setErrorMessage] = useState("");
 
         const handleChange = (value: string | DurationOption, name: string) => { // retrieves fields values
             setFormState((prev) => { return { ...prev, [name]: value }; });
@@ -128,19 +128,19 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
         const handleDurationChange = (duration: number, start: Date) => {
             const newDate = new Date(start.getTime() + (duration * 60 * 1000));
-            setFormState((prev) => { return { ...prev, ["end"]: newDate }});
+            setFormState((prev) => { return { ...prev, ["end"]: newDate } });
         }
 
+        // ----- FORM SUBMIT HANDLER -----
         const handleSubmit = async () => {
             console.log("in handle submit");
 
-            if (formState.pax < 4 
-                || formState.pax > 12 
+            if (formState.pax < 4
+                || formState.pax > 12
                 || formState.purp.length > 100
                 || isReservationBeyondOpeningHrs(formState.end)) {
 
-                // UPDATE: Error dialog
-                alert("Error! Your reservation exceeds library hours.");
+                setErrorMessage("Error! Your reservation exceeds library hours.");
                 return;
             }
             try {
@@ -164,16 +164,11 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 }
                 if (!event) {
                     console.log("in create");
-
-                    const addResRoomId = formState.roomId;
-                    const addResStart = formState.start;
-                    const addResEnd = formState.end;
-
                     const overlapping = isReservationOverlapping(
                         eventsState,
-                        addResStart,
-                        addResEnd,
-                        addResRoomId,
+                        formState.start,
+                        formState.end,
+                        formState.roomId,
                     );
 
                     if (!overlapping) {
@@ -181,21 +176,16 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         fetchReservationEvents();
                     }
                     else {
-                        // UPDATE: Error dialog
-                        alert("Reservation will overlap!");
+                        setErrorMessage("Reservation will overlap!");
+                        return;
                     }
                 } else {
                     console.log("in edit")
-
-                    const editResRoomId = newResEvent.room_id;
-                    const editResStart = newResEvent.start;
-                    const editResEnd = newResEvent.end;
-
                     const overlapping = isReservationOverlapping(
                         eventsState,
-                        editResStart,
-                        editResEnd,
-                        editResRoomId,
+                        newResEvent.start,
+                        newResEvent.end,
+                        newResEvent.room_id,
                         true
                     );
 
@@ -204,8 +194,8 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         fetchReservationEvents();
                     }
                     else {
-                        // UPDATE: Error dialog
-                        alert("Editing this reservation will result in an overlap!");
+                        setErrorMessage("Editing this reservation will result in an overlap!")
+                        return;
                     }
                 }
                 scheduler.close();
@@ -214,6 +204,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             }
         };
 
+        // ----- CUSTOM FORM -----
         return (
             <Grid
                 width={{ lg: "80vw", md: "80vw", sm: "100%" }}
@@ -229,7 +220,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     flexDirection: "column",
                     gap: "20px",
                 }}>
-                    {/* <p>Reserve Room</p> */}
                     <Typography variant="h4">{event ? "Edit" : "Reserve"} Room {scheduler.state.room_id.value}</Typography>
                     <TextField
                         label="Group Representative"
@@ -240,6 +230,13 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                             { readOnly: true, }
                         }
                     />
+                    {errorMessage ?
+                        <Alert severity="error">
+                            {errorMessage}
+                        </Alert>
+                        :
+                        <></>
+                    }
                     <TimePicker
                         label="Start time"
                         value={formState.start}
@@ -250,7 +247,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         value={formState.end}
                         readOnly
                     />
-
                     <Autocomplete
                         options={durationOptions}
                         getOptionLabel={(option) => (option.label)}
@@ -259,7 +255,8 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         disableClearable={true}
                         onChange={(e, option: DurationOption) => {
                             handleDurationChange(option.duration, formState.start);
-                            handleChange(option, "duration")
+                            handleChange(option, "duration");
+                            setErrorMessage("");
                         }}
                         isOptionEqualToValue={(option: any, value: any) => option.id === value.id}
                     />
@@ -374,7 +371,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     type: "hidden",
                 },
             ]}
-            onDelete={handleDelete}
         />
     );
 }
