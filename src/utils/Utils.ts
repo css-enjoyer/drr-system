@@ -63,7 +63,12 @@ export function generateRandomSequence() {
 
 export function isReservationBeyondOpeningHrs(resEnd: Date): boolean {
     // year/mos/day/hr:min:sec
-    const closingHrs = new Date(resEnd.getFullYear(), resEnd.getMonth(), resEnd.getDate(), 20, 30, 0);
+    const closingHrs = new Date(
+        resEnd.getFullYear(), 
+        resEnd.getMonth(), 
+        resEnd.getDate(), 
+        20, 30, 0
+    );
 
     if (resEnd > closingHrs) {
         return true;
@@ -103,6 +108,23 @@ export function isReservationOverlapping(
     });
 
     return res;
+}
+
+export function isStudentReservationConcurrent(
+    stuRepEmail: string,
+    eventsState: ProcessedEvent[]
+): boolean {
+
+    const isConcurrent = eventsState.some((e) => {
+        return (
+            e.stuRep === stuRepEmail
+            && (e.title === "Reserved" || e.title === "Occupied")
+        );
+    });
+
+    console.log(`CONCURRENT? ${isConcurrent}`);
+
+    return isConcurrent;
 }
 
 export function toTitleCase(inputString: string | null | undefined) {
