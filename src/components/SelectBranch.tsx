@@ -78,7 +78,10 @@ function SelectBranch() {
                                 backgroundPosition: 'center',
                             }}
                             onClick={() => redirectToTimeline(branch.branchId)}>
-                            <Box color="white" sx={{ textShadow: "0px 3px 3px black" }}>
+                            <Box color="#F9F6E0" 
+                            sx={{ 
+                                textShadow: "0px 3px 3px black" ,
+                                }}>
                                 <Typography variant="h4">
                                     {branch.branchTitle}
                                 </Typography>
