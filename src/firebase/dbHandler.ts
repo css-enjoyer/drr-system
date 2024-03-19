@@ -1,13 +1,13 @@
 import { Timestamp, addDoc, collection, collectionGroup, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { db } from './config';
-import { Branch, BranchRoom, ReservationEvent, Room, User, Librarian} from '../Types';
+import { Branch, BranchRoom, ReservationEvent, Room, User, Librarian, UserRole} from '../Types';
 import { ProcessedEvent } from '@aldabil/react-scheduler/types';
 
 // Disregard warnings when adding new fields in Firebase, takes time to reflect -isaac
 
-/*********************
- * RESERVATION EVENT
-**********************/
+/**************************
+ *  RESERVATION EVENT
+***************************/
 
 // ----- ADD RESERVATION EVENT -----
 export async function addReservationEvent(resEvent: ProcessedEvent): Promise<ProcessedEvent> {
@@ -57,7 +57,6 @@ export async function getReservationEvents(branch: string): Promise<ProcessedEve
                 end: (resEventData.end as Timestamp).toDate(),
 
                 color: resEventData.color,
-                editable: resEventData.editable,
 
                 branchId: resEventData.branchId,
                 room_id: resEventData.room_id,
@@ -87,7 +86,6 @@ export async function getReservationEventById(resEventId: string): Promise<Proce
         start: new Date(),
         end: new Date(),
         color: '',
-        editable: false,
         branchId: '',
         room_id: 0,
         date: new Date(),
@@ -112,7 +110,6 @@ export async function getReservationEventById(resEventId: string): Promise<Proce
                 end: (resEventData.end as Timestamp).toDate(),
 
                 color: resEventData.color,
-                editable: resEventData.editable,
 
                 branchId: resEventData.branchId,
                 room_id: resEventData.room_id,
@@ -251,7 +248,6 @@ export async function getReservationEventsLogs(branch: string): Promise<Processe
                 end: (resEventData.end as Timestamp).toDate(),
 
                 color: resEventData.color,
-                editable: false,
 
                 branchId: resEventData.branchId,
                 room_id: resEventData.room_id,
@@ -273,7 +269,7 @@ export async function getReservationEventsLogs(branch: string): Promise<Processe
 }
 
 /*********************
- * BRANCHES
+ *  BRANCHES
  *********************/
 
 export async function getBranches(): Promise<Branch[]> {
@@ -294,7 +290,6 @@ export async function getBranches(): Promise<Branch[]> {
         };
         branches.push(branch);
     });
-    console.log(...branches);
     return branches;
 }
 
@@ -336,12 +331,11 @@ export async function getBranchRooms(branchId?: string): Promise<BranchRoom[]> {
         }
         console.log(`Selected branch room id: ${branchId}`)
     })
-    console.log(...branchRooms);
     return branchRooms;
 }
 
 /*********************
- * USERS
+ *  USERS
  *********************/
 
 export async function getAdmins(): Promise<User[]> {
@@ -357,11 +351,9 @@ export async function getAdmins(): Promise<User[]> {
         };
         admins.push(admin);
     });
-    console.log(...admins);
     return admins;
 }
 
-// 
 export async function getLibrarians(): Promise<Librarian[]> {
     const librariansRef = collection(db, "librarians");
 
@@ -378,10 +370,8 @@ export async function getLibrarians(): Promise<Librarian[]> {
         };
         librarians.push(librarian);
     });
-    console.log(...librarians);
     return librarians;
 }
-
 
 // Add Librarian
 export async function addLibrarian(librarian: Librarian): Promise<Librarian> {
@@ -393,10 +383,10 @@ export async function addLibrarian(librarian: Librarian): Promise<Librarian> {
     } catch (error) {
         console.error(error)
     }
-    
 
     return librarian;
 }
+
 // Edit Librarian (via Email)
 export async function editLibrarian(userEmail: string, librarian: Librarian): Promise<Librarian> {
     const librarianRef = collection(db, "librarians");
@@ -424,7 +414,6 @@ export async function deleteLibrarian(userEmail: string): Promise<string> {
     })    
     const librarianToDeleteRef = doc(db, "librarians", librarianIdToDelete);
 
-
     try {
         await deleteDoc(librarianToDeleteRef);
         idDeleted = librarianIdToDelete;
@@ -433,4 +422,36 @@ export async function deleteLibrarian(userEmail: string): Promise<string> {
     }
 
     return idDeleted;
+}
+
+// ----- GET USER ROLE -----
+export async function getUserRole(userID: string | null | undefined, email: string | null | undefined): Promise<UserRole> {
+    try {
+        if (!userID) {
+            console.log("Error: No valid ID");
+            return undefined;
+        }
+
+        let querySnapshot = await getDoc(doc(db, "admins", userID));
+        if (querySnapshot.exists()) {
+            return "Admin";
+        }
+
+        querySnapshot = await getDoc(doc(db, "librarians", userID));
+        if (querySnapshot.exists()) {
+            return "Librarian";
+        }
+
+        const verify = /\.shs/;
+        if (verify.test(String(email))) {
+            return "SHS-Student";
+        }
+    } 
+
+    catch(error) {
+        console.error("Error checking role in db");
+        return undefined;
+    }
+
+    return "Student";
 }

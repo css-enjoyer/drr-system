@@ -10,7 +10,6 @@ export interface ReservationEvent {
 
     // optional types for events
     color: string,
-    editable: boolean,
 
     branchId: string;
     room_id: number;
@@ -75,3 +74,5 @@ export type DurationOption = {
     duration: number,
     label: string
 }
+
+export type UserRole = "Admin" | "Librarian" | "Student" | "SHS-Student" | null | undefined

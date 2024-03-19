@@ -14,10 +14,13 @@ import About from "./components/miscellaneous/About";
 import FAQs from "./components/miscellaneous/FAQs";
 import NoInternetComponent from "./components/miscellaneous/internetError";
 
+
 // Modules
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { useThemeContext } from "./theme/ThemeContextProvider";
+import { IconButton } from "@mui/material";
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 
 
 // Routes
@@ -27,7 +30,6 @@ import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "./utils/AuthContext";
 import SelectBranch from "./components/SelectBranch";
 import { Cancel, Login } from "@mui/icons-material";
-
 
 //Images
 import ustLogo from '/src/styles/images/UST_LOGO_WHT.png';
@@ -41,13 +43,31 @@ function App() {
   const [loading, setLoading] = React.useState(true);
   const location = useLocation();
 
+  const [showScrollButton, setShowScrollButton] = useState(false);
 
-  React.useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const scrollThreshold = 200;
+
+      if (scrollY > scrollThreshold) {
+        setShowScrollButton(true);
+      } else {
+        setShowScrollButton(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -88,7 +108,6 @@ function App() {
             }
           />
 
-
           {/* librarian reservation logs */}
           <Route
             path="/librarianLogs"
@@ -102,7 +121,6 @@ function App() {
               )
             }
           />
-
 
           {/* admin dashboard */}
           <Route
@@ -118,7 +136,6 @@ function App() {
             }
           />
 
-
           {/* confirmation page */}
           <Route
             path="/confirmation"
@@ -132,7 +149,6 @@ function App() {
               )
             }
           />
-
 
           {/* cancellation page */}
           <Route
@@ -192,6 +208,21 @@ function App() {
 
         </Routes>
         {authContext?.user && <Footer />}
+        {/* Scroll to Top Button */}
+        {showScrollButton && (
+        <IconButton
+          onClick={scrollToTop}
+          style={{
+            position: "fixed",
+            bottom: 20,
+            right: 20,
+            zIndex: 1000,
+            backgroundColor: theme.palette.mode === "dark" ? "#424242" : "#ffffff"
+          }}
+        >
+          <ArrowUpwardIcon />
+        </IconButton>
+        )}
       </div>
     </ThemeProvider>
   );
