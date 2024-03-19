@@ -137,9 +137,10 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
             if (formState.pax < 4
                 || formState.pax > 12
-                || formState.purp.length > 100
-                || isReservationBeyondOpeningHrs(formState.end)) {
-
+                || formState.purp.length > 100) {
+                return;
+            }
+            if (isReservationBeyondOpeningHrs(formState.end)) {
                 setErrorMessage("Error! Your reservation exceeds library hours.");
                 return;
             }
