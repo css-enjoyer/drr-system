@@ -5,20 +5,18 @@ function Footer() {
     let background = "";
     const { theme } = useThemeContext();
         if(theme.palette.mode === "dark") {
-            background = 'radial-gradient(circle, rgba(51,51,51,1) 0%, rgba(40,40,40,1) 100%)';
+            background = 'radial-gradient(circle,#000000 100%, #ffea76 20%, #fff394 30%)';
         } else {
-            background = 'radial-gradient(circle, rgba(43,43,43,1) 0%, rgba(43,43,43,1) 100%)';
+            background = 'radial-gradient(circle, #2b2b2b 0%, #2b2b2b 100%)';
         }
     return (
         <Box 
             sx={{
                 width: "100%",
                 height: "275px",
-                // paddingTop: "1rem",
-                // paddingBottom: "1rem",
                 display: 'flex',
                 alignItems: 'center',
-                color: 'white',
+                color: '#F9F6E0',
                 backgroundColor: {background}
             }}>
             <Divider />

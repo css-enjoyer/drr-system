@@ -12,6 +12,7 @@ import Confirmation from "./components/miscellaneous/Confirmation";
 import Cancellation from "./components/miscellaneous/Cancellation";
 import About from "./components/miscellaneous/About";
 import FAQs from "./components/miscellaneous/FAQs";
+import NoInternetComponent from "./components/miscellaneous/internetError";
 
 
 // Modules
@@ -30,6 +31,8 @@ import { AuthContext } from "./utils/AuthContext";
 import SelectBranch from "./components/SelectBranch";
 import { Cancel, Login } from "@mui/icons-material";
 
+//Images
+import ustLogo from '/src/styles/images/UST_LOGO_WHT.png';
 
 // Utils
 
@@ -71,7 +74,7 @@ function App() {
       <CssBaseline />
       <div className="App">
         {/* Show appbar and footer only when logged in */}
-        {authContext?.user && <ResponsiveAppBar logoTitle={"DRRS"} />}
+        {authContext?.user && <ResponsiveAppBar logoTitle={<img src={ustLogo} />} />}
         <Routes>
           <Route
             path="/"
@@ -182,6 +185,20 @@ function App() {
               authContext?.user ? (
                 <Protected>
                   <About />
+                </Protected>
+              ) : (
+                <Navigate to="/" />
+              )
+            }
+          />
+
+          {/* No Internet Connection Page */}
+          <Route
+            path="/netError"
+            element={
+              authContext?.user ? (
+                <Protected>
+                  <NoInternetComponent />
                 </Protected>
               ) : (
                 <Navigate to="/" />

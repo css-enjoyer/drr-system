@@ -24,7 +24,7 @@ export const useColorTheme = () => {
                 main: '#902F57',
             },
             background: {
-                default: '#e9e9e9',
+                default: '#e#FFFFFF',
                 paper: '#eeeeee',
             },
         },
@@ -32,19 +32,23 @@ export const useColorTheme = () => {
 
     const darkTheme: Theme = createTheme({
         palette: {
-            mode: 'dark',
-            primary: {
-                main: '#2382ff',
-            },
-            secondary: {
-                main: '#e7f179',
-            },
-            background: {
-                default: '#000000',
-                paper: '#1f1f1f',
-            },
+          mode: 'dark',
+          primary: {
+            main: '#F4C644',
+          },
+          secondary: {
+            main: '#F4C644',
+          },
+          background: {
+            default: '#111111',
+            paper: '#1e1e1e',
+          },
+          text: {
+            primary: '#F9F6E0', // This will style primary text color
+            secondary: '#CCCCCC', // This will style secondary text color
+          },
         },
-    });
+      });
 
     // useMemo hook allows caching to prevent recalculation of expensive resources
     // Creates a new theme on state toggle

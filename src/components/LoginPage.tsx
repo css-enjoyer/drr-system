@@ -2,7 +2,7 @@ import { Box, Divider, Grid, Link, Paper, Typography } from "@mui/material";
 
 import bgImage from '../styles/images/loginBgImageDark.png';
 import cicsLogo from '../styles/images/cics-logo.png';
-import ustLogo from '../styles/images/ust-logo.png';
+import ustLogo from '../styles/images/UST_LOGO_WHT.png';
 
 import LoginButton from './logbuttons/LoginButton';
 import { AuthContext } from "../utils/AuthContext";

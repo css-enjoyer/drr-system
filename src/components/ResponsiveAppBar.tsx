@@ -1,5 +1,6 @@
 import * as React from "react";
 // import Login from './logbuttons/Login';
+import ustLogo from '../styles/images/UST_LOGO_WHT.png';
 
 import {
   AppBar,
@@ -15,7 +16,6 @@ import {
   Tooltip,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import AdbIcon from "@mui/icons-material/Adb";
 import NightmodeToggle from "./NightmodeToggle";
 import LogoutButton from "./logbuttons/LogoutButton";
 import { useThemeContext } from "../theme/ThemeContextProvider";
@@ -25,16 +25,12 @@ import MenuBookIcon from "@mui/icons-material/MenuBook";
 import InfoIcon from "@mui/icons-material/Info";
 import { Link, useNavigate } from "react-router-dom";
 
-const pages = ["Branches", "Guide", "About"]; // change these to components in the future
+const pages = ["Branches", "FAQs", "About"]; // change these to components in the future
 const pageRoutes = ["/branches", "/FAQs", "/About"];
-const pageIcons: React.ReactNode[] = [
-  <BusinessIcon />,
-  <MenuBookIcon />,
-  <InfoIcon />,
-]; // change these to components in the future
+const pageIcons: React.ReactNode[] = []; // change these to components in the future
 
 type AppBarProps = {
-  logoTitle: string;
+  logoTitle: React.ReactNode;
 };
 
 function ResponsiveAppBar({ logoTitle }: AppBarProps) {
@@ -54,13 +50,17 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
   };
 
   let background = "";
+  let textColor= "";
+
   const { theme } = useThemeContext();
   if (theme.palette.mode === "dark") {
-      background =
-      "radial-gradient(circle,#F2AF29 100%, #ffea76 20%, #fff394 30%)";  
+    background =
+      "radial-gradient(circle, #2b2b2b -90%, #0e1111 80%)";
   } else {
-    background = 
-      "radial-gradient(circle,#F2AF29 100%, #ffea76 20%, #fff394 30%)";  
+    background =
+      "radial-gradient(circle, #E8AC41 100%, #E2CA76 50%)";
+    textColor = 
+      "#000000";  
   }
 
   // On-click, set reference position of menu component to current target (avatar)
@@ -78,14 +78,13 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
     <AppBar
       position="sticky"
       sx={{
-        color: "white",
+        color: "#F9F6E0",
         backgroundColor: { background },
-      }}
-    >
+      }}>
+
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* Logo with Text */}
-          <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
           <Typography
             variant="h6"
             noWrap
@@ -101,7 +100,11 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
               textDecoration: "none",
             }}
           >
-            {logoTitle}
+            <Box component="img"
+              sx={{ height: '50px', objectFit: 'contain' }}
+              alt="UST Logo"
+              src={ustLogo}
+              display={{ xs: "none", sm: "none", md: "block" }} />
           </Typography>
 
           {/* Logo with Text for Mobile Views */}
@@ -145,7 +148,6 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
             </Menu>
           </Box>
 
-          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
           <Typography
             variant="h5"
             noWrap
@@ -162,7 +164,12 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
               textDecoration: "none",
             }}
           >
-            {logoTitle}
+            <Box component="img"
+              sx={{ height: '50px', objectFit: 'contain' }}
+              alt="UST Logo"
+              src={ustLogo}
+              display={{ xs: "none", sm: "none", md: "block" }} />
+
           </Typography>
 
           {/* Expanded nav menu */}
@@ -174,7 +181,7 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
                 to={pageRoutes[index]} // Specify the route for each page
                 onClick={handleCloseNavMenu}
                 startIcon={pageIcons[index]}
-                sx={{ mx: 2, color: "white" }}
+                sx={{ mx: 2, color: "#F9F6E0" }}
               >
                 {page}
               </Button>
