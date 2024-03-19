@@ -7,7 +7,7 @@ import { AuthContext } from "../utils/AuthContext";
 import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getReservationEvents, getRooms } from "../firebase/dbHandler";
 import { TimePicker } from "@mui/x-date-pickers";
 import { DurationOption, ReservationEvent, RoomProps } from "../Types";
-import { generateRandomSequence, isReservationBeyondOpeningHrs, isReservationOverlapping } from "../utils/Utils.ts"
+import { generateRandomSequence, isReservationBeyondOpeningHrs, isReservationOverlapping, isStudentReservationConcurrent } from "../utils/Utils.ts"
 import { Numbers, Portrait, TextSnippet } from "@mui/icons-material";
 import Loading from "./miscellaneous/Loading";
 
@@ -142,6 +142,10 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             }
             if (isReservationBeyondOpeningHrs(formState.end)) {
                 setErrorMessage("Error! Your reservation exceeds library hours.");
+                return;
+            }
+            if (isStudentReservationConcurrent(formState.stuRep, eventsState)) {
+                setErrorMessage("Error! You already have a reservation.");
                 return;
             }
             try {
