@@ -118,8 +118,6 @@ export function isStudentReservationConcurrent(
 ): boolean {
 
     const isExistingEvent = eventsState.some((e) => {
-        console.log(e.event_id === eventId);
-
         return (
             e.event_id === eventId
         );
@@ -185,4 +183,31 @@ export function isWholeDay(duration: number): boolean {
     }
 
     return true;
+}
+
+export function setWholeDayUnavailable(
+    startTime: number,
+    endTime: number
+): { start: Date, end: Date, title: string, color: string } {
+
+    const hrsOpen = endTime - startTime;
+    const newStartTime = new Date();
+    const newEndTime = new Date();
+
+    newStartTime.setSeconds(0);
+    newStartTime.setMinutes(0);
+    newStartTime.setHours(startTime);
+
+    newEndTime.setSeconds(0);
+    newEndTime.setMinutes(0);
+    newEndTime.setHours((startTime + hrsOpen));
+
+    return (
+        {
+            start: newStartTime,
+            end: newEndTime,
+            title: "Unavailable",
+            color: "gray"
+        }
+    );
 }
