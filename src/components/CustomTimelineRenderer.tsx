@@ -345,8 +345,16 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         </Container>
                         <Container sx={{ display: "flex", alignItems: "center", justifyContent: "space-evenly", my: "10px" }}>
                             <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Unavailable")}>Set as Unavailable</Button>
-                            <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Departed")}>Confirm Departure</Button>
-                            <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Occupied")}>Confirm Arrival</Button>
+                            {event.title === "Reserved" ?
+                                <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Occupied")}>Confirm Arrival</Button>
+                                :
+                                <></>
+                            }
+                            {event.title === "Occupied" ?
+                                <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Departed")}>Confirm Departure</Button>
+                                :
+                                <></>
+                            }
                             {/* // TODO: Button onclick open larger view */}
                         </Container>
                     </Container>
