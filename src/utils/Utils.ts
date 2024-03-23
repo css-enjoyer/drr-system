@@ -1,4 +1,5 @@
 import { ProcessedEvent } from "@aldabil/react-scheduler/types";
+import { DurationOption } from "../Types";
 
 export function checkReservationTimeOverlap(
     a_start: Date, 
@@ -130,4 +131,46 @@ export function toTitleCase(inputString: string | null | undefined) {
         return "";
     }
     return inputString.toLowerCase().replace(/(?:^|\s)\w/g, match => match.toUpperCase());
+}
+
+export function setDurationOptions(
+    userType: string | null | undefined,
+    startHour?: number, 
+    endHour?: number
+): DurationOption[] {
+
+    if ((userType === "Admin" || userType === "Librarian")
+        && startHour !== undefined 
+        && endHour !== undefined
+    ) {
+        const operatingHours = (endHour - startHour) * 60;
+        console.log(`WHOLE DAY HRS: ${operatingHours}`);
+
+        const privilegedOptions = [
+            { duration: operatingHours, label: "Whole Day"},
+            { duration: 30, label: "30 Minutes" }, 
+            { duration: 60, label: "1 Hour" }, 
+            { duration: 90, label: "90 Minutes" }, 
+            { duration: 120, label: "2 Hours" }
+        ]
+
+        return privilegedOptions;
+    }
+    
+    const studentOptions = [
+        { duration: 30, label: "30 Minutes" }, 
+        { duration: 60, label: "1 Hour" }, 
+        { duration: 90, label: "90 Minutes" }, 
+        { duration: 120, label: "2 Hours" }
+    ];
+
+    return studentOptions;
+}
+
+export function isWholeDay(duration: number): boolean {
+    if (duration <= 120) {
+        return false;
+    }
+
+    return true;
 }
