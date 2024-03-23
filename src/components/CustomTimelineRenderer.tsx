@@ -148,6 +148,12 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 setErrorMessage("Error! You already have a reservation.");
                 return;
             }
+
+            if (formState.start < new Date() &&
+                (authContext?.userRole === "Student" || authContext?.userRole === "SHS-Student")) {
+                setErrorMessage("Error! Your reservation is before the current time!");
+                return;
+            }
             try {
                 scheduler.loading(true);
                 const newResEvent: ReservationEvent = {
