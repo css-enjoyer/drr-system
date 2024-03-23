@@ -7,7 +7,7 @@ import { AuthContext } from "../utils/AuthContext";
 import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getReservationEvents, getRooms } from "../firebase/dbHandler";
 import { TimePicker } from "@mui/x-date-pickers";
 import { DurationOption, ReservationEvent, RoomProps } from "../Types";
-import { generateRandomSequence, isReservationBeyondOpeningHrs, isReservationOverlapping, isStudentReservationConcurrent, setDurationOptions } from "../utils/Utils.ts"
+import { generateRandomSequence, isReservationBeyondOpeningHrs, isReservationOverlapping, isStudentReservationConcurrent, isWholeDay, setDurationOptions, setWholeDayUnavailable } from "../utils/Utils.ts"
 import { Numbers, Portrait, TextSnippet } from "@mui/icons-material";
 import Loading from "./miscellaneous/Loading";
 
@@ -153,6 +153,17 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             if (isStudentReservationConcurrent(formState.eventId, formState.stuRep, eventsState)) {
                 setErrorMessage("Error! You already have a reservation.");
                 return;
+            }
+            if (isWholeDay(formState.duration.duration)) {
+                const unavailable = setWholeDayUnavailable(
+                    startTime,
+                    endTime
+                );
+                
+                formState.start = unavailable.start;
+                formState.end = unavailable.end;
+                formState.title = unavailable.title;
+                formState.color = unavailable.color;
             }
             try {
                 scheduler.loading(true);
