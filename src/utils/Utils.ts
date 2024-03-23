@@ -112,9 +112,22 @@ export function isReservationOverlapping(
 }
 
 export function isStudentReservationConcurrent(
+    eventId: string | number,
     stuRepEmail: string,
     eventsState: ProcessedEvent[]
 ): boolean {
+
+    const isExistingEvent = eventsState.some((e) => {
+        console.log(e.event_id === eventId);
+
+        return (
+            e.event_id === eventId
+        );
+    });
+
+    if (isExistingEvent) {
+        return false;
+    }
 
     const isConcurrent = eventsState.some((e) => {
         return (
@@ -144,14 +157,13 @@ export function setDurationOptions(
         && endHour !== undefined
     ) {
         const operatingHours = (endHour - startHour) * 60;
-        console.log(`WHOLE DAY HRS: ${operatingHours}`);
 
         const privilegedOptions = [
-            { duration: operatingHours, label: "Whole Day"},
             { duration: 30, label: "30 Minutes" }, 
             { duration: 60, label: "1 Hour" }, 
             { duration: 90, label: "90 Minutes" }, 
-            { duration: 120, label: "2 Hours" }
+            { duration: 120, label: "2 Hours" },
+            { duration: operatingHours, label: "Whole Day"}
         ]
 
         return privilegedOptions;
