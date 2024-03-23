@@ -122,8 +122,6 @@ export function isStudentReservationConcurrent(
         );
     });
 
-    console.log(`CONCURRENT? ${isConcurrent}`);
-
     return isConcurrent;
 }
 
