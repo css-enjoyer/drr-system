@@ -90,10 +90,7 @@ export async function getReservationEventById(resEventId: string): Promise<Proce
         room_id: 0,
         date: new Date(),
         stuRep: '',
-        duration: {
-            duration: 0,
-            label: ''
-        },
+        duration: 0,
         pax: 0,
         purp: '',
         rcpt: ''

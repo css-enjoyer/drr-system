@@ -98,7 +98,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             eventId: event?.event_id || "lmao",
             title: event?.title || "Reserved",
             start: event?.start || scheduler.state.start.value,
-            end: event?.end || scheduler.state.end.value,
+            end: event?.end || new Date(scheduler.state.end.value - 15 * 60000),
 
             // optional event fields
             color: event?.color || "darkblue",
@@ -113,7 +113,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             stuRep: event?.stuRep || authContext?.user?.email,
             purp: event?.purp || "",
             pax: event?.pax || 4,
-            duration: event?.duration || durationOptions[0],
+            duration: event?.duration || 15,
 
             // auto-generated
             rcpt: event?.rcpt || generateRandomSequence()
@@ -121,7 +121,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
         const [errorMessage, setErrorMessage] = useState("");
 
-        const handleChange = (value: string | DurationOption, name: string) => { // retrieves fields values
+        const handleChange = (value: string | number, name: string) => { // retrieves fields values
             setFormState((prev) => { return { ...prev, [name]: value }; });
             // console.log(value)
         };
@@ -135,15 +135,18 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         const handleSubmit = async () => {
             console.log("in handle submit");
 
+            // TODO: Seperate all errors into a function
             if (formState.pax < 4
                 || formState.pax > 12
                 || formState.purp.length > 100) {
                 return;
             }
+
             if (isReservationBeyondOpeningHrs(formState.end)) {
                 setErrorMessage("Error! Your reservation exceeds library hours.");
                 return;
             }
+
             if (isStudentReservationConcurrent(formState.stuRep, eventsState)) {
                 setErrorMessage("Error! You already have a reservation.");
                 return;
@@ -154,6 +157,12 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 setErrorMessage("Error! Your reservation is before the current time!");
                 return;
             }
+
+            if (formState.duration < 15 || formState.duration > 120) {
+                setErrorMessage("Error! Duration should be within 15 minutes to 2 hours!");
+                return;
+            }
+
             try {
                 scheduler.loading(true);
                 const newResEvent: ReservationEvent = {
@@ -258,7 +267,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         value={formState.end}
                         readOnly
                     />
-                    <Autocomplete
+                    {/* <Autocomplete
                         options={durationOptions}
                         getOptionLabel={(option) => (option.label)}
                         renderInput={(params) => (<TextField {...params} label="Duration" variant="outlined" />)}
@@ -270,6 +279,23 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                             setErrorMessage("");
                         }}
                         isOptionEqualToValue={(option: any, value: any) => option.id === value.id}
+                    /> */}
+                    <TimePicker
+                        ampm={false}
+                        minTime={new Date(0, 0, 0, 0, 15)}
+                        maxTime={new Date(0, 0, 0, 2)}
+                        skipDisabled={true}
+                        value={new Date(0, 0, 0, 0, formState.duration)}
+                        onChange={(e) => {
+                            console.log("duration changed!");
+                            console.log((e.getHours() * 60) + e.getMinutes());
+                            const hours = e.getHours();
+                            const mins = e.getMinutes();
+                            const minsToAdd = ((e.getHours() * 60) + e.getMinutes());
+                            handleChange(minsToAdd, "duration");
+                            // handleChange(e, "duration");
+                            handleDurationChange(minsToAdd, formState.start);
+                        }}
                     />
                     <TextField
                         label="Number of participants"
@@ -364,7 +390,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                             {/* // TODO: Button onclick open larger view */}
                         </Container>
                     </Container>
-                    : <Container></Container>
+                    : <></>
                 }
             </Grid>
         );
@@ -378,7 +404,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             view="day"
             events={eventsState}
             day={{
-                startHour: 8, endHour: 21, step: 30,
+                startHour: 8, endHour: 21, step: 30
             }}
             resources={roomsState}
             resourceFields={{ idField: "room_id", textField: "title", }}
@@ -390,6 +416,34 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     type: "hidden",
                 },
             ]}
+            eventRenderer={({ event, ...props }) => {
+                // when an event is only 15 mins long, the details are compressed
+                if (event?.duration === 15) {
+                    return (
+                        <div
+                            style={{
+                                // display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "space-between",
+                                height: "100%",
+                                width: "100%",
+                                background: "darkblue",
+                                fontSize: "0.8em",
+                                color: "white",
+                            }}
+                            {...props}
+                        >
+                            <div
+                                style={{ margin: "5px" }}
+                            >
+                                {event.title} &nbsp;
+                                {event.start.toLocaleTimeString("en-US", { timeStyle: "short" })} - {event.end.toLocaleTimeString("en-US", { timeStyle: "short" })}
+                            </div>
+                        </div>
+                    );
+                }
+                return null;
+            }}
         />
     );
 }
