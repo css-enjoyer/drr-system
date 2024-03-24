@@ -177,6 +177,8 @@ export function setDurationOptions(
     return studentOptions;
 }
 
+/* --- UPDATE REQUIRED ---
+
 export function isWholeDay(duration: number): boolean {
     if (duration <= 120) {
         return false;
@@ -211,3 +213,4 @@ export function setWholeDayUnavailable(
         }
     );
 }
+*/

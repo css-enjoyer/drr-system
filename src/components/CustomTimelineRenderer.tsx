@@ -156,8 +156,10 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             if (isStudentReservationConcurrent(formState.eventId, formState.stuRep, eventsState)) {
                 setErrorMessage("Error! You already have a reservation.");
                 return;
-            }
+            } 
         
+            /* ---- UPDATE REQUIRED ----
+
             if (isWholeDay(formState.duration.duration)) {
                 const unavailable = setWholeDayUnavailable(
                     startTime,
@@ -169,6 +171,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 formState.title = unavailable.title;
                 formState.color = unavailable.color;
             }
+            */
 
             if (formState.start < new Date() &&
                 (authContext?.userRole === "Student" || authContext?.userRole === "SHS-Student")) {
