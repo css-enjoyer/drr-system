@@ -288,7 +288,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         skipDisabled={true}
                         value={new Date(0, 0, 0, 0, formState.duration)}
                         onChange={(e) => {
-                            const minsToAdd = ((e.getHours() * 60) + e.getMinutes());
+                            const minsToAdd = ((e!.getHours() * 60) + e!.getMinutes());
                             handleChange(minsToAdd, "duration");
                             handleDurationChange(minsToAdd, formState.start);
                         }}
