@@ -281,19 +281,15 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         isOptionEqualToValue={(option: any, value: any) => option.id === value.id}
                     /> */}
                     <TimePicker
+                        label="Duration"
                         ampm={false}
                         minTime={new Date(0, 0, 0, 0, 15)}
                         maxTime={new Date(0, 0, 0, 2)}
                         skipDisabled={true}
                         value={new Date(0, 0, 0, 0, formState.duration)}
                         onChange={(e) => {
-                            console.log("duration changed!");
-                            console.log((e.getHours() * 60) + e.getMinutes());
-                            const hours = e.getHours();
-                            const mins = e.getMinutes();
                             const minsToAdd = ((e.getHours() * 60) + e.getMinutes());
                             handleChange(minsToAdd, "duration");
-                            // handleChange(e, "duration");
                             handleDurationChange(minsToAdd, formState.start);
                         }}
                     />
