@@ -15,7 +15,7 @@ export interface ReservationEvent {
     room_id: number;
     date: Date;
     stuRep: string;
-    duration: DurationOption;
+    duration: number;
     pax: number;
     purp: string;
     rcpt: string;
