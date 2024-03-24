@@ -7,12 +7,9 @@ import { AuthContext } from "../utils/AuthContext";
 import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getReservationEvents, getRooms } from "../firebase/dbHandler";
 import { TimePicker } from "@mui/x-date-pickers";
 import { DurationOption, ReservationEvent, RoomProps } from "../Types";
-import { generateRandomSequence, isReservationBeyondOpeningHrs, isReservationOverlapping, isStudentReservationConcurrent } from "../utils/Utils.ts"
+import { generateRandomSequence, isReservationBeyondOpeningHrs, isReservationOverlapping, isStudentReservationConcurrent, isWholeDay, setDurationOptions, setWholeDayUnavailable } from "../utils/Utils.ts"
 import { Numbers, Portrait, TextSnippet } from "@mui/icons-material";
 import Loading from "./miscellaneous/Loading";
-
-const durationOptions: DurationOption[] = [{ duration: 30, label: "30 Minutes" }, { duration: 60, label: "1 Hour" }, { duration: 90, label: "90 Minutes" }, { duration: 120, label: "2 Hours" }]
-
 
 function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     const timelineRef = useRef<SchedulerRef>(null);
@@ -20,6 +17,15 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     // console.log(timelineRef);
 
     const authContext = useContext(AuthContext);
+
+    const startTime = 8;
+    const endTime = 17;
+
+    const durationOptions: DurationOption[] = setDurationOptions(
+        authContext?.userRole,
+        startTime,
+        endTime
+    );
 
     const [roomsState, setRoomsState] = useState<RoomProps[]>([]);
     const [eventsState, setEventsState] = useState<ProcessedEvent[]>([]);
@@ -147,9 +153,21 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 return;
             }
 
-            if (isStudentReservationConcurrent(formState.stuRep, eventsState)) {
+            if (isStudentReservationConcurrent(formState.eventId, formState.stuRep, eventsState)) {
                 setErrorMessage("Error! You already have a reservation.");
                 return;
+            }
+        
+            if (isWholeDay(formState.duration.duration)) {
+                const unavailable = setWholeDayUnavailable(
+                    startTime,
+                    endTime
+                );
+                
+                formState.start = unavailable.start;
+                formState.end = unavailable.end;
+                formState.title = unavailable.title;
+                formState.color = unavailable.color;
             }
 
             if (formState.start < new Date() &&
@@ -400,7 +418,9 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             view="day"
             events={eventsState}
             day={{
-                startHour: 8, endHour: 21, step: 30
+                startHour: startTime, 
+                endHour: endTime, 
+                step: 30
             }}
             resources={roomsState}
             resourceFields={{ idField: "room_id", textField: "title", }}
