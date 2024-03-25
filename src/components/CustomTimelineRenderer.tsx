@@ -77,6 +77,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     }
 
     // ----- CUSTOM FUNCTIONS -----
+    // custom crud, minimizes db read calls to avoid reaching firebase db quata limit
     const handleDelete = async (deletedId: string) => {
         await deleteReservationEvent(deletedId);
         fetchReservationEvents();
@@ -156,8 +157,8 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             if (isStudentReservationConcurrent(formState.eventId, formState.stuRep, eventsState)) {
                 setErrorMessage("Error! You already have a reservation.");
                 return;
-            } 
-        
+            }
+
             /* ---- UPDATE REQUIRED ----
 
             if (isWholeDay(formState.duration.duration)) {
@@ -421,8 +422,8 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             view="day"
             events={eventsState}
             day={{
-                startHour: startTime, 
-                endHour: endTime, 
+                startHour: startTime,
+                endHour: endTime,
                 step: 30
             }}
             resources={roomsState}
@@ -446,7 +447,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                                 justifyContent: "space-between",
                                 height: "100%",
                                 width: "100%",
-                                background: "darkblue",
+                                background: `${event?.color}`,
                                 fontSize: "0.8em",
                                 color: "white",
                             }}
