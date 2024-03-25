@@ -41,8 +41,10 @@ export async function addReservationEvent(resEvent: ProcessedEvent): Promise<Pro
 }
 
 // ----- GET RESERVATIONS EVENTS -----
+// use realtime updates instead
+/*
 export async function getReservationEvents(branch: string): Promise<ProcessedEvent[]> {
-    const q = query(collection(db, "reservation-event"), where("branchId", "==", branch))
+    const q = query(collection(db, "reservation-event"), where("branchId", "==", branch));
     const querySnapshot = await getDocs(q);
 
     const resEvents: ReservationEvent[] = []
@@ -76,6 +78,7 @@ export async function getReservationEvents(branch: string): Promise<ProcessedEve
 
     return resEvents;
 }
+*/
 
 // ----- GET SPECIFIC RESERVATION EVENT BY ID -----
 export async function getReservationEventById(resEventId: string): Promise<ProcessedEvent> {

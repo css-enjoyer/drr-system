@@ -10,6 +10,8 @@ import { DurationOption, ReservationEvent, RoomProps } from "../Types";
 import { generateRandomSequence, isReservationBeyondOpeningHrs, isReservationOverlapping, isStudentReservationConcurrent, isWholeDay, setDurationOptions, setWholeDayUnavailable } from "../utils/Utils.ts"
 import { Numbers, Portrait, TextSnippet } from "@mui/icons-material";
 import Loading from "./miscellaneous/Loading";
+import { db } from "../firebase/config.ts";
+import { Timestamp, collection, onSnapshot, query, where } from "firebase/firestore";
 
 function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     const timelineRef = useRef<SchedulerRef>(null);
@@ -29,36 +31,62 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
     const [roomsState, setRoomsState] = useState<RoomProps[]>([]);
     const [eventsState, setEventsState] = useState<ProcessedEvent[]>([]);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        const fetchRooms = async () => {
+            // ----- ROOMS ----- 
+            setLoading(true);
+            const rooms = await getRooms(branchId);
+            console.log("rooms")
+            console.log(rooms)
+            const transformedResources: RoomProps[] = rooms.map((room) => ({
+                room_id: room.roomId,
+                roomBranch: room.roomBranch,
+                title: room.roomTitle,
+                color: "darkblue",
+            }));
+            console.log("transformed rooms")
+            console.log(transformedResources)
+            setRoomsState(transformedResources)
+            setLoading(false);
+            console.log('Rooms in state', roomsState, roomsState.length)
+        }
+
         fetchRooms();
-        fetchReservationEvents();
+    }, [])
+
+    useEffect(() => {
+        // ----- FIRESTORE REALTIME UPDATES -----
+        // goes brrr
+        const q = query(collection(db, "reservation-event"), where("branchId", "==", branchId));
+        const unsub = onSnapshot(q, querySnapshot => {
+            const resEvents: ReservationEvent[] = [];
+            querySnapshot.forEach((doc) => {
+                const resEventData = doc.data();
+                const resEvent = {
+                    ...resEventData,
+                    start: (resEventData.start as Timestamp).toDate(),
+                    end: (resEventData.end as Timestamp).toDate(),
+                    date: (resEventData.date as Timestamp).toDate(),
+                };
+                resEvents.push(resEvent);
+            });
+            setEventsState(resEvents);
+        })
+        return () => unsub();
+
+        // fetchReservationEvents();
     }, []);
 
-    const fetchRooms = async () => {
-        // --- ROOMS --- 
-        const rooms = await getRooms(branchId);
-        console.log("rooms")
-        console.log(rooms)
-        const transformedResources: RoomProps[] = rooms.map((room) => ({
-            room_id: room.roomId,
-            roomBranch: room.roomBranch,
-            title: room.roomTitle,
-            color: "darkblue",
-        }));
-        console.log("transformed rooms")
-        console.log(transformedResources)
-        setRoomsState(transformedResources)
-        console.log('Rooms in state', roomsState, roomsState.length)
-    }
-
-    const fetchReservationEvents = async () => {
-        const resEvents = await getReservationEvents(branchId);
-        setEventsState(resEvents);
-    }
+    // const fetchReservationEvents = async () => {
+    //     const resEvents = await getReservationEvents(branchId);
+    //     setEventsState(resEvents);
+    // }
 
     // ----- LOADING STATE WHILE FETCHING ROOMS -----
-    if (roomsState.length === 0) {
+    if (loading) {
+        // if (roomsState.length === 0) {
         console.log("Bruh");
         // Render loading component
         return (
@@ -79,12 +107,12 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     // ----- CUSTOM FUNCTIONS -----
     const handleDelete = async (deletedId: string) => {
         await deleteReservationEvent(deletedId);
-        fetchReservationEvents();
+        // fetchReservationEvents();
     }
 
     const updateEventTitle = async (resId: string, newTitle: string) => {
         await editReservationEventTitle(resId, newTitle);
-        fetchReservationEvents();
+        // fetchReservationEvents();
     }
 
     /******************************
@@ -156,8 +184,8 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             if (isStudentReservationConcurrent(formState.eventId, formState.stuRep, eventsState)) {
                 setErrorMessage("Error! You already have a reservation.");
                 return;
-            } 
-        
+            }
+
             /* ---- UPDATE REQUIRED ----
 
             if (isWholeDay(formState.duration.duration)) {
@@ -213,8 +241,9 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     );
 
                     if (!overlapping) {
+                        scheduler.close();
                         await addReservationEvent(newResEvent);
-                        fetchReservationEvents();
+                        // fetchReservationEvents();
                     }
                     else {
                         setErrorMessage("Reservation will overlap!");
@@ -231,15 +260,16 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     );
 
                     if (!overlapping) {
+                        scheduler.close();
                         await editReservationEvent(event.event_id + "", newResEvent);
-                        fetchReservationEvents();
+                        // fetchReservationEvents();
                     }
                     else {
                         setErrorMessage("Editing this reservation will result in an overlap!")
                         return;
                     }
                 }
-                scheduler.close();
+                // scheduler.close();
             } finally {
                 scheduler.loading(false);
             }
@@ -421,8 +451,8 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             view="day"
             events={eventsState}
             day={{
-                startHour: startTime, 
-                endHour: endTime, 
+                startHour: startTime,
+                endHour: endTime,
                 step: 30
             }}
             resources={roomsState}
@@ -446,7 +476,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                                 justifyContent: "space-between",
                                 height: "100%",
                                 width: "100%",
-                                background: "darkblue",
+                                background: `${event?.color}`,
                                 fontSize: "0.8em",
                                 color: "white",
                             }}
