@@ -19,8 +19,8 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
-import { Branch } from "../Types";
-import { addBranch, deleteBranch, editBranch, getBranches } from "../firebase/dbHandler";
+import { Branch } from "../../Types";
+import { addBranch, deleteBranch, editBranch, getBranches } from "../../firebase/dbHandler";
 
 const BranchTable = () => {
     const columns = [
