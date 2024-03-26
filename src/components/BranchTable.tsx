@@ -24,9 +24,10 @@ import { addBranch, deleteBranch, editBranch, getBranches } from "../firebase/db
 
 const BranchTable = () => {
     const columns = [
-        { id: "name", name: "Name" },
-        { id: "id", name: "ID" },
-        { id: "location", name: "Location" },
+        { id: "branchTitle", name: "Name" },
+        { id: "branchId", name: "ID" },
+        { id: "branchLoc", name: "Location" },
+        // { id: "imgSrc", name: "Image Source" },
         { id: "actions", name: "Actions" }, // Added for edit and remove buttons
     ];
 
