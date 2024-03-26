@@ -271,6 +271,20 @@ export async function getReservationEventsLogs(branch: string): Promise<Processe
  /*********************
  *  BRANCHES
  *********************/
+export async function addBranch(branch: Branch) {
+    const branchRef = collection(db, "branches");
+
+    try {
+        const newBranchRef = doc(branchRef);
+        await setDoc(newBranchRef, branch);
+    } 
+    catch (error) {
+        console.error(error)
+    }
+
+    return branch;
+}
+
 export async function editBranch(branchId: string, branch: Branch): Promise<Branch> {
     const branchRef = collection(db, "branches");
     const branchSnapshot = await getDocs(query(branchRef, where('branchId', '==', branchId)));
