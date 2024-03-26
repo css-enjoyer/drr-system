@@ -271,7 +271,7 @@ export async function getReservationEventsLogs(branch: string): Promise<Processe
  /*********************
  *  BRANCHES
  *********************/
-export async function addBranch(branch: Branch) {
+export async function addBranch(branch: Branch): Promise<Branch> {
     const branchRef = collection(db, "branches");
 
     try {
@@ -301,6 +301,31 @@ export async function editBranch(branchId: string, branch: Branch): Promise<Bran
     const updatedBranch = await updateDoc(branchToEditRef, branch as any)
     
     return branch;
+}
+
+export async function deleteBranch(branchId: string): Promise<string> {
+    let idDeleted: string = "";
+    let branchIdToDelete = "";
+
+    const branchRef = collection(db, "branches");
+    const branchSnapshot = await getDocs(query(branchRef, where('branchId', '==', branchId)));
+
+    branchSnapshot.forEach((doc) => {
+        branchIdToDelete = doc.id
+    });
+
+    const branchToDeleteRef = doc(db, "branches", branchIdToDelete);
+
+    try {
+        await deleteDoc(branchToDeleteRef);
+        idDeleted = branchIdToDelete;
+    } catch (error) {
+        console.error;
+    }
+
+    /* --- TODO if (branchSnapshot.empty) {} --- */
+
+    return idDeleted;
 }
 
 export async function getBranches(): Promise<Branch[]> {
