@@ -6,13 +6,13 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 // TODO: Add SDKs for Firebase products to be used
 
 const firebaseConfig = {
-    apiKey: "AIzaSyC948B9d6ilrIelZD0tiIEWxjWlZw8i8Fs",
-    authDomain: "drr-system.firebaseapp.com",
-    projectId: "drr-system",
-    storageBucket: "drr-system.appspot.com",
-    messagingSenderId: "350863319556",
-    appId: "1:350863319556:web:72eb2b16177346d2454b51",
-    measurementId: "G-3D580LH65K"
+    apiKey: import.meta.env.VITE_API_KEY,
+    authDomain: import.meta.env.VITE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_APP_ID,
+    measurementId: import.meta.env.VITE_MEASUREMENT_ID
 };
 
 // Initialize Firebase

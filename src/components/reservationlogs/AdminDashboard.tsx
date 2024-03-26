@@ -26,6 +26,7 @@ import { ArrowUpward, ArrowDownward, DepartureBoard } from "@mui/icons-material"
 import { LibrarianProp, Librarian } from "../../Types";
 import { FieldValue, Timestamp } from "firebase/firestore";
 import { addLibrarian, deleteLibrarian, editLibrarian, getLibrarians } from "../../firebase/dbHandler";
+import BranchTable from "../BranchTable";
 
 const Muitable = () => {
   const columns = [
@@ -429,6 +430,8 @@ const Muitable = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <BranchTable></BranchTable>
     </div>
 
  

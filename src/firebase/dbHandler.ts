@@ -268,9 +268,65 @@ export async function getReservationEventsLogs(branch: string): Promise<Processe
     return resEvents;
 }
 
-/*********************
+ /*********************
  *  BRANCHES
  *********************/
+export async function addBranch(branch: Branch): Promise<Branch> {
+    const branchRef = collection(db, "branches");
+
+    try {
+        const newBranchRef = doc(branchRef);
+        await setDoc(newBranchRef, branch);
+    } 
+    catch (error) {
+        console.error(error)
+    }
+
+    return branch;
+}
+
+export async function editBranch(branchId: string, branch: Branch): Promise<Branch> {
+    const branchRef = collection(db, "branches");
+    const branchSnapshot = await getDocs(query(branchRef, where('branchId', '==', branchId)));
+    
+    /* --- TODO if (branchSnapshot.empty) {} --- */
+
+    let branchToEdit = "";
+
+    branchSnapshot.forEach((doc) => {
+        branchToEdit = doc.id
+    });
+
+    const branchToEditRef = doc(db, "branches", branchToEdit);
+    const updatedBranch = await updateDoc(branchToEditRef, branch as any)
+    
+    return branch;
+}
+
+export async function deleteBranch(branchId: string): Promise<string> {
+    let idDeleted: string = "";
+    let branchIdToDelete = "";
+
+    const branchRef = collection(db, "branches");
+    const branchSnapshot = await getDocs(query(branchRef, where('branchId', '==', branchId)));
+
+    branchSnapshot.forEach((doc) => {
+        branchIdToDelete = doc.id
+    });
+
+    const branchToDeleteRef = doc(db, "branches", branchIdToDelete);
+
+    try {
+        await deleteDoc(branchToDeleteRef);
+        idDeleted = branchIdToDelete;
+    } catch (error) {
+        console.error;
+    }
+
+    /* --- TODO if (branchSnapshot.empty) {} --- */
+
+    return idDeleted;
+}
 
 export async function getBranches(): Promise<Branch[]> {
     const branchesRef = collection(db, "branches");
@@ -397,7 +453,7 @@ export async function editLibrarian(userEmail: string, librarian: Librarian): Pr
         librarianIdToEdit = doc.id
     })    
     const librarianToEditRef = doc(db, "librarians", librarianIdToEdit);
-
+    
     const updatedLibrarian = await updateDoc(librarianToEditRef, librarian as any)
     return librarian
 }
