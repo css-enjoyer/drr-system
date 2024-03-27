@@ -6,8 +6,9 @@ import LoginPage from "./components/LoginPage";
 import Footer from "./components/Footer";
 import ResponsiveAppBar from "./components/ResponsiveAppBar";
 import Timeline from "./components/Timeline";
-import LibrarianReservationLogs from "./components/reservationlogs/LibrarianReservationLogs";
 import AdminDashboard from "./components/reservationlogs/AdminDashboard";
+import LibrarianDashboard from "./components/reservationlogs/LibrarianDashboard";
+import LibrarianReservationLogs from "./components/reservationlogs/LibrarianReservationLogs";
 import Confirmation from "./components/miscellaneous/Confirmation";
 import Cancellation from "./components/miscellaneous/Cancellation";
 import About from "./components/miscellaneous/About";
@@ -101,6 +102,20 @@ function App() {
               authContext?.user ? (
                 <Protected>
                   <Timeline />
+                </Protected>
+              ) : (
+                <Navigate to="/" />
+              )
+            }
+          />
+
+          {/* librarian dashboard */}
+          <Route
+            path="/librarianDashboard"
+            element={
+              authContext?.user ? (
+                <Protected>
+                  <LibrarianDashboard />
                 </Protected>
               ) : (
                 <Navigate to="/" />
