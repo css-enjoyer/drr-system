@@ -50,8 +50,8 @@ const RoomTable: React.FC<RoomTableProps> = ({ selectedBranch }) => {
     const [sortOrder, setSortOrder] = useState({ id: "", direction: "" });
 
     const [roomTitle, setRoomTitle] = useState("");
-    const [roomId, setRoomId] = useState(0);
-    const [roomPax, setRoomPax] = useState(0);
+    const [roomId, setRoomId] = useState<number | string>("");
+    const [roomPax, setRoomPax] = useState<number | string>("");
     const [roomBranch, setRoomBranch] = useState("");
     const [roomAvailable, setRoomAvailable] = useState(false);
     const [roomToEdit, setRoomToEdit] = useState(0);
@@ -138,6 +138,7 @@ const RoomTable: React.FC<RoomTableProps> = ({ selectedBranch }) => {
         setRoomTitle(rows.at(index)?.roomTitle as string);
         setRoomId(rows.at(index)?.roomId as number);
         setRoomBranch(rows.at(index)?.roomBranch as string);
+        setRoomPax(rows.at(index)?.roomPax as number);
         setRoomAvailable(rows.at(index)?.roomAvailable as boolean);
 
         setOpenEditDialog(true);
@@ -145,9 +146,9 @@ const RoomTable: React.FC<RoomTableProps> = ({ selectedBranch }) => {
 
     const handleConfirmEdit = () => {
         const newRoom: Room = {
-            roomId: roomId,
+            roomId: +roomId,
             roomTitle: roomTitle,
-            roomPax: roomPax,
+            roomPax: +roomPax,
             roomAvailable: roomAvailable,
             roomBranch: roomBranch
         };
@@ -174,10 +175,10 @@ const RoomTable: React.FC<RoomTableProps> = ({ selectedBranch }) => {
 
     // HANDLE ADD
     function resetAddDialog() {
-        setRoomId(0);
+        setRoomId("");
         setRoomTitle("");
         setRoomBranch("");
-        setRoomPax(0);
+        setRoomPax("");
         setRoomAvailable(false);
     }
 
@@ -187,9 +188,9 @@ const RoomTable: React.FC<RoomTableProps> = ({ selectedBranch }) => {
 
     const handleConfirmAdd = () => {
         const newRoom: Room = {
-            roomId: roomId,
+            roomId: +roomId,
             roomTitle: roomTitle,
-            roomPax: roomPax,
+            roomPax: +roomPax,
             roomAvailable: roomAvailable,
             roomBranch: roomBranch
         };
@@ -346,6 +347,8 @@ const RoomTable: React.FC<RoomTableProps> = ({ selectedBranch }) => {
                 />
                 <TextField
                     label="Id"
+                    type="number"
+                    inputProps={{ min: 1, max: 20 }}
                     variant="outlined"
                     value={roomId}
                     onChange={(e) => setRoomId(+e.target.value)}
@@ -354,6 +357,8 @@ const RoomTable: React.FC<RoomTableProps> = ({ selectedBranch }) => {
                 />
                 <TextField
                     label="Pax Capacity"
+                    type="number"
+                    inputProps={{ min: 1, max: 12 }}
                     variant="outlined"
                     value={roomPax}
                     onChange={(e) => setRoomPax(+e.target.value)}
@@ -408,6 +413,8 @@ const RoomTable: React.FC<RoomTableProps> = ({ selectedBranch }) => {
                 />
                 <TextField
                     label="New Id"
+                    type="number"
+                    inputProps={{ min: 1, max: 20 }}
                     variant="outlined"
                     value={roomId}
                     onChange={(e) => setRoomId(+e.target.value)}
@@ -424,6 +431,8 @@ const RoomTable: React.FC<RoomTableProps> = ({ selectedBranch }) => {
                 />
                 <TextField
                     label="New Pax Capacity"
+                    type="number"
+                    inputProps={{ min: 1, max: 12 }}
                     variant="outlined"
                     value={roomPax}
                     onChange={(e) => setRoomPax(+e.target.value)}
