@@ -244,6 +244,7 @@ const RoomTable: React.FC<RoomTableProps> = ({ selectedBranch }) => {
                         margin: "0px 0",
                     },
                 }}
+                disabled={!selectedBranch}
             >
             Add Room
             </Button>
@@ -348,14 +349,6 @@ const RoomTable: React.FC<RoomTableProps> = ({ selectedBranch }) => {
                     variant="outlined"
                     value={roomId}
                     onChange={(e) => setRoomId(+e.target.value)}
-                    fullWidth
-                    margin="normal"
-                />
-                <TextField
-                    label="Branch Id"
-                    variant="outlined"
-                    value={roomBranch}
-                    onChange={(e) => setRoomBranch(e.target.value)}
                     fullWidth
                     margin="normal"
                 />
