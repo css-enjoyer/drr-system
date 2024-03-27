@@ -371,35 +371,6 @@ export async function getBranches(): Promise<Branch[]> {
     return room;
 }
 
-//  export async function deleteRoom(branchId: string, roomId: number): Promise<string | undefined> {
-//     const roomRef = query(collectionGroup(db, 'rooms'), where('roomBranch', '==', branchId));
-//     const roomSnapshot = await getDocs(query(roomRef, where('roomId', '==', roomId)));
-
-//     let roomIdToDelete: number | undefined;
-
-//     roomSnapshot.forEach((doc) => {
-//         console.log(doc.id);
-//         roomIdToDelete = +doc.id;
-//     });
-
-//     if (!roomIdToDelete) {
-//         console.warn("No room with matching provided branch and room ids.");
-//         return undefined;
-//     }
-
-//     const branchesRef = doc(db, "branches", branchId);
-//     const roomToDeleteRef = doc(branchesRef, "rooms", roomIdToDelete);
-
-//     try {
-//         await deleteDoc(roomToDeleteRef);
-//         return roomIdToDelete;
-//     }
-//     catch (error) {
-//         console.error(error);
-//         return undefined;
-//     }
-// }
-
 export async function deleteRoom(branchId: string, roomId: number): Promise<string> {
     let idDeleted: string = "";
     let roomIdToDelete = "";
