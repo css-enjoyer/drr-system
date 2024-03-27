@@ -28,7 +28,7 @@ const BranchTable = () => {
         { id: "branchId", name: "ID" },
         { id: "branchLoc", name: "Location" },
         // { id: "imgSrc", name: "Image Source" },
-        { id: "actions", name: "Actions" }, // Added for edit and remove buttons
+        { id: "actions", name: "Actions" }
     ];
 
     /******************************
