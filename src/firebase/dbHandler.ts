@@ -358,6 +358,8 @@ export async function getBranches(): Promise<Branch[]> {
     const branchesRef = doc(db, "branches", branchId);
     const roomsRef = collection(branchesRef, "rooms");
 
+    room.roomBranch = branchId;
+
     try {
         const newRoomRef = doc(roomsRef);
         await setDoc(newRoomRef, room);
@@ -369,45 +371,71 @@ export async function getBranches(): Promise<Branch[]> {
     return room;
 }
 
- export async function deleteRoom(branchId: string, roomId: number): Promise<string> {
-    let idDeleted = "";
+//  export async function deleteRoom(branchId: string, roomId: number): Promise<string | undefined> {
+//     const roomRef = query(collectionGroup(db, 'rooms'), where('roomBranch', '==', branchId));
+//     const roomSnapshot = await getDocs(query(roomRef, where('roomId', '==', roomId)));
+
+//     let roomIdToDelete: number | undefined;
+
+//     roomSnapshot.forEach((doc) => {
+//         console.log(doc.id);
+//         roomIdToDelete = +doc.id;
+//     });
+
+//     if (!roomIdToDelete) {
+//         console.warn("No room with matching provided branch and room ids.");
+//         return undefined;
+//     }
+
+//     const branchesRef = doc(db, "branches", branchId);
+//     const roomToDeleteRef = doc(branchesRef, "rooms", roomIdToDelete);
+
+//     try {
+//         await deleteDoc(roomToDeleteRef);
+//         return roomIdToDelete;
+//     }
+//     catch (error) {
+//         console.error(error);
+//         return undefined;
+//     }
+// }
+
+export async function deleteRoom(branchId: string, roomId: number): Promise<string> {
+    let idDeleted: string = "";
     let roomIdToDelete = "";
 
-    const roomRef = query(collectionGroup(db, 'rooms'), where('roomBranch', '==', branchId));
-    const roomSnapshot = await getDocs(query(roomRef, where('roomId', '==', roomId)));
-
+    const branchesRef = doc(db, "branches", branchId);
+    const roomsRef = collection(branchesRef, "rooms");
+    const roomSnapshot = await getDocs(query(roomsRef, where('roomId', '==', roomId)));
+    
     roomSnapshot.forEach((doc) => {
-        roomIdToDelete = doc.id
+        roomIdToDelete = doc.id;
     });
 
-    const roomToDeleteRef = doc(db, "rooms", roomIdToDelete);
-
+    const roomToDeleteRef = doc(branchesRef, "rooms", roomIdToDelete);
     try {
         await deleteDoc(roomToDeleteRef);
         idDeleted = roomIdToDelete;
-    } catch (error) {
-        console.error;
+    } 
+    catch (error) {
+        console.error(error);
     }
-
-    /* --- TODO if (branchSnapshot.empty) {} --- */
 
     return idDeleted;
 }
 
 export async function editRoom(branchId: string, roomId: number, room: Room): Promise<Room> {
-    const roomRef = query(collectionGroup(db, 'rooms'), where('roomBranch', '==', branchId));
-    const roomSnapshot = await getDocs(query(roomRef, where('roomId', '==', roomId)));
+    const branchesRef = doc(db, "branches", branchId);
+    const roomsRef = collection(branchesRef, "rooms");
+    const roomSnapshot = await getDocs(query(roomsRef, where('roomId', '==', roomId)));
     
     let roomToEdit = "";
-
     roomSnapshot.forEach((doc) => {
         roomToEdit = doc.id
     });
 
-    const roomToEditRef = doc(db, "rooms", roomToEdit);
+    const roomToEditRef = doc(branchesRef, "rooms", roomToEdit);
     const updatedRoom = await updateDoc(roomToEditRef, room as any);
-    
-    /* --- TODO if (roomSnapshot.empty) {} --- */
     
     return room;
 }
