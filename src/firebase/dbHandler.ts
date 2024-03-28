@@ -349,6 +349,68 @@ export async function getBranches(): Promise<Branch[]> {
     return branches;
 }
 
+ /*********************
+ *  ROOMS
+ *********************/
+ export async function addRoom(branchId: string, room: Room): Promise<Room> {
+    // const rooms = query(collectionGroup(db, 'rooms'), where('roomBranch', '==', branchId));
+
+    const branchesRef = doc(db, "branches", branchId);
+    const roomsRef = collection(branchesRef, "rooms");
+
+    room.roomBranch = branchId;
+
+    try {
+        const newRoomRef = doc(roomsRef);
+        await setDoc(newRoomRef, room);
+    } 
+    catch (error) {
+        console.error(error)
+    }
+
+    return room;
+}
+
+export async function deleteRoom(branchId: string, roomId: number): Promise<string> {
+    let idDeleted: string = "";
+    let roomIdToDelete = "";
+
+    const branchesRef = doc(db, "branches", branchId);
+    const roomsRef = collection(branchesRef, "rooms");
+    const roomSnapshot = await getDocs(query(roomsRef, where('roomId', '==', roomId)));
+    
+    roomSnapshot.forEach((doc) => {
+        roomIdToDelete = doc.id;
+    });
+
+    const roomToDeleteRef = doc(branchesRef, "rooms", roomIdToDelete);
+    try {
+        await deleteDoc(roomToDeleteRef);
+        idDeleted = roomIdToDelete;
+    } 
+    catch (error) {
+        console.error(error);
+    }
+
+    return idDeleted;
+}
+
+export async function editRoom(branchId: string, roomId: number, room: Room): Promise<Room> {
+    const branchesRef = doc(db, "branches", branchId);
+    const roomsRef = collection(branchesRef, "rooms");
+    const roomSnapshot = await getDocs(query(roomsRef, where('roomId', '==', roomId)));
+    
+    let roomToEdit = "";
+    roomSnapshot.forEach((doc) => {
+        roomToEdit = doc.id
+    });
+
+    const roomToEditRef = doc(branchesRef, "rooms", roomToEdit);
+    const updatedRoom = await updateDoc(roomToEditRef, room as any);
+    
+    return room;
+}
+
 export async function getRooms(branch: string): Promise<Room[]> {
     const roomsArray: Room[] = [];
 
