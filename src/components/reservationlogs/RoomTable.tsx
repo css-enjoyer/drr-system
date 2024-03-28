@@ -370,7 +370,11 @@ const RoomTable: React.FC<RoomTableProps> = ({ selectedBranch }) => {
                         <Select
                         labelId="section-label"
                         value={roomAvailable}
-                        onChange={(e) => setRoomAvailable(!!e.target.value)}
+                        // onChange={(e) => setRoomAvailable(!!e.target.value)}
+                        onChange={(e) => {
+                            const isTrue = e.target.value === "true";
+                            setRoomAvailable(isTrue);
+                        }}
                         label="Available"
                         >
                             <MenuItem value={"false"}>
@@ -444,7 +448,11 @@ const RoomTable: React.FC<RoomTableProps> = ({ selectedBranch }) => {
                         <Select
                         labelId="section-label"
                         value={roomAvailable}
-                        onChange={(e) => setRoomAvailable(!!e.target.value)}
+                        // onChange={(e) => setRoomAvailable(e.target.value)}
+                        onChange={(e) => {
+                            const isTrue = e.target.value === "true";
+                            setRoomAvailable(isTrue);
+                        }}
                         label="Available"
                         >
                             <MenuItem value={"false"}>
