@@ -4,7 +4,7 @@ import { Alert, Autocomplete, Box, Button, Container, DialogActions, Grid, TextF
 import { useContext, useEffect, useRef, useState } from "react";
 import drImage from "../styles/images/dr1.jpg";
 import { AuthContext } from "../utils/AuthContext";
-import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getReservationEvents, getRooms } from "../firebase/dbHandler";
+import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getRooms } from "../firebase/dbHandler";
 import { TimePicker } from "@mui/x-date-pickers";
 import { DurationOption, ReservationEvent, RoomProps } from "../Types";
 import { generateRandomSequence, isReservationBeyondOpeningHrs, isReservationOverlapping, isStudentReservationConcurrent } from "../utils/Utils.ts"
@@ -23,11 +23,11 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     const startTime = 8;
     const endTime = 17;
 
-    const durationOptions: DurationOption[] = setDurationOptions(
-        authContext?.userRole,
-        startTime,
-        endTime
-    );
+    // const durationOptions: DurationOption[] = setDurationOptions(
+    //     authContext?.userRole,
+    //     startTime,
+    //     endTime
+    // );
 
     const [roomsState, setRoomsState] = useState<RoomProps[]>([]);
     const [eventsState, setEventsState] = useState<ProcessedEvent[]>([]);
