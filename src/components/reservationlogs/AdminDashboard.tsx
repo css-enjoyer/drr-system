@@ -67,7 +67,8 @@ const Muitable = () => {
 
       console.log(librarian);
       librarianProps.push(librarianProp);
-    })
+    });
+
     setRows(librarianProps);
   }
 
@@ -110,17 +111,21 @@ const Muitable = () => {
   });
 
   /******************************
-  *  EDIT HANDLERS              *
+  *  EDIT HANDLER               *
   ******************************/
-  const handleEdit = (index: number) => {
-    console.log("Edit row:", rows.at(index)?.email);
+  const handleEdit = (email: string) => {
+    const rowToEdit = rows.find((row) => row.email === email);
 
-    setLibrarianEmailToEdit(rows.at(index)?.email as string)
-    setLibrarianEmail(rows.at(index)?.email as string);
-    setLibrarianName(rows.at(index)?.name as string);
-    setLibrarianDepartment(rows.at(index)?.department as string);
+    if (rowToEdit) {
+      console.log("Edit row:", rowToEdit.email);
 
-    setopenEditDialog(true);
+      setLibrarianEmailToEdit(rowToEdit.email);
+      setLibrarianEmail(rowToEdit.email);
+      setLibrarianName(rowToEdit.name);
+      setLibrarianDepartment(rowToEdit.department)
+
+      setopenEditDialog(true);
+    }
   };
 
   const handleConfirmEdit = () => {
@@ -147,10 +152,12 @@ const Muitable = () => {
   /******************************
   *  CRUD HANDLER
   ******************************/
-  const handleRemove = (index: number) => {
-    console.log("Remove row:", rows.at(index)?.email);
+  const handleRemove = (email: string) => {
+    const rowToRemove = rows.find((row) => row.email === email);
 
-    deleteLibrarian(rows.at(index)?.email as string);
+    console.log("Remove row: ", rowToRemove);
+
+    deleteLibrarian(rowToRemove?.email as string);
     fetchData();
   };
 
@@ -290,22 +297,22 @@ const Muitable = () => {
             <TableBody>
               {filteredRows
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => (
-                  <TableRow key={index}>
+                .map((row) => (
+                  <TableRow key={row.email}>
                     {columns.map((column) => (
-                      <TableCell key={column.id} style={{ height: "52px" }}>
+                      <TableCell key={`${row.email}-${column.id}`} style={{ height: "52px" }}>
                         {column.id !== "actions" ? (
                           row[column.id as keyof typeof row] // Corrected line
                         ) : (
                           <div>
                             <IconButton
-                              onClick={() => handleEdit(index)}
+                              onClick={() => handleEdit(row.email)}
                               aria-label="edit"
                             >
                               <EditIcon style={{ fontSize: 18 }} />
                             </IconButton>
                             <IconButton
-                              onClick={() => handleRemove(index)}
+                              onClick={() => handleRemove(row.email)}
                               aria-label="delete"
                             >
                               <DeleteIcon style={{ fontSize: 18 }} />
