@@ -22,9 +22,9 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { ArrowUpward, ArrowDownward, DepartureBoard } from "@mui/icons-material";
+import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
 import { LibrarianProp, Librarian } from "../../Types";
-import { FieldValue, Timestamp } from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
 import { addLibrarian, deleteLibrarian, editLibrarian, getLibrarians } from "../../firebase/dbHandler";
 import BranchTable from "./BranchTable";
 
@@ -34,11 +34,7 @@ const Muitable = () => {
     { id: "name", name: "Name" },
     { id: "department", name: "Department" },
     { id: "email", name: "Email" },
-    { id: "actions", name: "Actions" }, // Added for edit and remove buttons
-  ];
-
-  // Hardcoded data
-  const MockData: LibrarianProp[] = [
+    { id: "actions", name: "Actions" },
   ];
 
   const [rows, setRows] = useState<LibrarianProp[]>([]);
@@ -52,8 +48,11 @@ const Muitable = () => {
   const [librarianDepartment, setLibrarianDepartment] = useState("");
   const [librarianEmailToEdit, setLibrarianEmailToEdit] = useState("");
   const [openAddDialog, setopenAddDialog] = useState(false);
-  const [openEditDialog, setopenEditDialog] = useState(false)
-  // TABLE HANDLERS
+  const [openEditDialog, setopenEditDialog] = useState(false);
+  
+  /******************************
+  *  TABLE INIT                 *
+  ******************************/
   const fetchData = async () => {
     const LibrariansData = await getLibrarians();
     const librarianProps: LibrarianProp[] = [];
@@ -66,16 +65,15 @@ const Muitable = () => {
         department: librarian.librarianBranch
       }
 
-      console.log(librarian)
-
+      console.log(librarian);
       librarianProps.push(librarianProp);
     })
-    setRows(librarianProps)
+    setRows(librarianProps);
   }
 
   useEffect(() => {
     fetchData();
-  }, [])
+  }, []);
 
   const handleSearchChange = (event: {
     target: { value: React.SetStateAction<string> };
@@ -104,20 +102,25 @@ const Muitable = () => {
     const aValue = a[sortOrder.id as keyof typeof a];
     const bValue = b[sortOrder.id as keyof typeof b];
     const multiplier = sortOrder.direction === "asc" ? 1 : -1;
+
     if (aValue < bValue) return -1 * multiplier;
     if (aValue > bValue) return 1 * multiplier;
+
     return 0;
   });
 
-  // HANDLE EDIT
+  /******************************
+  *  EDIT HANDLERS              *
+  ******************************/
   const handleEdit = (index: number) => {
     console.log("Edit row:", rows.at(index)?.email);
+
     setLibrarianEmailToEdit(rows.at(index)?.email as string)
     setLibrarianEmail(rows.at(index)?.email as string);
     setLibrarianName(rows.at(index)?.name as string);
     setLibrarianDepartment(rows.at(index)?.department as string);
+
     setopenEditDialog(true);
-    
   };
 
   const handleConfirmEdit = () => {
@@ -130,8 +133,8 @@ const Muitable = () => {
 
     editLibrarian(librarianEmailToEdit, newLibrarian)
     setopenEditDialog(false);
-    resetAddDialog();
 
+    resetAddDialog();
     fetchData();
   }
 
@@ -141,15 +144,16 @@ const Muitable = () => {
   };
 
 
-  // HANDLE REMOVE
+  /******************************
+  *  CRUD HANDLER
+  ******************************/
   const handleRemove = (index: number) => {
-    // Handle remove action here
     console.log("Remove row:", rows.at(index)?.email);
+
     deleteLibrarian(rows.at(index)?.email as string);
     fetchData();
   };
 
-  // HANDLE ADD
   const handleAddLibrarian = () => {
     setopenAddDialog(true);
   };
@@ -168,18 +172,16 @@ const Muitable = () => {
       librarianBranch: librarianDepartment
     }
     
-    console.log(newLibrarian)
+    console.log(newLibrarian);
 
     addLibrarian(newLibrarian);
     setopenAddDialog(false);
-    // Reset input values
-    resetAddDialog;
+    resetAddDialog();
     fetchData();
   };
 
   const handleCancelAdd = () => {
     setopenAddDialog(false);
-    // Reset input values
     resetAddDialog();
   };
 
@@ -434,7 +436,7 @@ const Muitable = () => {
       <BranchTable></BranchTable>
     </div>
 
- 
+
     
   );
 };
