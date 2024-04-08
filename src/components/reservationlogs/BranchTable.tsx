@@ -31,6 +31,9 @@ const BranchTable = () => {
         { id: "actions", name: "Actions" }
     ];
 
+    // Refresh table after action/s are done
+    const [refreshTable, setRefreshTable] = useState(false);
+
     /******************************
     *  TABLE INIT
     ******************************/
@@ -71,7 +74,7 @@ const BranchTable = () => {
 
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [refreshTable]);
 
     const handleSearchChange = (event: {
         target: { value: React.SetStateAction<string> };
@@ -136,7 +139,7 @@ const BranchTable = () => {
         editBranch(branchToEdit, newBranch);
         setOpenEditDialog(false);
         resetAddDialog();
-        fetchData();
+        setRefreshTable(!refreshTable);
     }
 
     const handleCancelEdit = () => {
@@ -151,7 +154,7 @@ const BranchTable = () => {
         // console.log("Remove row:", rows.at(index)?.branchId);
 
         deleteBranch(branchId);
-        fetchData();
+        setRefreshTable(!refreshTable);
     };
 
     // HANDLE ADD
@@ -180,7 +183,7 @@ const BranchTable = () => {
         addBranch(newBranch);
         setOpenAddDialog(false);
         resetAddDialog();
-        fetchData();
+        setRefreshTable(!refreshTable);
     };
 
     const handleCancelAdd = () => {
