@@ -50,6 +50,9 @@ const Muitable = () => {
   const [openAddDialog, setopenAddDialog] = useState(false);
   const [openEditDialog, setopenEditDialog] = useState(false);
   
+  // Refresh table after action/s are done
+  const [refreshTable, setRefreshTable] = useState(false);
+
   /******************************
   *  TABLE INIT                 *
   ******************************/
@@ -74,7 +77,7 @@ const Muitable = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [refreshTable]);
 
   const handleSearchChange = (event: {
     target: { value: React.SetStateAction<string> };
@@ -140,8 +143,14 @@ const Muitable = () => {
     setopenEditDialog(false);
 
     resetAddDialog();
-    fetchData();
-  }
+
+    // --- UPDATE: DOES NOT REFLECT IN REAL TIME --- //
+    setRows((prevRows) =>
+      prevRows.map((row) =>
+        row.email === librarianEmailToEdit ? { ...row, ...newLibrarian } : row
+      )
+    );
+  };
 
   const handleCancelEdit = () => {
     setopenEditDialog(false);
@@ -158,7 +167,7 @@ const Muitable = () => {
     console.log("Remove row: ", rowToRemove);
 
     deleteLibrarian(rowToRemove?.email as string);
-    fetchData();
+    setRows((prevRows) => prevRows.filter((row) => row.email !== email));
   };
 
   const handleAddLibrarian = () => {
@@ -184,7 +193,7 @@ const Muitable = () => {
     addLibrarian(newLibrarian);
     setopenAddDialog(false);
     resetAddDialog();
-    fetchData();
+    setRefreshTable(!refreshTable);
   };
 
   const handleCancelAdd = () => {
