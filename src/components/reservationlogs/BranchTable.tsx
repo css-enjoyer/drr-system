@@ -108,18 +108,21 @@ const BranchTable = () => {
     });
 
     /* --- EDIT FUNCTIONALITIES --- */
-    const handleEdit = (index: number) => {
-        // *** VERIFIFCATION
-        console.log("Edit row:", rows.at(index)?.branchId);
-
-        setBranchToEdit(rows.at(index)?.branchId as string);
+    const handleEdit = (branchId: string) => {
+        const rowToEdit = rows.find((row) => row.branchId === branchId);
+        if (rowToEdit) {
+            // *** VERIFIFCATION
+            console.log("Edit row:", rowToEdit.branchId);
+            
+            setBranchToEdit(rowToEdit.branchId);
         
-        setBranchId(rows.at(index)?.branchId as string);
-        setBranchName(rows.at(index)?.branchTitle as string);
-        setBranchLocation(rows.at(index)?.branchLoc as string);
-        setImgSource(rows.at(index)?.imgSrc as string);
+            setBranchId(rowToEdit.branchId);
+            setBranchName(rowToEdit.branchTitle);
+            setBranchLocation(rowToEdit.branchLoc);
+            setImgSource(rowToEdit.imgSrc);
 
-        setOpenEditDialog(true);
+            setOpenEditDialog(true);
+        }
     };
 
     const handleConfirmEdit = () => {
@@ -143,11 +146,11 @@ const BranchTable = () => {
 
 
     // HANDLE REMOVE
-    const handleRemove = (index: number) => {
+    const handleRemove = (branchId: string) => {
         // *** VERIFICATION
-        console.log("Remove row:", rows.at(index)?.branchId);
+        // console.log("Remove row:", rows.at(index)?.branchId);
 
-        deleteBranch(rows.at(index)?.branchId as string);
+        deleteBranch(branchId);
         fetchData();
     };
 
@@ -264,22 +267,22 @@ const BranchTable = () => {
                 <TableBody>
                 {filteredRows
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row, index) => (
-                        <TableRow key={index}>
+                    .map((row) => (
+                        <TableRow key={row.branchId}>
                             {columns.map((column) => (
-                                <TableCell key={column.id} style={{ height: "52px" }}>
+                                <TableCell key={`${row.branchId}-${column.id}`} style={{ height: "52px" }}>
                                     {column.id !== "actions" ? (
-                                        row[column.id as keyof typeof row]
+                                        row[column.id as keyof Branch]
                                     ) : (
                                         <div>
                                             <IconButton
-                                                onClick={() => handleEdit(index)}
+                                                onClick={() => handleEdit(row.branchId)}
                                                 aria-label="edit"
                                             >
                                             <EditIcon style={{ fontSize: 18 }} />
                                             </IconButton>
                                             <IconButton
-                                                onClick={() => handleRemove(index)}
+                                                onClick={() => handleRemove(row.branchId)}
                                                 aria-label="delete"
                                             >
                                             <DeleteIcon style={{ fontSize: 18 }} />
