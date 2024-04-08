@@ -139,7 +139,12 @@ const BranchTable = () => {
         editBranch(branchToEdit, newBranch);
         setOpenEditDialog(false);
         resetAddDialog();
-        setRefreshTable(!refreshTable);
+
+        setRows((prevRows) =>
+            prevRows.map((row) =>
+              row.branchId === branchToEdit ? newBranch : row
+            )
+        );
     }
 
     const handleCancelEdit = () => {
@@ -150,11 +155,8 @@ const BranchTable = () => {
 
     // HANDLE REMOVE
     const handleRemove = (branchId: string) => {
-        // *** VERIFICATION
-        // console.log("Remove row:", rows.at(index)?.branchId);
-
         deleteBranch(branchId);
-        setRefreshTable(!refreshTable);
+        setRows((prevRows) => prevRows.filter((row) => row.branchId !== branchId));
     };
 
     // HANDLE ADD
