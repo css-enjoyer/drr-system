@@ -420,6 +420,7 @@ const Muitable = () => {
               onChange={(e) => setLibrarianDepartment(e.target.value)}
               label="Department"
             >
+              {/* UPDATE: MODULAR SELECTION OF BRANCHES */}
               <MenuItem value={"gen-ref"}>
                 Miguel de Benavides Library - General References
               </MenuItem>
@@ -439,7 +440,7 @@ const Muitable = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
+      {/* TABLE FOR BRANCHES */}
       <BranchTable></BranchTable>
     </div>
 
