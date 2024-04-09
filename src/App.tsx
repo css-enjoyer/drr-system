@@ -76,6 +76,7 @@ function App() {
       <div className="App">
         {/* Show appbar and footer only when logged in */}
         {authContext?.user && <ResponsiveAppBar logoTitle={<img src={ustLogo} />} />}
+        <div className="App-content">
         <Routes>
           <Route
             path="/"
@@ -222,6 +223,7 @@ function App() {
           />
 
         </Routes>
+        </div>
         {authContext?.user && <Footer />}
         {/* Scroll to Top Button */}
         {showScrollButton && (
