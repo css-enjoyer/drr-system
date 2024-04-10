@@ -41,8 +41,10 @@ export async function addReservationEvent(resEvent: ProcessedEvent): Promise<Pro
 }
 
 // ----- GET RESERVATIONS EVENTS -----
+// use realtime updates instead
+/*
 export async function getReservationEvents(branch: string): Promise<ProcessedEvent[]> {
-    const q = query(collection(db, "reservation-event"), where("branchId", "==", branch))
+    const q = query(collection(db, "reservation-event"), where("branchId", "==", branch));
     const querySnapshot = await getDocs(q);
 
     const resEvents: ReservationEvent[] = []
@@ -76,6 +78,7 @@ export async function getReservationEvents(branch: string): Promise<ProcessedEve
 
     return resEvents;
 }
+*/
 
 // ----- GET SPECIFIC RESERVATION EVENT BY ID -----
 export async function getReservationEventById(resEventId: string): Promise<ProcessedEvent> {
@@ -265,9 +268,65 @@ export async function getReservationEventsLogs(branch: string): Promise<Processe
     return resEvents;
 }
 
-/*********************
+ /*********************
  *  BRANCHES
  *********************/
+export async function addBranch(branch: Branch): Promise<Branch> {
+    const branchRef = collection(db, "branches");
+
+    try {
+        const newBranchRef = doc(branchRef);
+        await setDoc(newBranchRef, branch);
+    } 
+    catch (error) {
+        console.error(error)
+    }
+
+    return branch;
+}
+
+export async function editBranch(branchId: string, branch: Branch): Promise<Branch> {
+    const branchRef = collection(db, "branches");
+    const branchSnapshot = await getDocs(query(branchRef, where('branchId', '==', branchId)));
+    
+    /* --- TODO if (branchSnapshot.empty) {} --- */
+
+    let branchToEdit = "";
+
+    branchSnapshot.forEach((doc) => {
+        branchToEdit = doc.id
+    });
+
+    const branchToEditRef = doc(db, "branches", branchToEdit);
+    const updatedBranch = await updateDoc(branchToEditRef, branch as any)
+    
+    return branch;
+}
+
+export async function deleteBranch(branchId: string): Promise<string> {
+    let idDeleted: string = "";
+    let branchIdToDelete = "";
+
+    const branchRef = collection(db, "branches");
+    const branchSnapshot = await getDocs(query(branchRef, where('branchId', '==', branchId)));
+
+    branchSnapshot.forEach((doc) => {
+        branchIdToDelete = doc.id
+    });
+
+    const branchToDeleteRef = doc(db, "branches", branchIdToDelete);
+
+    try {
+        await deleteDoc(branchToDeleteRef);
+        idDeleted = branchIdToDelete;
+    } catch (error) {
+        console.error;
+    }
+
+    /* --- TODO if (branchSnapshot.empty) {} --- */
+
+    return idDeleted;
+}
 
 export async function getBranches(): Promise<Branch[]> {
     const branchesRef = collection(db, "branches");
@@ -288,6 +347,68 @@ export async function getBranches(): Promise<Branch[]> {
         branches.push(branch);
     });
     return branches;
+}
+
+ /*********************
+ *  ROOMS
+ *********************/
+ export async function addRoom(branchId: string, room: Room): Promise<Room> {
+    // const rooms = query(collectionGroup(db, 'rooms'), where('roomBranch', '==', branchId));
+
+    const branchesRef = doc(db, "branches", branchId);
+    const roomsRef = collection(branchesRef, "rooms");
+
+    room.roomBranch = branchId;
+
+    try {
+        const newRoomRef = doc(roomsRef);
+        await setDoc(newRoomRef, room);
+    } 
+    catch (error) {
+        console.error(error)
+    }
+
+    return room;
+}
+
+export async function deleteRoom(branchId: string, roomId: number): Promise<string> {
+    let idDeleted: string = "";
+    let roomIdToDelete = "";
+
+    const branchesRef = doc(db, "branches", branchId);
+    const roomsRef = collection(branchesRef, "rooms");
+    const roomSnapshot = await getDocs(query(roomsRef, where('roomId', '==', roomId)));
+    
+    roomSnapshot.forEach((doc) => {
+        roomIdToDelete = doc.id;
+    });
+
+    const roomToDeleteRef = doc(branchesRef, "rooms", roomIdToDelete);
+    try {
+        await deleteDoc(roomToDeleteRef);
+        idDeleted = roomIdToDelete;
+    } 
+    catch (error) {
+        console.error(error);
+    }
+
+    return idDeleted;
+}
+
+export async function editRoom(branchId: string, roomId: number, room: Room): Promise<Room> {
+    const branchesRef = doc(db, "branches", branchId);
+    const roomsRef = collection(branchesRef, "rooms");
+    const roomSnapshot = await getDocs(query(roomsRef, where('roomId', '==', roomId)));
+    
+    let roomToEdit = "";
+    roomSnapshot.forEach((doc) => {
+        roomToEdit = doc.id
+    });
+
+    const roomToEditRef = doc(branchesRef, "rooms", roomToEdit);
+    const updatedRoom = await updateDoc(roomToEditRef, room as any);
+    
+    return room;
 }
 
 export async function getRooms(branch: string): Promise<Room[]> {
@@ -394,7 +515,7 @@ export async function editLibrarian(userEmail: string, librarian: Librarian): Pr
         librarianIdToEdit = doc.id
     })    
     const librarianToEditRef = doc(db, "librarians", librarianIdToEdit);
-
+    
     const updatedLibrarian = await updateDoc(librarianToEditRef, librarian as any)
     return librarian
 }

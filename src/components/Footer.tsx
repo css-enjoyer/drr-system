@@ -38,10 +38,10 @@ function Footer() {
                             Contact us:
                         </Typography>
                         <Typography variant="body2" sx={{ fontSize: '0.75rem' }}>
-                            +63 2-8731-3034 | +63 2-8740-9709
+                            Tel/Fax: +63 2-8731-3034 | +63 2-8740-9709
                         </Typography>                        
                         <Typography variant="body2" sx={{ fontSize: '0.75rem' }}>
-                            library@ust.edu.ph
+                            Email: library@ust.edu.ph
                         </Typography>
                     </Grid>
                 </Grid>

@@ -1,5 +1,5 @@
 import { ProcessedEvent } from "@aldabil/react-scheduler/types";
-import { DurationOption } from "../Types";
+// import { DurationOption } from "../Types";
 
 export function checkReservationTimeOverlap(
     a_start: Date, 
@@ -144,6 +144,7 @@ export function toTitleCase(inputString: string | null | undefined) {
     return inputString.toLowerCase().replace(/(?:^|\s)\w/g, match => match.toUpperCase());
 }
 
+/* --- UPDATE REQUIRED ---
 export function setDurationOptions(
     userType: string | null | undefined,
     startHour?: number, 
@@ -176,8 +177,6 @@ export function setDurationOptions(
 
     return studentOptions;
 }
-
-/* --- UPDATE REQUIRED ---
 
 export function isWholeDay(duration: number): boolean {
     if (duration <= 120) {
