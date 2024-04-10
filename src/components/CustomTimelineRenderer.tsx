@@ -5,7 +5,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../utils/AuthContext";
 import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getRooms } from "../firebase/dbHandler";
 import { TimePicker } from "@mui/x-date-pickers";
-import { DurationOption, ReservationEvent, RoomProps } from "../Types";
+import { DurationOption, ReservationEvent, RoomProps, Room } from "../Types";
 import { generateRandomSequence, isReservationBeyondOpeningHrs, isReservationOverlapping, isStudentReservationConcurrent } from "../utils/Utils.ts"
 import { Numbers, Portrait, School, TextSnippet } from "@mui/icons-material";
 import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
@@ -32,7 +32,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
     const startTime = 8;
     const endTime = 17;
-
     const [roomsState, setRoomsState] = useState<RoomProps[]>([]);
     const [eventsState, setEventsState] = useState<ProcessedEvent[]>([]);
     const [loading, setLoading] = useState(false);
@@ -60,6 +59,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         }
 
         fetchRooms();
+        
     }, [])
 
     const fetchRooms = async () => {
@@ -156,6 +156,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     interface CustomEditorProps {
         scheduler: SchedulerHelpers;
     }
+
     const CustomEditor = ({ scheduler }: CustomEditorProps) => {
         console.log("In scheduler:");
         console.log(scheduler);
@@ -181,13 +182,13 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             // should come from form inputs
             stuRep: event?.stuRep || authContext?.user?.email,
             purp: event?.purp || "",
-            pax: event?.pax || roomsState.filter((room) => room.room_id = scheduler.state.room_id.value)[0].roomMinPax,
+            pax: event?.pax || scheduler.state.roomMinPax.value,
             participantEmails: event?.participantEmails || "",
             duration: event?.duration || 15,
 
             // pax requirements
-            minPax: event?.minPax || roomsState.filter((room) => room.room_id = scheduler.state.room_id.value)[0].roomMinPax,
-            maxPax: event?.maxPax || roomsState.filter((room) => room.room_id = scheduler.state.room_id.value)[0].roomMaxPax,
+            minPax: event?.minPax || scheduler.state.roomMinPax.value,
+            maxPax: event?.maxPax || scheduler.state.roomMaxPax.value,
 
             // auto-generated
             rcpt: event?.rcpt || generateRandomSequence()
@@ -209,7 +210,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             try {
                 const startOfDay = new Date(formState.date.getFullYear(), formState.date.getMonth(), formState.date.getDate(), startTime, 0);
                 const endOfDay = new Date(formState.date.getFullYear(), formState.date.getMonth(), formState.date.getDate(), endTime, 0);
-        
+                
                 const newEvent: ReservationEvent = {
                     event_id: formState.eventId + "",
                     title: "Unavailable",
@@ -649,13 +650,23 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
 
             resources={roomsState}
-            resourceFields={{ idField: "room_id", textField: "title", }}
+            resourceFields={{ idField: "room_id", textField: "title", roomMinPax: "roomMinPax", roomMaxPax: "roomMaxPax"}}
             resourceViewMode="default"
             // required to access room_id
             fields={[
                 {
                     name: "room_id",
                     type: "hidden",
+                },
+                {
+                    name: "roomMinPax",
+                    type: "hidden",
+                    default: roomsState[0].roomMinPax
+                },
+                {
+                    name: "roomMaxPax",
+                    type: "hidden",
+                    default: roomsState[0].roomMaxPax
                 },
 
             ]}

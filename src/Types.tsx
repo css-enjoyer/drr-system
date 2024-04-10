@@ -32,7 +32,6 @@ export interface Branch {
 export interface Room {
     roomId: number;
     roomTitle: string;
-    roomPax: number;
     roomAvailable: boolean;
     roomBranch: string;
     roomMinPax: number;
