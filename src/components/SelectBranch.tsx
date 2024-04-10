@@ -18,7 +18,7 @@ function SelectBranch() {
         const fetchData = async () => {
             try {
                 const branchesData = await getBranches();
-                const filteredBranches = authContext?.userRole !== "SHS-Student"
+                const filteredBranches = authContext?.userRole === "Student"
                     ? branchesData.filter((branch) => branch.branchId !== "shs")
                     : branchesData;
                 setBranches(filteredBranches);
