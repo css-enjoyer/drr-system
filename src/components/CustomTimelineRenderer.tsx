@@ -26,21 +26,12 @@ import genrefroom from "../styles/images/genrefroom.jpeg";
 
 function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     const timelineRef = useRef<SchedulerRef>(null);
-    // console.log("TIMELINE REF");
-    // console.log(timelineRef);
     const { theme } = useThemeContext();
-
 
     const authContext = useContext(AuthContext);
 
     const startTime = 8;
     const endTime = 17;
-
-    // const durationOptions: DurationOption[] = setDurationOptions(
-    //     authContext?.userRole,
-    //     startTime,
-    //     endTime
-    // );
 
     const [roomsState, setRoomsState] = useState<RoomProps[]>([]);
     const [eventsState, setEventsState] = useState<ProcessedEvent[]>([]);
