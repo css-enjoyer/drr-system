@@ -27,9 +27,9 @@ import { Link, useNavigate } from "react-router-dom";
 
 let pages = ["Branches", "FAQs", "About"]; // change these to components in the future
 let pageRoutes = ["/branches", "/FAQs", "/About"];
-const adminPages = ["Branches", "Admin Dashboard", "Librarian Dashboard", "Logs", "FAQs", "About"]
-const adminPageRoutes = ["/branches", "/adminDashboard", "/librarianDashboard", "/librarianLogs", "/FAQs", "/About"];
-const librarianPages = ["Branches", "Librarian Dashboard", "Logs", "FAQs", "About"]
+const adminPages = ["Branches", "Dashboard", "Logs", "FAQs", "About"]
+const adminPageRoutes = ["/branches", "/adminDashboard", "/librarianLogs", "/FAQs", "/About"];
+const librarianPages = ["Branches", "Dashboard", "Logs", "FAQs", "About"]
 const librarianPageRoutes = ["/branches", "/librarianDashboard", "/librarianLogs", "/FAQs", "/About"];
 
 const pageIcons: React.ReactNode[] = []; // change these to components in the future
