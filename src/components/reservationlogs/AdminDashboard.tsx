@@ -141,15 +141,10 @@ const Muitable = () => {
 
     editLibrarian(librarianEmailToEdit, newLibrarian)
     setopenEditDialog(false);
-
     resetAddDialog();
 
-    // --- UPDATE: DOES NOT REFLECT IN REAL TIME --- //
-    setRows((prevRows) =>
-      prevRows.map((row) =>
-        row.email === librarianEmailToEdit ? { ...row, ...newLibrarian } : row
-      )
-    );
+    // --- UPDATE: Does not always reflect in real time --- //
+    setRefreshTable(!refreshTable);
   };
 
   const handleCancelEdit = () => {
@@ -311,7 +306,7 @@ const Muitable = () => {
                     {columns.map((column) => (
                       <TableCell key={`${row.email}-${column.id}`} style={{ height: "52px" }}>
                         {column.id !== "actions" ? (
-                          row[column.id as keyof typeof row] // Corrected line
+                          row[column.id as keyof LibrarianProp]
                         ) : (
                           <div>
                             <IconButton
