@@ -1,5 +1,4 @@
 import { ProcessedEvent } from "@aldabil/react-scheduler/types";
-// import { DurationOption } from "../Types";
 
 export function checkReservationTimeOverlap(
     a_start: Date, 
