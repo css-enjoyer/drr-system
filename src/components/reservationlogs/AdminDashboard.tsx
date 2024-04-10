@@ -27,6 +27,7 @@ import { LibrarianProp, Librarian } from "../../Types";
 import { Timestamp } from "firebase/firestore";
 import { addLibrarian, deleteLibrarian, editLibrarian, getLibrarians } from "../../firebase/dbHandler";
 import BranchTable from "./BranchTable";
+import LibrarianDashboard from "./LibrarianDashboard";
 
 const Muitable = () => {
   const columns = [
@@ -446,6 +447,8 @@ const Muitable = () => {
       </Dialog>
       {/* TABLE FOR BRANCHES */}
       <BranchTable></BranchTable>
+
+      <LibrarianDashboard></LibrarianDashboard>
     </div>
 
 
