@@ -71,7 +71,7 @@ function SelectBranch() {
                                 backgroundPosition: 'center',
                             }}
                             onClick={() => redirectToTimeline(branch.branchId)}>
-                            <Box color="#F9F6E0" 
+                            <Box color="#FFFFFF" 
                             sx={{ 
                                 textShadow: "0px 3px 3px black" ,
                                 }}>

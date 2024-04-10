@@ -6,7 +6,7 @@ function FAQs() {
   const [open, setOpen] = useState({});
 
   const handleToggle = (index) => {
-    setOpen((prev) => ({ ...prev, [index]: !prev[index] }));
+    setOpen((prevOpen) => ({ ...prevOpen, [index]: !prevOpen[index] }));
   };
 
   const faqs = [

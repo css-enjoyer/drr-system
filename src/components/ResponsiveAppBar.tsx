@@ -56,9 +56,11 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
   if (theme.palette.mode === "dark") {
     background =
       "radial-gradient(circle, #2b2b2b -90%, #0e1111 80%)";
+      textColor=
+      "#FFFFFF";
   } else {
-    background =
-      "radial-gradient(circle, #E8AC41 100%, #E2CA76 50%)";
+    background = 
+      "radial-gradient(circle, rgb(232, 172, 65) 100%, rgb(226, 202, 118) 50%);"
     textColor = 
       "#000000";  
   }
@@ -78,8 +80,7 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
     <AppBar
       position="sticky"
       sx={{
-        color: "#F9F6E0",
-        backgroundColor: { background },
+        backgroundColor: { background }
       }}>
 
       <Container maxWidth="xl">
@@ -181,7 +182,12 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
                 to={pageRoutes[index]} // Specify the route for each page
                 onClick={handleCloseNavMenu}
                 startIcon={pageIcons[index]}
-                sx={{ mx: 2, color: "#F9F6E0" }}
+                sx=
+                {{ 
+                  mx: 2, 
+                  color: 
+                  theme.palette.mode === 'dark' ? '#FFFFFF' : '#000000', 
+                }}
               >
                 {page}
               </Button>
