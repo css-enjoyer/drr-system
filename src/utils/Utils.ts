@@ -90,6 +90,7 @@ export function isReservationOverlapping(
         dateStart.getFullYear().toString()
     );
 
+    // Add functionality: Ignore if titles are "Departed"
     const filteredEvents = filterReservations(
         roomId,
         formattedResDate,
