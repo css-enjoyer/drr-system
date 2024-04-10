@@ -25,8 +25,13 @@ import MenuBookIcon from "@mui/icons-material/MenuBook";
 import InfoIcon from "@mui/icons-material/Info";
 import { Link, useNavigate } from "react-router-dom";
 
-const pages = ["Branches", "FAQs", "About"]; // change these to components in the future
-const pageRoutes = ["/branches", "/FAQs", "/About"];
+let pages = ["Branches", "FAQs", "About"]; // change these to components in the future
+let pageRoutes = ["/branches", "/FAQs", "/About"];
+const adminPages = ["Branches", "Admin Dashboard", "Librarian Dashboard", "Logs", "FAQs", "About"]
+const adminPageRoutes = ["/branches", "/adminDashboard", "/librarianDashboard", "/librarianLogs", "/FAQs", "/About"];
+const librarianPages = ["Branches", "Librarian Dashboard", "Logs", "FAQs", "About"]
+const librarianPageRoutes = ["/branches", "/librarianDashboard", "/librarianLogs", "/FAQs", "/About"];
+
 const pageIcons: React.ReactNode[] = []; // change these to components in the future
 
 type AppBarProps = {
@@ -35,6 +40,15 @@ type AppBarProps = {
 
 function ResponsiveAppBar({ logoTitle }: AppBarProps) {
   const authContext = React.useContext(AuthContext);
+
+  if (authContext?.userRole === "Admin") {
+    pages = adminPages;
+    pageRoutes = adminPageRoutes;
+  } else if (authContext?.userRole === "Librarian") {
+    pages = librarianPages;
+    pageRoutes = librarianPageRoutes;
+  }
+
   const navigate = useNavigate();
   const userPhoto = authContext?.user?.photoURL;
 
@@ -90,7 +104,7 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
             variant="h6"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            href="/"
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
