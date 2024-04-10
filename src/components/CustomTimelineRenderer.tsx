@@ -2,21 +2,34 @@ import { Scheduler } from "@aldabil/react-scheduler"
 import { ProcessedEvent, SchedulerHelpers, SchedulerRef } from "@aldabil/react-scheduler/types";
 import { Alert, Autocomplete, Box, Button, Container, DialogActions, Grid, TextField, Typography } from "@mui/material";
 import { useContext, useEffect, useRef, useState } from "react";
-import drImage from "../styles/images/dr1.jpg";
 import { AuthContext } from "../utils/AuthContext";
 import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getRooms } from "../firebase/dbHandler";
 import { TimePicker } from "@mui/x-date-pickers";
 import { DurationOption, ReservationEvent, RoomProps } from "../Types";
-import { generateRandomSequence, isReservationBeyondOpeningHrs, isReservationOverlapping, isStudentReservationConcurrent } from "../utils/Utils.ts"
-import { Numbers, Portrait, TextSnippet } from "@mui/icons-material";
+import { generateRandomSequence, isReservationBeyondOpeningHrs, isReservationOverlapping, isStudentReservationConcurrent, isWholeDay, setDurationOptions, setWholeDayUnavailable } from "../utils/Utils.ts"
+import { Numbers, Portrait, School, TextSnippet } from "@mui/icons-material";
+import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import EventBusyOutlinedIcon from '@mui/icons-material/EventBusyOutlined';
+import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
 import Loading from "./miscellaneous/Loading";
-import { db } from "../firebase/config.ts";
+import { fetchCollege } from '../utils/fetchCollege';
+import { useThemeContext } from "../theme/ThemeContextProvider";
+import { Divider } from "@mui/material";
+import RunCircleOutlinedIcon from '@mui/icons-material/RunCircleOutlined';
 import { Timestamp, collection, onSnapshot, query, where } from "firebase/firestore";
+import { db } from "../firebase/config.ts";
+
+import shsroom from "../styles/images/Shsroom.jpeg";
+import scitechroom from "../styles/images/scitechroom.jpeg";
+import genrefroom from "../styles/images/genrefroom.jpeg";
 
 function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     const timelineRef = useRef<SchedulerRef>(null);
     // console.log("TIMELINE REF");
     // console.log(timelineRef);
+    const { theme } = useThemeContext();
+
 
     const authContext = useContext(AuthContext);
 
@@ -55,6 +68,23 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
         fetchRooms();
     }, [])
+
+const fetchRooms = async () => {
+        // --- ROOMS --- 
+        const rooms = await getRooms(branchId);
+        console.log("rooms")
+        console.log(rooms)
+        const transformedResources: RoomProps[] = rooms.map((room) => ({
+            room_id: room.roomId,
+            roomBranch: room.roomBranch,
+            title: room.roomTitle,
+            color: "#F2F2F2", // color of the circle outlining the person icon
+        }));
+        console.log("transformed rooms")
+        console.log(transformedResources)
+        setRoomsState(transformedResources)
+        console.log('Rooms in state', roomsState, roomsState.length)
+    }
 
     useEffect(() => {
         // ----- FIRESTORE REALTIME UPDATES -----
@@ -283,6 +313,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 sx={{
                     display: "flex",
                     justifyContent: "center",
+                    background: theme.palette.mode === 'dark' ? "#1E1F20" : "#FFFFFF",
                 }}>
                 <Grid item sx={{
                     p: "35px",
@@ -291,15 +322,21 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     flexDirection: "column",
                     gap: "20px",
                 }}>
-                    <Typography variant="h4">{event ? "Edit" : "Reserve"} Room {scheduler.state.room_id.value}</Typography>
+                    <Typography variant="h4" sx={{ marginBottom: '30px' }}>{event ? "Edit" : "Reserve"} Room {scheduler.state.room_id.value}</Typography>
                     <TextField
                         label="Group Representative"
                         value={authContext?.user?.displayName}
                         fullWidth
                         contentEditable={false}
                         inputProps={
-                            { readOnly: true, }
+                            { readOnly: true }
                         }
+                        sx={{
+                            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                            {
+                                borderColor: "#F2F2F2", // Change the color to your desired color
+                            },
+                        }}
                     />
                     {errorMessage ?
                         <Alert severity="error">
@@ -312,11 +349,23 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         label="Start time"
                         value={formState.start}
                         readOnly
+                        sx={{
+                            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                            {
+                                borderColor: "#F2F2F2", // Change the color to your desired color
+                            },
+                        }}
                     />
                     <TimePicker
                         label="End time"
                         value={formState.end}
                         readOnly
+                        sx={{
+                            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                            {
+                                borderColor: "#F2F2F2", // Change the color to your desired color
+                            },
+                        }}
                     />
                     {/* <Autocomplete
                         options={durationOptions}
@@ -342,7 +391,13 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                             const minsToAdd = ((e!.getHours() * 60) + e!.getMinutes());
                             handleChange(minsToAdd, "duration");
                             handleDurationChange(minsToAdd, formState.start);
+                        }} sx={{
+                            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                            {
+                                borderColor: "#F2F2F2", // Change the color to your desired color
+                            },
                         }}
+
                     />
                     <TextField
                         label="Number of participants"
@@ -355,7 +410,14 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         helperText={formState.pax < 4 || formState.pax > 12 ? "Pax should be 4-12" : ""}
                         inputProps={{ min: 4, max: 12 }}
                         onChange={(e) => handleChange(e.target.value, "pax")}
+                        sx={{
+                            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                            {
+                                borderColor: "#F2F2F2", // Change the color to your desired color
+                            },
+                        }}
                     />
+
                     <TextField
                         label="Reason for Reservation"
                         placeholder="Studying for thesis, group meeting for project, presentation practice..."
@@ -365,17 +427,46 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         error={formState.purp.length > 100 ? true : false}
                         helperText={formState.purp.length > 100 ? "Limited to 100 characters only" : ""}
                         onChange={(e) => handleChange(e.target.value, "purp")}
+                        sx={{
+                            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                            {
+                                borderColor: "#F2F2F2", // Change the color to your desired color
+                            },
+                        }}
                     />
-                    <DialogActions>
-                        <Button onClick={scheduler.close}>Cancel</Button>
-                        <Button onClick={handleSubmit}>{event ? "Edit" : "Reserve"}</Button>
+                    <DialogActions sx={{ justifyContent: 'space-between' }}>
+
+                        <Button onClick={scheduler.close}
+                            sx=
+                            {{
+                                marginTop: '50px',
+                                color:
+                                    theme.palette.mode === 'dark' ? '#FFFFFF' : '#000000'
+                            }}>
+                            Cancel
+                        </Button>
+
+                        <Button onClick={handleSubmit}
+                            sx=
+                            {{
+                                marginTop: '50px',
+                                color:
+                                    theme.palette.mode === 'dark' ? '#FFFFFF' : '#000000'
+                            }}>
+                            {event ? "Edit" : "Reserve"}
+                        </Button>
+
                     </DialogActions>
                 </Grid>
                 <Grid item
                     width={{ lg: "150vw", md: "120vw", sm: "80vw", xs: "0" }}
                     height={{ lg: "90vh", md: "90vh", sm: "90vh", xs: "0" }}
                     sx={{
-                        backgroundImage: `url("${drImage}")`,
+                        backgroundImage:
+                            branchId === "scitech" ? `url("${scitechroom}")` :
+                                branchId === "genref" ? `url("${genrefroom}")` :
+                                    `url("${shsroom}")`,
+
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                     }} />
@@ -390,14 +481,20 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         return (
             <Grid sx={{
                 width: "100%",
-                padding: "5px",
+                padding: "20px",
                 display: "flex",
                 flexDirection: "column",
-                gap: "5px"
+                gap: "5px",
+                color: '#000000',
+                background: theme.palette.mode === 'dark' ? '#1B1B1B' : '#E3E3E3'
             }}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: "7px" }}>
                     <Portrait sx={{ marginLeft: "-4px", }} />
                     <Typography variant="caption" >Representative: {event?.stuRep}</Typography>
+                </Box>
+                <Box sx={{ display: "flex", alignItems: "center", gap: "7px" }}>
+                    <School sx={{ marginLeft: "-4px", }} />
+                    <Typography variant="caption" >Representative's College: {fetchCollege(authContext)}</Typography>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center", gap: "7px" }}>
                     <Numbers sx={{ marginLeft: "-4px", }} />
@@ -407,36 +504,67 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     <TextSnippet sx={{ marginLeft: "-4px", }} />
                     <Typography variant="caption" >Reason for Reservation: {event?.purp}</Typography>
                 </Box>
+
+                <Box sx={{ mt: 2, mb: 1 }}>
+                    <Divider variant="middle" sx={{backgroundColor: "#1E1F20"}}/>
+                </Box>
+
                 {/* TODO: Retrieve and display all participant emails */}
                 {authContext?.userRole === "Admin" || authContext?.userRole === "Librarian" ?
-                    <Container>
-                        <Container sx={{ display: "flex", alignItems: "center", justifyContent: "space-evenly", my: "10px" }}>
+                    <Container sx={{ display: "flex", justifyContent: "space-between", my: "5px" }}>
+
+                        <Box sx={{ mt: 2, mb: 3, color: '#1E1F20' }}>
+                            <Divider variant="middle" />
+                        </Box>
+
+                        {/* 1st Column */}
+                        <Container sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "space-evenly", marginLeft: "-85px" }}>
+
                             <Button size="small" onClick={() => {
                                 console.log("In custom edit")
                                 timelineRef.current?.scheduler.triggerDialog(true, event);
                                 close();
-                            }}>Edit</Button>
+                            }} sx={{color: '#1E1F20', lineHeight: "1"}}>
+                                <EditNoteOutlinedIcon sx={{ marginRight: "10px" }} />
+                                Edit Reservation
+                            </Button>
 
                             <Button size="small" onClick={() => {
                                 console.log("In custom delete")
                                 handleDelete(event.event_id + "");
-                            }}>Delete</Button>
+                            }} sx={{ marginLeft: '-2.5px', color: '#1E1F20',  lineHeight: "1" }}>
+                                <DeleteOutlineOutlinedIcon sx={{ color: '#D22B2B', marginRight: "10px" }} />
+                                Delete Reservation
+                            </Button>
                         </Container>
-                        <Container sx={{ display: "flex", alignItems: "center", justifyContent: "space-evenly", my: "10px" }}>
-                            <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Unavailable")}>Set as Unavailable</Button>
-                            {event.title === "Reserved" ?
-                                <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Occupied")}>Confirm Arrival</Button>
-                                :
-                                <></>
+
+                        {/* Spacer */}
+                        <div style={{ width: '50px' }}></div> {/* Adjust width as needed for spacing between columns */}
+
+                        {/* 2nd Column */}
+                        <Container sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "space-evenly", marginRight: "-45px" }}>
+                            <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Unavailable")} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }} sx={{color: '#1E1F20',  lineHeight: "1"}}>
+                                <EventBusyOutlinedIcon sx={{ color: '#D22B2B', marginRight: "10px"}} />
+                                Set as Unavailable
+                            </Button>
+
+                            {event.title === "Reserved" &&
+                                <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Occupied")} sx={{color: '#1E1F20',  lineHeight: "1"}}>
+                                    <CheckBoxOutlinedIcon sx={{ color: '#009E60', marginRight: "10px"}} />
+                                    Confirm Arrival
+                                </Button>
                             }
-                            {event.title === "Occupied" ?
-                                <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Departed")}>Confirm Departure</Button>
-                                :
-                                <></>
+
+                            {event.title === "Occupied" &&
+                                <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Departed")} sx={{color: '#1E1F20',  lineHeight: "1"}}>
+                                    <RunCircleOutlinedIcon />
+                                    Confirm Departure
+                                </Button>
                             }
-                            {/* // TODO: Button onclick open larger view */}
                         </Container>
                     </Container>
+
+
                     : <></>
                 }
             </Grid>
@@ -444,7 +572,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     }
 
     return (
-        <Scheduler dialogMaxWidth="xl"
+        <Scheduler  dialogMaxWidth="xl"
             ref={timelineRef}
             customEditor={(scheduler) => <CustomEditor scheduler={scheduler} />}
             customViewer={CustomViewer}
@@ -455,6 +583,8 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 endHour: endTime,
                 step: 30
             }}
+            
+
             resources={roomsState}
             resourceFields={{ idField: "room_id", textField: "title", }}
             resourceViewMode="default"
@@ -464,6 +594,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     name: "room_id",
                     type: "hidden",
                 },
+
             ]}
             eventRenderer={({ event, ...props }) => {
                 // when an event is only 15 mins long, the details are compressed
@@ -478,7 +609,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                                 width: "100%",
                                 background: `${event?.color}`,
                                 fontSize: "0.8em",
-                                color: "white",
+                                color: "White",
                             }}
                             {...props}
                         >

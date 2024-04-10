@@ -16,7 +16,7 @@ function Footer() {
                 height: "275px",
                 display: 'flex',
                 alignItems: 'center',
-                color: '#F9F6E0',
+                color: '#FFFFFF',
                 backgroundColor: {background}
             }}>
             <Divider />

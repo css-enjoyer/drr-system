@@ -34,19 +34,19 @@ export const useColorTheme = () => {
         palette: {
           mode: 'dark',
           primary: {
-            main: '#F4C644',
+            main: '#A3A3A3', //greyish-blue
           },
           secondary: {
-            main: '#F4C644',
+            main: '#880808', //red
           },
           background: {
-            default: '#111111',
-            paper: '#1e1e1e',
+            default: '#161617', 
+            paper: '#151515',
           },
           text: {
-            primary: '#F9F6E0', // This will style primary text color
-            secondary: '#CCCCCC', // This will style secondary text color
-          },
+            primary: '#FFFFFF', // This will style primary text color
+
+          }
         },
       });
 
