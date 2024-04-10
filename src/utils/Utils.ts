@@ -1,5 +1,4 @@
 import { ProcessedEvent } from "@aldabil/react-scheduler/types";
-// import { DurationOption } from "../Types";
 
 export function checkReservationTimeOverlap(
     a_start: Date, 
@@ -91,6 +90,7 @@ export function isReservationOverlapping(
         dateStart.getFullYear().toString()
     );
 
+    // Add functionality: Ignore if titles are "Departed"
     const filteredEvents = filterReservations(
         roomId,
         formattedResDate,
@@ -143,73 +143,3 @@ export function toTitleCase(inputString: string | null | undefined) {
     }
     return inputString.toLowerCase().replace(/(?:^|\s)\w/g, match => match.toUpperCase());
 }
-
-/* --- UPDATE REQUIRED ---
-export function setDurationOptions(
-    userType: string | null | undefined,
-    startHour?: number, 
-    endHour?: number
-): DurationOption[] {
-
-    if ((userType === "Admin" || userType === "Librarian")
-        && startHour !== undefined 
-        && endHour !== undefined
-    ) {
-        const operatingHours = (endHour - startHour) * 60;
-
-        const privilegedOptions = [
-            { duration: 30, label: "30 Minutes" }, 
-            { duration: 60, label: "1 Hour" }, 
-            { duration: 90, label: "90 Minutes" }, 
-            { duration: 120, label: "2 Hours" },
-            { duration: operatingHours, label: "Whole Day"}
-        ]
-
-        return privilegedOptions;
-    }
-    
-    const studentOptions = [
-        { duration: 30, label: "30 Minutes" }, 
-        { duration: 60, label: "1 Hour" }, 
-        { duration: 90, label: "90 Minutes" }, 
-        { duration: 120, label: "2 Hours" }
-    ];
-
-    return studentOptions;
-}
-
-export function isWholeDay(duration: number): boolean {
-    if (duration <= 120) {
-        return false;
-    }
-
-    return true;
-}
-
-export function setWholeDayUnavailable(
-    startTime: number,
-    endTime: number
-): { start: Date, end: Date, title: string, color: string } {
-
-    const hrsOpen = endTime - startTime;
-    const newStartTime = new Date();
-    const newEndTime = new Date();
-
-    newStartTime.setSeconds(0);
-    newStartTime.setMinutes(0);
-    newStartTime.setHours(startTime);
-
-    newEndTime.setSeconds(0);
-    newEndTime.setMinutes(0);
-    newEndTime.setHours((startTime + hrsOpen));
-
-    return (
-        {
-            start: newStartTime,
-            end: newEndTime,
-            title: "Unavailable",
-            color: "gray"
-        }
-    );
-}
-*/

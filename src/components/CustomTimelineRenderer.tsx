@@ -26,21 +26,12 @@ import genrefroom from "../styles/images/genrefroom.jpeg";
 
 function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     const timelineRef = useRef<SchedulerRef>(null);
-    // console.log("TIMELINE REF");
-    // console.log(timelineRef);
     const { theme } = useThemeContext();
-
 
     const authContext = useContext(AuthContext);
 
     const startTime = 8;
     const endTime = 17;
-
-    // const durationOptions: DurationOption[] = setDurationOptions(
-    //     authContext?.userRole,
-    //     startTime,
-    //     endTime
-    // );
 
     const [roomsState, setRoomsState] = useState<RoomProps[]>([]);
     const [eventsState, setEventsState] = useState<ProcessedEvent[]>([]);
@@ -195,6 +186,36 @@ const fetchRooms = async () => {
             setFormState((prev) => { return { ...prev, ["end"]: newDate } });
         }
 
+        const setRoomUnavailable = async () => {
+            try {
+                const startOfDay = new Date(formState.date.getFullYear(), formState.date.getMonth(), formState.date.getDate(), startTime, 0);
+                const endOfDay = new Date(formState.date.getFullYear(), formState.date.getMonth(), formState.date.getDate(), endTime, 0);
+        
+                const newEvent: ReservationEvent = {
+                    event_id: formState.eventId + "",
+                    title: "Unavailable",
+                    start: startOfDay,
+                    end: endOfDay,
+
+                    color: "gray",
+
+                    branchId: formState.branchId,
+                    room_id: formState.roomId,
+                    date: formState.date,
+                    stuRep: formState.stuRep,
+                    duration: 0, // Set duration to 0 for whole day
+                    pax: 0,
+                    purp: "Room unavailable for the day",
+                    rcpt: formState.rcpt
+                };
+        
+                await addReservationEvent(newEvent);
+                scheduler.close();
+            } catch (error) {
+                console.error("Error setting room unavailable:", error);
+            }
+        };
+
         // ----- FORM SUBMIT HANDLER -----
         const handleSubmit = async () => {
             console.log("in handle submit");
@@ -215,21 +236,6 @@ const fetchRooms = async () => {
                 setErrorMessage("Error! You already have a reservation.");
                 return;
             }
-
-            /* ---- UPDATE REQUIRED ----
-
-            if (isWholeDay(formState.duration.duration)) {
-                const unavailable = setWholeDayUnavailable(
-                    startTime,
-                    endTime
-                );
-                
-                formState.start = unavailable.start;
-                formState.end = unavailable.end;
-                formState.title = unavailable.title;
-                formState.color = unavailable.color;
-            }
-            */
 
             if (formState.start < new Date() &&
                 (authContext?.userRole === "Student" || authContext?.userRole === "SHS-Student")) {
@@ -434,8 +440,8 @@ const fetchRooms = async () => {
                             },
                         }}
                     />
-                    <DialogActions sx={{ justifyContent: 'space-between' }}>
 
+                    <DialogActions sx={{ justifyContent: 'space-between' }}>
                         <Button onClick={scheduler.close}
                             sx=
                             {{
@@ -455,8 +461,20 @@ const fetchRooms = async () => {
                             }}>
                             {event ? "Edit" : "Reserve"}
                         </Button>
-
                     </DialogActions>
+                    
+                    {authContext?.userRole === "Admin" || authContext?.userRole === "Librarian" 
+                    ? <Button 
+                        onClick={setRoomUnavailable}
+                        sx=
+                        {{
+                            color:
+                                theme.palette.mode === 'dark' ? '#FFFFFF' : '#000000'
+                        }}>
+                        Set Room Unavailable
+                        </Button>
+                    : <></>
+                    }
                 </Grid>
                 <Grid item
                     width={{ lg: "150vw", md: "120vw", sm: "80vw", xs: "0" }}
