@@ -224,6 +224,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     stuRep: formState.stuRep,
                     duration: 0, // Set duration to 0 for whole day
                     pax: 0,
+                    stuEmails: [],
                     purp: "Room unavailable for the day",
                     rcpt: formState.rcpt
                 };
@@ -556,7 +557,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center", gap: "7px" }}>
                     <School sx={{ marginLeft: "-4px", }} />
-                    <Typography variant="caption" >Representative's College: {fetchCollege(authContext)}</Typography>
+                    <Typography variant="caption" >Representative's College: {event?.stuRep.split('.')[2].split('@')[0].toUpperCase()}</Typography>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center", gap: "7px" }}>
                     <Numbers sx={{ marginLeft: "-4px", }} />
