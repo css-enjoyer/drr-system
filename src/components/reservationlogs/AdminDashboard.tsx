@@ -22,9 +22,9 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { ArrowUpward, ArrowDownward, DepartureBoard } from "@mui/icons-material";
+import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
 import { LibrarianProp, Librarian } from "../../Types";
-import { FieldValue, Timestamp } from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
 import { addLibrarian, deleteLibrarian, editLibrarian, getLibrarians } from "../../firebase/dbHandler";
 import BranchTable from "./BranchTable";
 
@@ -34,11 +34,7 @@ const Muitable = () => {
     { id: "name", name: "Name" },
     { id: "department", name: "Department" },
     { id: "email", name: "Email" },
-    { id: "actions", name: "Actions" }, // Added for edit and remove buttons
-  ];
-
-  // Hardcoded data
-  const MockData: LibrarianProp[] = [
+    { id: "actions", name: "Actions" },
   ];
 
   const [rows, setRows] = useState<LibrarianProp[]>([]);
@@ -52,8 +48,14 @@ const Muitable = () => {
   const [librarianDepartment, setLibrarianDepartment] = useState("");
   const [librarianEmailToEdit, setLibrarianEmailToEdit] = useState("");
   const [openAddDialog, setopenAddDialog] = useState(false);
-  const [openEditDialog, setopenEditDialog] = useState(false)
-  // TABLE HANDLERS
+  const [openEditDialog, setopenEditDialog] = useState(false);
+  
+  // Refresh table after action/s are done
+  const [refreshTable, setRefreshTable] = useState(false);
+
+  /******************************
+  *  TABLE INIT                 *
+  ******************************/
   const fetchData = async () => {
     const LibrariansData = await getLibrarians();
     const librarianProps: LibrarianProp[] = [];
@@ -66,16 +68,16 @@ const Muitable = () => {
         department: librarian.librarianBranch
       }
 
-      console.log(librarian)
-
+      console.log(librarian);
       librarianProps.push(librarianProp);
-    })
-    setRows(librarianProps)
+    });
+
+    setRows(librarianProps);
   }
 
   useEffect(() => {
     fetchData();
-  }, [])
+  }, [refreshTable]);
 
   const handleSearchChange = (event: {
     target: { value: React.SetStateAction<string> };
@@ -104,20 +106,29 @@ const Muitable = () => {
     const aValue = a[sortOrder.id as keyof typeof a];
     const bValue = b[sortOrder.id as keyof typeof b];
     const multiplier = sortOrder.direction === "asc" ? 1 : -1;
+
     if (aValue < bValue) return -1 * multiplier;
     if (aValue > bValue) return 1 * multiplier;
+
     return 0;
   });
 
-  // HANDLE EDIT
-  const handleEdit = (index: number) => {
-    console.log("Edit row:", rows.at(index)?.email);
-    setLibrarianEmailToEdit(rows.at(index)?.email as string)
-    setLibrarianEmail(rows.at(index)?.email as string);
-    setLibrarianName(rows.at(index)?.name as string);
-    setLibrarianDepartment(rows.at(index)?.department as string);
-    setopenEditDialog(true);
-    
+  /******************************
+  *  EDIT HANDLER               *
+  ******************************/
+  const handleEdit = (email: string) => {
+    const rowToEdit = rows.find((row) => row.email === email);
+
+    if (rowToEdit) {
+      console.log("Edit row:", rowToEdit.email);
+
+      setLibrarianEmailToEdit(rowToEdit.email);
+      setLibrarianEmail(rowToEdit.email);
+      setLibrarianName(rowToEdit.name);
+      setLibrarianDepartment(rowToEdit.department)
+
+      setopenEditDialog(true);
+    }
   };
 
   const handleConfirmEdit = () => {
@@ -132,8 +143,9 @@ const Muitable = () => {
     setopenEditDialog(false);
     resetAddDialog();
 
-    fetchData();
-  }
+    // --- UPDATE: Does not always reflect in real time --- //
+    setRefreshTable(!refreshTable);
+  };
 
   const handleCancelEdit = () => {
     setopenEditDialog(false);
@@ -141,15 +153,18 @@ const Muitable = () => {
   };
 
 
-  // HANDLE REMOVE
-  const handleRemove = (index: number) => {
-    // Handle remove action here
-    console.log("Remove row:", rows.at(index)?.email);
-    deleteLibrarian(rows.at(index)?.email as string);
-    fetchData();
+  /******************************
+  *  CRUD HANDLER
+  ******************************/
+  const handleRemove = (email: string) => {
+    const rowToRemove = rows.find((row) => row.email === email);
+
+    console.log("Remove row: ", rowToRemove);
+
+    deleteLibrarian(rowToRemove?.email as string);
+    setRows((prevRows) => prevRows.filter((row) => row.email !== email));
   };
 
-  // HANDLE ADD
   const handleAddLibrarian = () => {
     setopenAddDialog(true);
   };
@@ -168,18 +183,16 @@ const Muitable = () => {
       librarianBranch: librarianDepartment
     }
     
-    console.log(newLibrarian)
+    console.log(newLibrarian);
 
     addLibrarian(newLibrarian);
     setopenAddDialog(false);
-    // Reset input values
-    resetAddDialog;
-    fetchData();
+    resetAddDialog();
+    setRefreshTable(!refreshTable);
   };
 
   const handleCancelAdd = () => {
     setopenAddDialog(false);
-    // Reset input values
     resetAddDialog();
   };
 
@@ -288,22 +301,22 @@ const Muitable = () => {
             <TableBody>
               {filteredRows
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => (
-                  <TableRow key={index}>
+                .map((row) => (
+                  <TableRow key={row.email}>
                     {columns.map((column) => (
-                      <TableCell key={column.id} style={{ height: "52px" }}>
+                      <TableCell key={`${row.email}-${column.id}`} style={{ height: "52px" }}>
                         {column.id !== "actions" ? (
-                          row[column.id as keyof typeof row] // Corrected line
+                          row[column.id as keyof LibrarianProp]
                         ) : (
                           <div>
                             <IconButton
-                              onClick={() => handleEdit(index)}
+                              onClick={() => handleEdit(row.email)}
                               aria-label="edit"
                             >
                               <EditIcon style={{ fontSize: 18 }} />
                             </IconButton>
                             <IconButton
-                              onClick={() => handleRemove(index)}
+                              onClick={() => handleRemove(row.email)}
                               aria-label="delete"
                             >
                               <DeleteIcon style={{ fontSize: 18 }} />
@@ -411,6 +424,7 @@ const Muitable = () => {
               onChange={(e) => setLibrarianDepartment(e.target.value)}
               label="Department"
             >
+              {/* UPDATE: MODULAR SELECTION OF BRANCHES */}
               <MenuItem value={"gen-ref"}>
                 Miguel de Benavides Library - General References
               </MenuItem>
@@ -430,11 +444,11 @@ const Muitable = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
+      {/* TABLE FOR BRANCHES */}
       <BranchTable></BranchTable>
     </div>
 
- 
+
     
   );
 };

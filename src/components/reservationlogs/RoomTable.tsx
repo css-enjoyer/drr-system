@@ -40,6 +40,9 @@ const RoomTable: React.FC<RoomTableProps> = ({ selectedBranch }) => {
         { id: "actions", name: "Actions" }, // Added for edit and remove buttons
     ];
 
+    // Refresh table after action/s are done
+    const [refreshTable, setRefreshTable] = useState(false);
+
     /******************************
     *  TABLE INIT
     ******************************/
@@ -62,6 +65,10 @@ const RoomTable: React.FC<RoomTableProps> = ({ selectedBranch }) => {
     useEffect(() => {
         fetchData();
     }, [selectedBranch]);
+
+    useEffect(() => {
+        fetchData();
+    }, [refreshTable]);
 
     const fetchData = async () => {
         if (selectedBranch) {
@@ -129,19 +136,22 @@ const RoomTable: React.FC<RoomTableProps> = ({ selectedBranch }) => {
     };
 
     /* --- EDIT FUNCTIONALITIES --- */
-    const handleEdit = (index: number) => {
-        // *** VERIFIFCATION
-        console.log("Edit row:", rows.at(index)?.roomId);
+    const handleEdit = (roomId: number) => {
+        const rowToEdit = rows.find((row) => row.roomId === roomId);
+        if (rowToEdit) {
+            // *** VERIFIFCATION
+            console.log("Edit row:", rowToEdit.roomId);
 
-        setRoomToEdit(rows.at(index)?.roomId as number);
-        
-        setRoomTitle(rows.at(index)?.roomTitle as string);
-        setRoomId(rows.at(index)?.roomId as number);
-        setRoomBranch(rows.at(index)?.roomBranch as string);
-        setRoomPax(rows.at(index)?.roomPax as number);
-        setRoomAvailable(rows.at(index)?.roomAvailable as boolean);
+            setRoomToEdit(rowToEdit.roomId);
+            
+            setRoomTitle(rowToEdit.roomTitle);
+            setRoomId(rowToEdit.roomId);
+            setRoomBranch(rowToEdit.roomBranch);
+            setRoomPax(rowToEdit.roomPax);
+            setRoomAvailable(rowToEdit.roomAvailable);
 
-        setOpenEditDialog(true);
+            setOpenEditDialog(true);
+        }
     };
 
     const handleConfirmEdit = () => {
@@ -156,7 +166,12 @@ const RoomTable: React.FC<RoomTableProps> = ({ selectedBranch }) => {
         editRoom(selectedBranch, roomToEdit, newRoom);
         setOpenEditDialog(false);
         resetAddDialog();
-        fetchData();
+
+        setRows((prevRows) =>
+            prevRows.map((row) =>
+              row.roomId === roomToEdit ? newRoom : row
+            )
+        );
     }
 
     const handleCancelEdit = () => {
@@ -165,12 +180,9 @@ const RoomTable: React.FC<RoomTableProps> = ({ selectedBranch }) => {
     };
 
     // HANDLE REMOVE
-    const handleRemove = (index: number) => {
-        // *** VERIFICATION
-        console.log("Remove row:", rows.at(index)?.roomId);
-
-        deleteRoom(selectedBranch, rows.at(index)?.roomId as number);
-        fetchData();
+    const handleRemove = (roomId: number) => {
+        deleteRoom(selectedBranch, roomId);
+        setRows((prevRows) => prevRows.filter((row) => row.roomId !== roomId));
     };
 
     // HANDLE ADD
@@ -289,26 +301,26 @@ const RoomTable: React.FC<RoomTableProps> = ({ selectedBranch }) => {
                 <TableBody>
                 {filteredRows
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row, index) => (
-                        <TableRow key={index}>
+                    .map((row) => (
+                        <TableRow key={row.roomId}>
                             {columns.map((column) => (
-                                <TableCell key={column.id} style={{ height: "52px" }}>
+                                <TableCell key={`${row.roomId}-${column.id}`} style={{ height: "52px" }}>
                                     {column.id !== "actions" ? (
                                         column.id === "roomAvailable" ? (
                                             renderAvailable(!!row[column.id as keyof typeof row])
                                         ) : (
-                                            row[column.id as keyof typeof row]
+                                            row[column.id as keyof Room]
                                         )
                                     ) : (
                                         <div>
                                             <IconButton
-                                                onClick={() => handleEdit(index)}
+                                                onClick={() => handleEdit(row.roomId)}
                                                 aria-label="edit"
                                             >
                                             <EditIcon style={{ fontSize: 18 }} />
                                             </IconButton>
                                             <IconButton
-                                                onClick={() => handleRemove(index)}
+                                                onClick={() => handleRemove(row.roomId)}
                                                 aria-label="delete"
                                             >
                                             <DeleteIcon style={{ fontSize: 18 }} />
