@@ -34,6 +34,7 @@ export function filterReservations(
 
         return (
             e.room_id === roomId
+            && e.title !== "Departed"
             && formattedResDate === dateForComparison
             && (dateStart === undefined || e.start !== dateStart)
             && (dateEnd === undefined || e.end !== dateEnd)
