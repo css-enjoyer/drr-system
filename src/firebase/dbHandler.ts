@@ -95,6 +95,7 @@ export async function getReservationEventById(resEventId: string): Promise<Proce
         stuRep: '',
         duration: 0,
         pax: 0,
+        stuEmails: [],
         purp: '',
         rcpt: ''
     };
@@ -117,6 +118,7 @@ export async function getReservationEventById(resEventId: string): Promise<Proce
                 stuRep: resEventData.stuRep,
                 duration: resEventData.duration,
                 pax: resEventData.pax,
+                stuEmails: resEventData.stuEmails,
                 purp: resEventData.purp,
                 rcpt: resEventData.rcpt
             }
@@ -255,6 +257,7 @@ export async function getReservationEventsLogs(branch: string): Promise<Processe
                 stuRep: resEventData.stuRep,
                 duration: resEventData.duration,
                 pax: resEventData.pax,
+                stuEmails: resEventData.stuEmails,
                 purp: resEventData.purp,
                 rcpt: resEventData.rcpt
             }
@@ -425,6 +428,8 @@ export async function getRooms(branch: string): Promise<Room[]> {
             roomTitle: roomData.roomTitle,
             roomPax: roomData.roomPax,
             roomAvailable: roomData.roomAvailable,
+            roomMinPax: roomData.roomMinPax,
+            roomMaxPax: roomData.roomMaxPax
         };
         roomsArray.push(room);
     })
