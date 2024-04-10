@@ -17,6 +17,7 @@ export interface ReservationEvent {
     stuRep: string;
     duration: number;
     pax: number;
+    stuEmails: string[];
     purp: string;
     rcpt: string;
 }
@@ -34,6 +35,8 @@ export interface Room {
     roomPax: number;
     roomAvailable: boolean;
     roomBranch: string;
+    roomMinPax: number;
+    roomMaxPax: number;
 }
 
 export interface BranchRoom {
@@ -60,6 +63,8 @@ export type RoomProps = {
     room_id: number,
     roomBranch: string,
     title: string,
+    roomMinPax: number,
+    roomMaxPax: number,
     color: string,
 }
 

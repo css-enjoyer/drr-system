@@ -6,7 +6,7 @@ import { AuthContext } from "../utils/AuthContext";
 import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getRooms } from "../firebase/dbHandler";
 import { TimePicker } from "@mui/x-date-pickers";
 import { DurationOption, ReservationEvent, RoomProps } from "../Types";
-import { generateRandomSequence, isReservationBeyondOpeningHrs, isReservationOverlapping, isStudentReservationConcurrent, isWholeDay, setDurationOptions, setWholeDayUnavailable } from "../utils/Utils.ts"
+import { generateRandomSequence, isReservationBeyondOpeningHrs, isReservationOverlapping, isStudentReservationConcurrent } from "../utils/Utils.ts"
 import { Numbers, Portrait, School, TextSnippet } from "@mui/icons-material";
 import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
@@ -48,6 +48,8 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 room_id: room.roomId,
                 roomBranch: room.roomBranch,
                 title: room.roomTitle,
+                roomMinPax: room.roomMinPax,
+                roomMaxPax: room.roomMaxPax,
                 color: "darkblue",
             }));
             console.log("transformed rooms")
@@ -60,7 +62,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         fetchRooms();
     }, [])
 
-const fetchRooms = async () => {
+    const fetchRooms = async () => {
         // --- ROOMS --- 
         const rooms = await getRooms(branchId);
         console.log("rooms")
@@ -69,6 +71,8 @@ const fetchRooms = async () => {
             room_id: room.roomId,
             roomBranch: room.roomBranch,
             title: room.roomTitle,
+            roomMinPax: room.roomMinPax,
+            roomMaxPax: room.roomMaxPax,
             color: "#F2F2F2", // color of the circle outlining the person icon
         }));
         console.log("transformed rooms")
@@ -136,6 +140,16 @@ const fetchRooms = async () => {
         // fetchReservationEvents();
     }
 
+    function checkParticipantEmails(pax: number, text: string) {
+        if (!text.match("^([a-zA-Z]+\\.[a-zA-Z]+\\.[a-zA-Z]+@ust\\.edu\\.ph\\n)*[a-zA-Z]+\\.[a-zA-Z]+\\.[a-zA-Z]+@ust\\.edu\\.ph$")) {
+            return true
+        } else if (text.split('\n').length != pax) {
+            return true
+        } else {
+            return false
+        }
+    }
+
     /******************************
      *  CUSTOM FORM EDITOR
      ******************************/
@@ -167,8 +181,13 @@ const fetchRooms = async () => {
             // should come from form inputs
             stuRep: event?.stuRep || authContext?.user?.email,
             purp: event?.purp || "",
-            pax: event?.pax || 4,
+            pax: event?.pax || roomsState.filter((room) => room.room_id = scheduler.state.room_id.value)[0].roomMinPax,
+            participantEmails: event?.participantEmails || "",
             duration: event?.duration || 15,
+
+            // pax requirements
+            minPax: event?.minPax || roomsState.filter((room) => room.room_id = scheduler.state.room_id.value)[0].roomMinPax,
+            maxPax: event?.maxPax || roomsState.filter((room) => room.room_id = scheduler.state.room_id.value)[0].roomMaxPax,
 
             // auto-generated
             rcpt: event?.rcpt || generateRandomSequence()
@@ -221,10 +240,10 @@ const fetchRooms = async () => {
             console.log("in handle submit");
 
             // TODO: Seperate all errors into a function
-            if (formState.pax < 4
-                || formState.pax > 12
-                || formState.purp.length > 100) {
-                return;
+            if (checkParticipantEmails(formState.pax, formState.participantEmails)) {
+                setErrorMessage("Error! Your reservation must include all valid emails of the participants.");
+                console.log(formState.participantEmails)
+                return
             }
 
             if (isReservationBeyondOpeningHrs(formState.end)) {
@@ -242,7 +261,14 @@ const fetchRooms = async () => {
                 setErrorMessage("Error! Your reservation is before the current time!");
                 return;
             }
+            
+            const today = new Date()
+            if (formState.start.getDate() > new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).getDate() ) {
+                setErrorMessage("Error! Room reservations can only be done a day ahead of current time!");
+                return;
+            }
 
+            
             if (formState.duration < 15 || formState.duration > 120) {
                 setErrorMessage("Error! Duration should be within 15 minutes to 2 hours!");
                 return;
@@ -264,6 +290,7 @@ const fetchRooms = async () => {
                     stuRep: formState.stuRep,
                     duration: formState.duration,
                     pax: formState.pax,
+                    stuEmails: formState.participantEmails.split('\n'),
                     purp: formState.purp,
                     rcpt: formState.rcpt
                 }
@@ -412,10 +439,27 @@ const fetchRooms = async () => {
                         margin="normal"
                         type="number"
                         value={formState.pax}
-                        error={formState.pax < 4 || formState.pax > 12 ? true : false}
-                        helperText={formState.pax < 4 || formState.pax > 12 ? "Pax should be 4-12" : ""}
-                        inputProps={{ min: 4, max: 12 }}
+                        error={formState.pax < formState.minPax || formState.pax > formState.maxPax ? true : false}
+                        helperText={formState.pax < formState.minPax || formState.pax > formState.maxPax ? `Pax should be ${formState.minPax}-${formState.maxPax}` : ""}
+                        inputProps={{ min: formState.minPax, max: formState.maxPax }}
                         onChange={(e) => handleChange(e.target.value, "pax")}
+                        sx={{
+                            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                            {
+                                borderColor: "#F2F2F2", // Change the color to your desired color
+                            },
+                        }}
+                    />
+
+                    <TextField
+                        label="Emails of included participants"
+                        placeholder=""
+                        multiline
+                        rows={3}
+                        value={formState.participantEmails}
+                        error={checkParticipantEmails(formState.pax, formState.participantEmails)}
+                        helperText={checkParticipantEmails(formState.pax, formState.participantEmails) ? "Must include all valid emails of the participants" : ""}
+                        onChange={(e) => handleChange(e.target.value, "participantEmails")}
                         sx={{
                             "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
                             {
@@ -524,7 +568,7 @@ const fetchRooms = async () => {
                 </Box>
 
                 <Box sx={{ mt: 2, mb: 1 }}>
-                    <Divider variant="middle" sx={{backgroundColor: "#1E1F20"}}/>
+                    <Divider variant="middle" sx={{ backgroundColor: "#1E1F20" }} />
                 </Box>
 
                 {/* TODO: Retrieve and display all participant emails */}
@@ -542,7 +586,7 @@ const fetchRooms = async () => {
                                 console.log("In custom edit")
                                 timelineRef.current?.scheduler.triggerDialog(true, event);
                                 close();
-                            }} sx={{color: '#1E1F20', lineHeight: "1"}}>
+                            }} sx={{ color: '#1E1F20', lineHeight: "1" }}>
                                 <EditNoteOutlinedIcon sx={{ marginRight: "10px" }} />
                                 Edit Reservation
                             </Button>
@@ -550,7 +594,7 @@ const fetchRooms = async () => {
                             <Button size="small" onClick={() => {
                                 console.log("In custom delete")
                                 handleDelete(event.event_id + "");
-                            }} sx={{ marginLeft: '-2.5px', color: '#1E1F20',  lineHeight: "1" }}>
+                            }} sx={{ marginLeft: '-2.5px', color: '#1E1F20', lineHeight: "1" }}>
                                 <DeleteOutlineOutlinedIcon sx={{ color: '#D22B2B', marginRight: "10px" }} />
                                 Delete Reservation
                             </Button>
@@ -561,20 +605,20 @@ const fetchRooms = async () => {
 
                         {/* 2nd Column */}
                         <Container sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "space-evenly", marginRight: "-45px" }}>
-                            <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Unavailable")} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }} sx={{color: '#1E1F20',  lineHeight: "1"}}>
-                                <EventBusyOutlinedIcon sx={{ color: '#D22B2B', marginRight: "10px"}} />
+                            <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Unavailable")} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }} sx={{ color: '#1E1F20', lineHeight: "1" }}>
+                                <EventBusyOutlinedIcon sx={{ color: '#D22B2B', marginRight: "10px" }} />
                                 Set as Unavailable
                             </Button>
 
                             {event.title === "Reserved" &&
-                                <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Occupied")} sx={{color: '#1E1F20',  lineHeight: "1"}}>
-                                    <CheckBoxOutlinedIcon sx={{ color: '#009E60', marginRight: "10px"}} />
+                                <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Occupied")} sx={{ color: '#1E1F20', lineHeight: "1" }}>
+                                    <CheckBoxOutlinedIcon sx={{ color: '#009E60', marginRight: "10px" }} />
                                     Confirm Arrival
                                 </Button>
                             }
 
                             {event.title === "Occupied" &&
-                                <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Departed")} sx={{color: '#1E1F20',  lineHeight: "1"}}>
+                                <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Departed")} sx={{ color: '#1E1F20', lineHeight: "1" }}>
                                     <RunCircleOutlinedIcon />
                                     Confirm Departure
                                 </Button>
@@ -590,7 +634,7 @@ const fetchRooms = async () => {
     }
 
     return (
-        <Scheduler  dialogMaxWidth="xl"
+        <Scheduler dialogMaxWidth="xl"
             ref={timelineRef}
             customEditor={(scheduler) => <CustomEditor scheduler={scheduler} />}
             customViewer={CustomViewer}
@@ -601,7 +645,7 @@ const fetchRooms = async () => {
                 endHour: endTime,
                 step: 30
             }}
-            
+
 
             resources={roomsState}
             resourceFields={{ idField: "room_id", textField: "title", }}
