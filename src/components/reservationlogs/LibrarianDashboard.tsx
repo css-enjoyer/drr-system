@@ -5,7 +5,6 @@ import { Container, FormControl, InputLabel, Select, MenuItem, Typography } from
 import RoomTable from './RoomTable';
 
 // Fetch branches
-// const [branches, setBranches] = useState<Branch[]>([]);
 function LibrarianDashboard() {
     const [selectedBranch, setSelectedBranch] = useState('');
     const [branches, setBranches] = useState<Branch[]>([]);
@@ -35,8 +34,7 @@ function LibrarianDashboard() {
               labelId="section-label"
               value={selectedBranch}
               onChange={(e) => setSelectedBranch(e.target.value)}
-              label="Department"
-            >
+              label="Department">
                 {branches.map((branch) => (
                     <MenuItem key={branch.branchId} value={branch.branchId}>
                         {branch.branchTitle}
