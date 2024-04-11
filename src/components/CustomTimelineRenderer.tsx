@@ -367,7 +367,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     <Typography variant="h4" sx={{ marginBottom: '30px' }}>{event ? "Edit" : "Reserve"} Room {scheduler.state.room_id.value}</Typography>
                     <TextField
                         label="Group Representative"
-                        value={authContext?.user?.displayName}
+                        value={event?.stuRep}
                         fullWidth
                         contentEditable={false}
                         inputProps={

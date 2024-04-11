@@ -82,7 +82,7 @@ function LibrarianReservationLogs() {
 	const columns = [
 		{ id: "branch", name: "Branch" },
 		{ id: "date", name: "Date" },
-		{ id: "time", name: "Time" },
+		{ id: "time", name: "Timeslot" },
 		{ id: "room", name: "Room" },
 		{ id: "representative", name: "Representative" },
 		{ id: "pax", name: "Pax" },

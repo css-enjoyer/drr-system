@@ -105,7 +105,7 @@ function LoginPage() {
                             <LoginButton />
                         </Box>
                         <Typography component="p" variant="caption">
-                            Need help signing in? <Link href="#">Learn more</Link>
+                            Need help signing in? <Link href="https://registrar.ust.edu.ph/contact">Learn more</Link>
                         </Typography>
                     </Box>
                     <Divider />
