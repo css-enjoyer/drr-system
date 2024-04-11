@@ -124,7 +124,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     }
 
     function checkParticipantEmails(pax: number, text: string) {
-        if (!text.match("^([a-zA-Z]+\\.[a-zA-Z]+\\.[a-zA-Z]+@ust\\.edu\\.ph\\n)*[a-zA-Z]+\\.[a-zA-Z]+\\.[a-zA-Z]+@ust\\.edu\\.ph$")) {
+        if (!text.match("^([a-zA-Z]+\\.[a-zA-Z]+\\.[a-zA-Z]+@ust\\.edu\\.ph(\\n| ))*[a-zA-Z]+\\.[a-zA-Z]+\\.[a-zA-Z]+@ust\\.edu\\.ph$")) {
             return true
         } else if (text.split('\n').length != pax) {
             return true
@@ -353,6 +353,8 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     display: "flex",
                     flexDirection: "column",
                     gap: "20px",
+                    overflowY: "auto",
+                    pb: "100px"
                 }}>
                     <Typography variant="h4" sx={{ marginBottom: '30px' }}>{event ? "Edit" : "Reserve"} Room {scheduler.state.room_id.value}</Typography>
                     <TextField
@@ -457,7 +459,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         rows={3}
                         value={formState.participantEmails}
                         error={checkParticipantEmails(formState.pax, formState.participantEmails)}
-                        helperText={checkParticipantEmails(formState.pax, formState.participantEmails) ? "Must include all valid emails of the participants" : ""}
+                        helperText={checkParticipantEmails(formState.pax, formState.participantEmails) ? "Must include all valid emails of the participants. Separate emails with [enter]." : ""}
                         onChange={(e) => handleChange(e.target.value, "participantEmails")}
                         sx={{
                             "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
@@ -484,13 +486,13 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         }}
                     />
 
-                    <DialogActions sx={{ justifyContent: 'space-between' }}>
+                    <DialogActions sx={{ justifyContent: 'space-around' }}>
                         <Button onClick={scheduler.close}
                             sx=
                             {{
                                 marginTop: '50px',
-                                color:
-                                    theme.palette.mode === 'dark' ? '#FFFFFF' : '#000000'
+                                width: "100%",
+                                color: theme.palette.mode === 'dark' ? '#FFFFFF' : '#000000'
                             }}>
                             Cancel
                         </Button>
@@ -499,8 +501,8 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                             sx=
                             {{
                                 marginTop: '50px',
-                                color:
-                                    theme.palette.mode === 'dark' ? '#FFFFFF' : '#000000'
+                                width: "100%",
+                                color: theme.palette.mode === 'dark' ? '#FFFFFF' : '#000000'
                             }}>
                             {event ? "Edit" : "Reserve"}
                         </Button>
@@ -511,8 +513,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                             onClick={setRoomUnavailable}
                             sx=
                             {{
-                                color:
-                                    theme.palette.mode === 'dark' ? '#FFFFFF' : '#000000'
+                                color: theme.palette.mode === 'dark' ? '#FFFFFF' : 'red'
                             }}>
                             Set Room Unavailable
                         </Button>
