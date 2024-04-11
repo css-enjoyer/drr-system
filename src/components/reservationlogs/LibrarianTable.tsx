@@ -24,8 +24,8 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
-import { Branch, Librarian, LibrarianProp, Room } from "../../Types";
-import { addLibrarian, addRoom, deleteLibrarian, deleteRoom, editLibrarian, editRoom, getBranches, getLibrarians, getRooms } from "../../firebase/dbHandler";
+import { Branch, Librarian, LibrarianProp } from "../../Types";
+import { addLibrarian, deleteLibrarian, editLibrarian, getBranches, getLibrarians } from "../../firebase/dbHandler";
 import { Timestamp } from "firebase/firestore";
 
 const LibrarianTable = () => {
