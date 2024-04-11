@@ -16,6 +16,7 @@ import { Timestamp, collection, onSnapshot, query } from "firebase/firestore";
 import { ReservationEvent } from "../../Types";
 import { db } from "../../firebase/config";
 import Loading from "../miscellaneous/Loading";
+import { format } from "date-fns";
 
 interface LogsFormat {
 	branch: string;
@@ -53,7 +54,7 @@ function LibrarianReservationLogs() {
 				};
 				resEvents.push(resEvent);
 			});
-
+			
 			const formattedLogs: LogsFormat[] = resEvents.map((e) => ({
 				branch: e.branchId,
 				date: e.date.toLocaleString(),
@@ -61,9 +62,10 @@ function LibrarianReservationLogs() {
 				room: e.room_id.toString(),
 				representative: e.stuRep,
 				pax: e.pax,
-				participantEmails: e.stuEmails,
+				participantEmails: e.stuEmails.join('\n'),
 				purpose: e.purp
 			}));
+			console.log(formattedLogs[0].participantEmails)
 			setRows(formattedLogs);
 
 			// setLoading(false);
@@ -86,7 +88,7 @@ function LibrarianReservationLogs() {
 		{ id: "room", name: "Room" },
 		{ id: "representative", name: "Representative" },
 		{ id: "pax", name: "Pax" },
-		{ id: "participant-emails", name: "Participant Emails" },
+		{ id: "participantEmails", name: "Participant Emails" },
 		{ id: "purpose", name: "Purpose" }
 	];
 
