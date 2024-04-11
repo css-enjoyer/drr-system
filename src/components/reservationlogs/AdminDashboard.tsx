@@ -24,9 +24,9 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
-import { LibrarianProp, Librarian } from "../../Types";
+import { LibrarianProp, Librarian, Branch } from "../../Types";
 import { Timestamp } from "firebase/firestore";
-import { addLibrarian, deleteLibrarian, editLibrarian, getLibrarians } from "../../firebase/dbHandler";
+import { addLibrarian, deleteLibrarian, editLibrarian, getBranches, getLibrarians } from "../../firebase/dbHandler";
 import BranchTable from "./BranchTable";
 import LibrarianDashboard from "./LibrarianDashboard";
 
@@ -38,6 +38,8 @@ const Muitable = () => {
     { id: "email", name: "Email" },
     { id: "actions", name: "Actions" },
   ];
+
+  const [branches, setBranches] = useState<Branch[]>([]);
 
   const [rows, setRows] = useState<LibrarianProp[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -74,11 +76,23 @@ const Muitable = () => {
     });
 
     setRows(librarianProps);
-  }
+  };
 
   useEffect(() => {
     fetchData();
   }, [refreshTable]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+        try {
+            const branchesData = await getBranches();
+            setBranches(branchesData);
+        } catch (error) {
+            console.error('Error fetching branches:', error);
+        }
+    };
+    fetchData();
+  }, []);
 
   const handleSearchChange = (event: {
     target: { value: React.SetStateAction<string> };
@@ -386,17 +400,12 @@ const Muitable = () => {
               labelId="section-label"
               value={librarianDepartment}
               onChange={(e) => setLibrarianDepartment(e.target.value)}
-              label="Department"
-            >
-              <MenuItem value={"gen-ref"}>
-                Miguel de Benavides Library - General References
-              </MenuItem>
-              <MenuItem value={"sci-tech"}>
-                Miguel de Benavides Library - Science and Technology
-              </MenuItem>
-              <MenuItem value={"shs"}>
-                Blessed Pier Giorgio Frassati - Senior High-School
-              </MenuItem>
+              label="Department">
+              {branches.map((branch) => (
+                <MenuItem key={branch.branchId} value={branch.branchId}>
+                    {branch.branchTitle}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </DialogContent>
@@ -442,18 +451,12 @@ const Muitable = () => {
               labelId="section-label"
               value={librarianDepartment}
               onChange={(e) => setLibrarianDepartment(e.target.value)}
-              label="Department"
-            >
-              {/* UPDATE: MODULAR SELECTION OF BRANCHES */}
-              <MenuItem value={"gen-ref"}>
-                Miguel de Benavides Library - General References
-              </MenuItem>
-              <MenuItem value={"sci-tech"}>
-                Miguel de Benavides Library - Science and Technology
-              </MenuItem>
-              <MenuItem value={"shs"}>
-                Blessed Pier Giorgio Frassati - Senior High-School
-              </MenuItem>
+              label="Department">
+              {branches.map((branch) => (
+                <MenuItem key={branch.branchId} value={branch.branchId}>
+                    {branch.branchTitle}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </DialogContent>
