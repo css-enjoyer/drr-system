@@ -19,6 +19,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Alert
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -50,16 +51,15 @@ const Muitable = () => {
   const [librarianEmailToEdit, setLibrarianEmailToEdit] = useState("");
   const [openAddDialog, setopenAddDialog] = useState(false);
   const [openEditDialog, setopenEditDialog] = useState(false);
-  
   // Refresh table after action/s are done
   const [refreshTable, setRefreshTable] = useState(false);
-
+  const [errorMessage, setErrorMessage] = useState("");
   /******************************
   *  TABLE INIT                 *
   ******************************/
   const fetchData = async () => {
     const LibrariansData = await getLibrarians();
-    const librarianProps: LibrarianProp[] = [];
+    const librarianProps: LibrarianProp[] = []
 
     LibrariansData.forEach((librarian) => {
       const librarianProp = {
@@ -106,12 +106,17 @@ const Muitable = () => {
   const sortedRows = rows.slice().sort((a, b) => {
     const aValue = a[sortOrder.id as keyof typeof a];
     const bValue = b[sortOrder.id as keyof typeof b];
+    if (sortOrder.id == "date") {
+      const aValue = new Date(a[sortOrder.id as keyof typeof a]);
+      const bValue = new Date(b[sortOrder.id as keyof typeof b]);
+    } else { }
     const multiplier = sortOrder.direction === "asc" ? 1 : -1;
 
     if (aValue < bValue) return -1 * multiplier;
     if (aValue > bValue) return 1 * multiplier;
 
     return 0;
+
   });
 
   /******************************
@@ -163,7 +168,7 @@ const Muitable = () => {
     console.log("Remove row: ", rowToRemove);
 
     deleteLibrarian(rowToRemove?.email as string);
-    setRows((prevRows) => prevRows.filter((row) => row.email !== email));
+    setRefreshTable(!refreshTable);
   };
 
   const handleAddLibrarian = () => {
@@ -177,13 +182,18 @@ const Muitable = () => {
   }
 
   const handleConfirmAdd = () => {
+    console.log(rows)
+    if (rows.some(librarian => librarian.email === librarianEmail)) {
+      setErrorMessage("Error! Librarian Already Exists");
+      return
+    }
     const newLibrarian: Librarian = {
       dateAdded: Timestamp.now(),
       librarianName: librarianName,
       userEmail: librarianEmail,
       librarianBranch: librarianDepartment
     }
-    
+
     console.log(newLibrarian);
 
     addLibrarian(newLibrarian);
@@ -341,10 +351,17 @@ const Muitable = () => {
           onRowsPerPageChange={handleRowsPerPage}
         />
       </Paper>
-{/* ADD DIALOG -------------------------------------------------------------------------*/}
+      {/* ADD DIALOG -------------------------------------------------------------------------*/}
       <Dialog open={openAddDialog} onClose={handleCancelAdd} maxWidth="lg">
         <DialogTitle>Add Librarian</DialogTitle>
         <DialogContent style={{ width: "500px", height: "275px" }}>
+          {errorMessage ?
+            <Alert severity="error">
+              {errorMessage}
+            </Alert>
+            :
+            <></>
+          }
           <TextField
             label="Name"
             variant="outlined"
@@ -388,7 +405,7 @@ const Muitable = () => {
           </Button>
         </DialogActions>
       </Dialog>
-{/* EDIT DIALOG -------------------------------------------------------------------------*/}
+      {/* EDIT DIALOG -------------------------------------------------------------------------*/}
       <Dialog open={openEditDialog} onClose={handleCancelEdit} maxWidth="lg">
         <DialogTitle>Edit Librarian</DialogTitle>
         <DialogContent style={{ width: "500px", height: "340px" }}>
@@ -452,7 +469,7 @@ const Muitable = () => {
     </div>
 
 
-    
+
   );
 };
 

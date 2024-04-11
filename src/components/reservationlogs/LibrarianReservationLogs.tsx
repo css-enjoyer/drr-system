@@ -56,8 +56,8 @@ function LibrarianReservationLogs() {
 
 			const formattedLogs: LogsFormat[] = resEvents.map((e) => ({
 				branch: e.branchId,
-				date: e.date.toString(),
-				time: e.start.toString(),
+				date: e.date.toLocaleString(),
+				time: `${e.start.toLocaleString()} - ${e.end.toLocaleString().split(',')[1]}`,
 				room: e.room_id.toString(),
 				representative: e.stuRep,
 				pax: e.pax,
@@ -126,9 +126,20 @@ function LibrarianReservationLogs() {
 	const sortedRows = rows.slice().sort((a, b) => {
 		const aValue = a[sortOrder.id as keyof typeof a];
 		const bValue = b[sortOrder.id as keyof typeof b];
+		if (sortOrder.id == "date") {
+			const aValue = new Date(a[sortOrder.id as keyof typeof a] as string);
+			const bValue = new Date(b[sortOrder.id as keyof typeof b] as string);
+		} else if (sortOrder.id == "time") {
+			const aValue = new Date((a[sortOrder.id as keyof typeof a] as string).split('-')[0].trim());
+			const bValue = new Date((b[sortOrder.id as keyof typeof b] as string).split('-')[0].trim());
+		} else {
+
+		}
 		const multiplier = sortOrder.direction === "asc" ? 1 : -1;
+
 		if (aValue < bValue) return -1 * multiplier;
 		if (aValue > bValue) return 1 * multiplier;
+
 		return 0;
 	});
 

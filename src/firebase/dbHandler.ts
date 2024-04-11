@@ -426,7 +426,6 @@ export async function getRooms(branch: string): Promise<Room[]> {
             roomId: roomData.roomId,
             roomBranch: roomData.roomBranch,
             roomTitle: roomData.roomTitle,
-            roomPax: roomData.roomPax,
             roomAvailable: roomData.roomAvailable,
             roomMinPax: roomData.roomMinPax,
             roomMaxPax: roomData.roomMaxPax

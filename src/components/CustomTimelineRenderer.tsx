@@ -23,6 +23,7 @@ import { db } from "../firebase/config.ts";
 import shsroom from "../styles/images/Shsroom.jpeg";
 import scitechroom from "../styles/images/scitechroom.jpeg";
 import genrefroom from "../styles/images/genrefroom.jpeg";
+import { max } from "date-fns";
 
 function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     const timelineRef = useRef<SchedulerRef>(null);
@@ -59,27 +60,9 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         }
 
         fetchRooms();
-        
+
     }, [])
 
-    const fetchRooms = async () => {
-        // --- ROOMS --- 
-        const rooms = await getRooms(branchId);
-        console.log("rooms")
-        console.log(rooms)
-        const transformedResources: RoomProps[] = rooms.map((room) => ({
-            room_id: room.roomId,
-            roomBranch: room.roomBranch,
-            title: room.roomTitle,
-            roomMinPax: room.roomMinPax,
-            roomMaxPax: room.roomMaxPax,
-            color: "#F2F2F2", // color of the circle outlining the person icon
-        }));
-        console.log("transformed rooms")
-        console.log(transformedResources)
-        setRoomsState(transformedResources)
-        console.log('Rooms in state', roomsState, roomsState.length)
-    }
 
     useEffect(() => {
         // ----- FIRESTORE REALTIME UPDATES -----
@@ -156,15 +139,29 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     interface CustomEditorProps {
         scheduler: SchedulerHelpers;
     }
+    function getMinMax(roomsState: RoomProps[], roomId: number): number[] {
+        var min = 0;
+        var max = 0;
+        roomsState.forEach(room => {
+            if (room.room_id == roomId) {
+                min = room.roomMinPax
+                max = room.roomMaxPax
+            }
+
+        });
+        return [min, max]
+    }
 
     const CustomEditor = ({ scheduler }: CustomEditorProps) => {
         console.log("In scheduler:");
-        console.log(scheduler);
+        console.log(scheduler.state);
 
         const event = scheduler.edited;
 
+
         const [formState, setFormState] = useState({
             // event fields
+
             eventId: event?.event_id || "lmao",
             title: event?.title || "Reserved",
             start: event?.start || scheduler.state.start.value,
@@ -182,13 +179,13 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             // should come from form inputs
             stuRep: event?.stuRep || authContext?.user?.email,
             purp: event?.purp || "",
-            pax: event?.pax || scheduler.state.roomMinPax.value,
+            pax: event?.pax || getMinMax(roomsState, scheduler.state.room_id.value)[0],
             participantEmails: event?.participantEmails || "",
             duration: event?.duration || 15,
 
             // pax requirements
-            minPax: event?.minPax || scheduler.state.roomMinPax.value,
-            maxPax: event?.maxPax || scheduler.state.roomMaxPax.value,
+            minPax: event?.minPax || getMinMax(roomsState, scheduler.state.room_id.value)[0],
+            maxPax: event?.maxPax || getMinMax(roomsState, scheduler.state.room_id.value)[1],
 
             // auto-generated
             rcpt: event?.rcpt || generateRandomSequence()
@@ -210,7 +207,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             try {
                 const startOfDay = new Date(formState.date.getFullYear(), formState.date.getMonth(), formState.date.getDate(), startTime, 0);
                 const endOfDay = new Date(formState.date.getFullYear(), formState.date.getMonth(), formState.date.getDate(), endTime, 0);
-                
+
                 const newEvent: ReservationEvent = {
                     event_id: formState.eventId + "",
                     title: "Unavailable",
@@ -229,7 +226,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     purp: "Room unavailable for the day",
                     rcpt: formState.rcpt
                 };
-        
+
                 await addReservationEvent(newEvent);
                 scheduler.close();
             } catch (error) {
@@ -263,14 +260,14 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 setErrorMessage("Error! Your reservation is before the current time!");
                 return;
             }
-            
+
             const today = new Date()
-            if (formState.start.getDate() > new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).getDate() ) {
+            if (formState.start.getDate() > new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).getDate()) {
                 setErrorMessage("Error! Room reservations can only be done a day ahead of current time!");
                 return;
             }
 
-            
+
             if (formState.duration < 15 || formState.duration > 120) {
                 setErrorMessage("Error! Duration should be within 15 minutes to 2 hours!");
                 return;
@@ -508,18 +505,18 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                             {event ? "Edit" : "Reserve"}
                         </Button>
                     </DialogActions>
-                    
-                    {authContext?.userRole === "Admin" || authContext?.userRole === "Librarian" 
-                    ? <Button 
-                        onClick={setRoomUnavailable}
-                        sx=
-                        {{
-                            color:
-                                theme.palette.mode === 'dark' ? '#FFFFFF' : '#000000'
-                        }}>
-                        Set Room Unavailable
+
+                    {authContext?.userRole === "Admin" || authContext?.userRole === "Librarian"
+                        ? <Button
+                            onClick={setRoomUnavailable}
+                            sx=
+                            {{
+                                color:
+                                    theme.palette.mode === 'dark' ? '#FFFFFF' : '#000000'
+                            }}>
+                            Set Room Unavailable
                         </Button>
-                    : <></>
+                        : <></>
                     }
                 </Grid>
                 <Grid item
@@ -650,7 +647,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
 
             resources={roomsState}
-            resourceFields={{ idField: "room_id", textField: "title", roomMinPax: "roomMinPax", roomMaxPax: "roomMaxPax"}}
+            resourceFields={{ idField: "room_id", textField: "title" }}
             resourceViewMode="default"
             // required to access room_id
             fields={[
@@ -658,17 +655,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     name: "room_id",
                     type: "hidden",
                 },
-                {
-                    name: "roomMinPax",
-                    type: "hidden",
-                    default: roomsState[0].roomMinPax
-                },
-                {
-                    name: "roomMaxPax",
-                    type: "hidden",
-                    default: roomsState[0].roomMaxPax
-                },
-
             ]}
             eventRenderer={({ event, ...props }) => {
                 // when an event is only 15 mins long, the details are compressed
