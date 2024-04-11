@@ -12,7 +12,9 @@ import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import EventBusyOutlinedIcon from '@mui/icons-material/EventBusyOutlined';
 import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
+import CancelIcon from '@mui/icons-material/Cancel';
 import Loading from "./miscellaneous/Loading";
+
 import { fetchCollege } from '../utils/fetchCollege';
 import { useThemeContext } from "../theme/ThemeContextProvider";
 import { Divider } from "@mui/material";
@@ -626,7 +628,25 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     </Container>
 
 
-                    : <></>
+                    : authContext?.user?.email === event?.stuRep ?
+                        <Container sx={{ display: "flex", justifyContent: "space-between", my: "5px" }}>
+
+                            <Box sx={{ mt: 2, mb: 3, color: '#1E1F20' }}>
+                                <Divider variant="middle" />
+                            </Box>
+
+                            {/* 1st Column */}
+                            <Container sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "space-evenly", marginLeft: "-85px" }}>
+                                <Button size="small" onClick={() => {
+                                    console.log("In custom delete")
+                                    handleDelete(event.event_id + "");
+                                }} sx={{ marginLeft: '-2.5px', color: '#1E1F20', lineHeight: "1" }}>
+                                    <CancelIcon sx={{ color: '#D22B2B', marginRight: "10px" }} />
+                                    Cancel Reservation
+                                </Button>
+                            </Container>
+                        </Container> 
+                        : <></>
                 }
             </Grid>
         );
