@@ -554,13 +554,12 @@ export async function getUserRole(userID: string | null | undefined, email: stri
             return undefined;
         }
 
-        let querySnapshot = await getDoc(doc(db, "admins", userID));
-        if (querySnapshot.exists()) {
+        let querySnapshot = await getDocs(query(collection(db, "admins"), where('adminEmail', '==', email)))
+        if (!querySnapshot.empty) {
             return "Admin";
         }
-
-        querySnapshot = await getDoc(doc(db, "librarians", userID));
-        if (querySnapshot.exists()) {
+        querySnapshot = await getDocs(query(collection(db, "librarians"), where('userEmail', '==', email)))
+        if (!querySnapshot.empty) {   
             return "Librarian";
         }
 
