@@ -50,7 +50,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 title: room.roomTitle,
                 roomMinPax: room.roomMinPax,
                 roomMaxPax: room.roomMaxPax,
-                color: "darkblue",
+                color: "white",
             }));
             console.log("transformed rooms")
             console.log(transformedResources)
