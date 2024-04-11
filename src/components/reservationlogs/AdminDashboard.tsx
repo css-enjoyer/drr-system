@@ -239,7 +239,7 @@ const Muitable = () => {
           width: "90%",
           marginLeft: "5%",
         }}
-      >
+        >
         <TextField
           label="Search"
           variant="outlined"
@@ -469,12 +469,9 @@ const Muitable = () => {
       </Dialog>
       {/* TABLE FOR BRANCHES */}
       <BranchTable></BranchTable>
-
+      {/* TABLE FOR ROOMS */}
       <LibrarianDashboard></LibrarianDashboard>
     </div>
-
-
-
   );
 };
 
