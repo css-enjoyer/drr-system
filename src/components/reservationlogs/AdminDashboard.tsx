@@ -256,6 +256,7 @@ const Muitable = () => {
               margin: "0px 0",
             },
           }}
+          disabled // disabled temporarily
         >
           Edit Contact
         </Button>
@@ -269,6 +270,7 @@ const Muitable = () => {
               margin: "0px 0",
             },
           }}
+          disabled // disabled temporarily
         >
           Edit FAQs
         </Button>
