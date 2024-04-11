@@ -32,7 +32,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     const authContext = useContext(AuthContext);
 
     const startTime = 8;
-    const endTime = 17;
+    const endTime = 18;
     const [roomsState, setRoomsState] = useState<RoomProps[]>([]);
     const [eventsState, setEventsState] = useState<ProcessedEvent[]>([]);
     const [loading, setLoading] = useState(false);
