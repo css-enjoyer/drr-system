@@ -274,6 +274,12 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 setErrorMessage("Error! Duration should be within 15 minutes to 2 hours!");
                 return;
             }
+            today.setHours(endTime)
+            today.setMinutes(0) 
+            if (formState.end > today) {
+                setErrorMessage("Error! Cannot reserve past closing time");
+                return;
+            }
 
             try {
                 scheduler.loading(true);
