@@ -25,7 +25,7 @@ const contacts = [
 ];
 
 // Contact component to render individual contact information
-const Contact = ({ name, phone, email }) => (
+const Contact = ({ name = '', phone = '', email = '' }) => (
   <Paper elevation={3} sx={{ padding: '20px', marginBottom: '20px', minWidth: '300px', borderRadius: '10px', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)' }}>
     <Typography variant="body2" sx={{ fontWeight: 'bold', marginBottom: '10px', color: '#333' }}>
       {name}
