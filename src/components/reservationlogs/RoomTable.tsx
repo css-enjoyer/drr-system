@@ -243,8 +243,8 @@ const RoomTable: React.FC<RoomTableProps> = ({ selectedBranch }) => {
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
-                    width: "90%",
-                    marginLeft: "5%",
+                    width: "100%",
+                    marginLeft: "0%",
                 }}
             >
                 <TextField
@@ -270,9 +270,9 @@ const RoomTable: React.FC<RoomTableProps> = ({ selectedBranch }) => {
                 </Button>
             </div>
 
-            <Paper sx={{ width: "90%", marginLeft: "5%", marginBottom: "60px" }}>
+            <Paper sx={{ width: "100%", marginLeft: "0%", marginBottom: "60px" }}>
                 <TableContainer
-                    sx={{ maxHeight: "calc(150vh - 350px)", overflow: "hidden" }}
+                    sx={{ maxHeight: "calc(150vh - 350px)", overflowX: "auto", overflowY: "hidden" }}
                 >
                     <Table stickyHeader>
                         <TableHead>
