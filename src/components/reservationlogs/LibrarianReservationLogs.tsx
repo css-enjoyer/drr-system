@@ -66,7 +66,7 @@ function LibrarianReservationLogs() {
 				room: e.room_id.toString(),
 				representative: e.stuRep,
 				pax: e.pax,
-				participantEmails: e.stuEmails.join('\n'),
+				participantEmails: e.stuEmails.join(',\n'),
 				purpose: e.purp
 			}));
 			console.log(formattedLogs[0].participantEmails)
@@ -128,9 +128,8 @@ function LibrarianReservationLogs() {
 		} else if (sortOrder.id == "time") {
 			const aValue = new Date((a[sortOrder.id as keyof typeof a] as string).split('-')[0].trim());
 			const bValue = new Date((b[sortOrder.id as keyof typeof b] as string).split('-')[0].trim());
-		} else {
-
 		}
+
 		const multiplier = sortOrder.direction === "asc" ? 1 : -1;
 
 		if (aValue < bValue) return -1 * multiplier;
