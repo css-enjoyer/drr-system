@@ -164,7 +164,7 @@ function LibrarianReservationLogs() {
 
 			<Paper sx={{ width: "90%", marginLeft: "5%", marginBottom: "60px" }}>
 				<TableContainer
-					sx={{ maxHeight: "calc(150vh - 350px)", overflow: "hidden" }}
+					sx={{ maxHeight: "calc(150vh - 350px)", overflowX: "auto", overflowY: "hidden" }}
 				>
 					<Table stickyHeader>
 						<TableHead>
