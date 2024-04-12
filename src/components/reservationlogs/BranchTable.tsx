@@ -217,7 +217,7 @@ const BranchTable = () => {
                 variant="outlined"
                 value={searchQuery}
                 onChange={handleSearchChange}
-                style={{ width: "90%" }}
+                style={{ flex: 1, marginRight: "20px" }}
             />
             <Button
                 variant="contained"

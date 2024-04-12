@@ -158,7 +158,7 @@ function LibrarianReservationLogs() {
 	}
 
 	return (
-		<div style={{ textAlign: "center", marginTop: "20px" }}>
+		<div style={{ textAlign: "center", marginTop: "40px" }}>
 			<h3 style={{ marginBottom: "20px" }}>Librarian Reservation Logs</h3>
 			<div
 				style={{
@@ -170,31 +170,31 @@ function LibrarianReservationLogs() {
 					marginLeft: "5%",
 				}}
 			>
-				<TextField
-					label="Search"
-					variant="outlined"
-					value={searchQuery}
-					onChange={handleSearchChange}
-					style={{ width: "90%" }}
-				/>
-				<Button
-					variant="contained"
-					color="primary"
-					onClick={downloadLogs}
-					sx={{
-						textTransform: "none",
-						"@media (max-width: 600px)": {
-							margin: "0px 0",
-						},
-					}}
-				>
-					Download Logs
-				</Button>
+                <TextField
+                    label="Search"
+                    variant="outlined"
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                    style={{ flex: 1, marginRight: "20px" }}
+                />
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={downloadLogs}
+                    sx={{
+                        textTransform: "none",
+                        "@media (max-width: 600px)": {
+                            margin: "0px 0",
+                        },
+                    }}
+                >
+                    Download Logs
+                </Button>
 			</div>
 
 			<Paper sx={{ width: "90%", marginLeft: "5%", marginBottom: "60px" }}>
 				<TableContainer
-					sx={{ maxHeight: "calc(150vh - 350px)", overflow: "hidden" }}
+					sx={{ maxHeight: "calc(150vh - 350px)", overflowX: "auto", overflowY: "hidden" }}
 				>
 					<Table stickyHeader>
 						<TableHead>

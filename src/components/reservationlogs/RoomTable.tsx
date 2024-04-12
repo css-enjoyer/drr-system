@@ -252,7 +252,7 @@ const RoomTable: React.FC<RoomTableProps> = ({ selectedBranch }) => {
                     variant="outlined"
                     value={searchQuery}
                     onChange={handleSearchChange}
-                    style={{ width: "85%" }}
+                    style={{ flex: 1, marginRight: "20px" }}
                 />
                 <Button
                     variant="contained"
