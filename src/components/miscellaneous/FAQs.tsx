@@ -41,15 +41,15 @@ function FAQs() {
   ];
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 8 }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 6 }}>
       <Container maxWidth="lg">
-        <Typography variant="h3" gutterBottom align="center" sx={{ pb: 4 }}>
+        <Typography variant="h3" gutterBottom align="center" sx={{ pb: 4, fontSize: '2.7rem' }}>
           Frequently Asked Questions
         </Typography>
         <Grid container spacing={4}>
           {faqs.map((faq, index) => (
             <Grid item xs={12} key={index}>
-              <Paper elevation={3} sx={{ p: 3, position: 'relative' }}>
+              <Paper elevation={3} sx={{ p: 3, paddingRight: '48px', position: 'relative' }}>
                 <Typography variant="h6" sx={{ mb: 2 }}>
                   {faq.question}
                 </Typography>
