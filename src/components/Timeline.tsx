@@ -9,6 +9,10 @@ import { Branch } from '../Types';
 import { auth } from "../firebase/config";
 import { formatGreeting } from "../utils/formatGreeting";
 
+import sciTechImg from '/src/styles/images/scitech4.jpeg';
+import genRefImg from '/src/styles/images/genref3.jpeg';
+import shsImg from '/src/styles/images/shs2.jpeg';
+
 function Timeline() {
   const { branchId } = useParams<{ branchId: string }>();
   const authContext = useContext(AuthContext);
@@ -39,8 +43,8 @@ function Timeline() {
           position: 'absolute',
           width: '100vw',
           height: '100vh',
-          backgroundImage: `linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4)), url(${branchId === "genref" ? "/src/styles/images/genref3.jpeg" :
-              branchId === "scitech" ? "/src/styles/images/scitech4.jpeg" :"/src/styles/images/shs2.jpeg"})`,
+          backgroundImage: `linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4)), url(${branchId === "genref" ? `${genRefImg}` :
+              branchId === "scitech" ? `${sciTechImg}` : `${shsImg}`})`,
           backgroundPosition:
             branchId === "scitech" ? '0% 75%' :
             branchId === "genref" ? '0% 150%' :
