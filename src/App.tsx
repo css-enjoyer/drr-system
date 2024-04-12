@@ -6,6 +6,11 @@ import LoginPage from "./components/LoginPage";
 import Footer from "./components/Footer";
 import ResponsiveAppBar from "./components/ResponsiveAppBar";
 import Timeline from "./components/Timeline";
+import AdminDashboard from "./components/reservationlogs/AdminDashboard";
+import LibrarianDashboard from "./components/reservationlogs/LibrarianDashboard";
+import LibrarianReservationLogs from "./components/reservationlogs/LibrarianReservationLogs";
+import Confirmation from "./components/miscellaneous/Confirmation";
+import Cancellation from "./components/miscellaneous/Cancellation";
 import About from "./components/miscellaneous/About";
 import FAQs from "./components/miscellaneous/FAQs";
 import InternetConnection from "./components/miscellaneous/InternetConnection";
@@ -121,6 +126,76 @@ function App() {
                 }
               />
 
+              {/* librarian dashboard */}
+              <Route
+                path="/librarianDashboard"
+                element={
+                  authContext?.user ? (
+                    <Protected>
+                      <LibrarianDashboard />
+                    </Protected>
+                  ) : (
+                    <Navigate to="/" />
+                  )
+                }
+              />
+
+              {/* librarian reservation logs */}
+              <Route
+                path="/librarianLogs"
+                element={
+                  authContext?.user ? (
+                    <Protected>
+                      <LibrarianReservationLogs />
+                    </Protected>
+                  ) : (
+                    <Navigate to="/" />
+                  )
+                }
+              />
+
+              {/* admin dashboard */}
+              <Route
+                path="/adminDashboard"
+                element={
+                  authContext?.user ? (
+                    <Protected>
+                      <AdminDashboard />
+                    </Protected>
+                  ) : (
+                    <Navigate to="/" />
+                  )
+                }
+              />
+
+              {/* confirmation page */}
+              <Route
+                path="/confirmation"
+                element={
+                  authContext?.user ? (
+                    <Protected>
+                      <Confirmation messageKey="reservationSuccess" />
+                    </Protected>
+                  ) : (
+                    <Navigate to="/" />
+                  )
+                }
+              />
+
+              {/* cancellation page */}
+              <Route
+                path="/cancellation"
+                element={
+                  authContext?.user ? (
+                    <Protected>
+                      <Cancellation />
+                    </Protected>
+                  ) : (
+                    <Navigate to="/" />
+                  )
+                }
+              />
+
               {/* FAQs page */}
               <Route
                 path="/FAQs"
@@ -149,6 +224,19 @@ function App() {
                 }
               />
 
+              {/* No Internet Connection Page */}
+              <Route
+                path="/netError"
+                element={
+                  authContext?.user ? (
+                    <Protected>
+                      <InternetConnection />
+                    </Protected>
+                  ) : (
+                    <Navigate to="/" />
+                  )
+                }
+              />
             </Routes>
           ) : (
             <InternetConnection />
