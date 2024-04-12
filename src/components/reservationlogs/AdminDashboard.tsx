@@ -214,8 +214,9 @@ const Muitable = () => {
   );
 
   return (
-    <div style={{ textAlign: "center", marginTop: "20px" }}>
-      <h3 style={{ marginBottom: "20px" }}>Admin Dashboard</h3>
+    <div style={{ textAlign: "center", marginTop: "60px" }}>
+      <h1 style={{ marginBottom: "60px" }}>Admin Dashboard</h1>
+      <h3 style={{ marginBottom: "20px" }}>Librarians</h3>
       <div
         style={{
           marginBottom: "20px",
@@ -231,7 +232,7 @@ const Muitable = () => {
           variant="outlined"
           value={searchQuery}
           onChange={handleSearchChange}
-          style={{ width: "60%" }}
+          style={{ width: "90%" }}
         />
         <Button
           variant="contained"
@@ -246,39 +247,11 @@ const Muitable = () => {
         >
           Add Librarian
         </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleAddLibrarian}
-          sx={{
-            textTransform: "none",
-            "@media (max-width: 600px)": {
-              margin: "0px 0",
-            },
-          }}
-          disabled // disabled temporarily
-        >
-          Edit Contact
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleAddLibrarian}
-          sx={{
-            textTransform: "none",
-            "@media (max-width: 600px)": {
-              margin: "0px 0",
-            },
-          }}
-          disabled // disabled temporarily
-        >
-          Edit FAQs
-        </Button>
       </div>
 
       <Paper sx={{ width: "90%", marginLeft: "5%", marginBottom: "60px" }}>
         <TableContainer
-          sx={{ maxHeight: "calc(150vh - 350px)", overflow: "hidden" }}
+          sx={{ maxHeight: "calc(150vh - 350px)", overflowX: "auto", overflowY: "hidden" }}
         >
           <Table stickyHeader>
             <TableHead>
