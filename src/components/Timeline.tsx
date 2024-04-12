@@ -43,8 +43,8 @@ function Timeline() {
           position: 'absolute',
           width: '100vw',
           height: '100vh',
-          backgroundImage: `linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5)), url(${branchId === "genref" ? "/src/styles/images/genref3.jpeg" :
-              branchId === "scitech" ? "/src/styles/images/scitech4.jpeg" :"/src/styles/images/shs2.jpeg"})`,
+          backgroundImage: `linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5)), url(${branchId === "genref" ? `${genRefImg}` :
+              branchId === "scitech" ? `${sciTechImg}` : `${shsImg}`})`,
           backgroundPosition:
             branchId === "scitech" ? '0% 75%' :
             branchId === "genref" ? '0% 150%' :
