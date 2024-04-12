@@ -176,7 +176,7 @@ function LibrarianReservationLogs() {
 					variant="outlined"
 					value={searchQuery}
 					onChange={handleSearchChange}
-					style={{ width: "90%", marginBottom: "20px" }}
+					style={{ width: "90%" }}
 				/>
 				<Button
 					variant="contained"
@@ -189,7 +189,7 @@ function LibrarianReservationLogs() {
 						},
 					}}
 				>
-					Download Reservation Logs
+					Download Logs
 				</Button>
 			</div>
 
