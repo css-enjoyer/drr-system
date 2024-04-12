@@ -25,8 +25,10 @@ import MenuBookIcon from "@mui/icons-material/MenuBook";
 import InfoIcon from "@mui/icons-material/Info";
 import { Link, useNavigate } from "react-router-dom";
 
-let pages = ["Branches", "FAQs", "About"]; // change these to components in the future
-let pageRoutes = ["/branches", "/FAQs", "/About"];
+let pages: string[] = [];
+let pageRoutes: string[] = [];
+const studentPages = ["Branches", "FAQs", "About"];
+const studentPageRoutes = ["/branches", "/FAQs", "/About"];
 const adminPages = ["Branches", "Dashboard", "Logs", "FAQs", "About"];
 const adminPageRoutes = [
   "/branches",
@@ -59,6 +61,9 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
   } else if (authContext?.userRole === "Librarian") {
     pages = librarianPages;
     pageRoutes = librarianPageRoutes;
+  } else if (authContext?.userRole === "SHS-Student" || authContext?.userRole === "Student") {
+    pages = studentPages;
+    pageRoutes = studentPageRoutes;
   }
 
   const navigate = useNavigate();
