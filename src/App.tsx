@@ -9,8 +9,6 @@ import Timeline from "./components/Timeline";
 import AdminDashboard from "./components/reservationlogs/AdminDashboard";
 import LibrarianDashboard from "./components/reservationlogs/LibrarianDashboard";
 import LibrarianReservationLogs from "./components/reservationlogs/LibrarianReservationLogs";
-import Confirmation from "./components/miscellaneous/Confirmation";
-import Cancellation from "./components/miscellaneous/Cancellation";
 import About from "./components/miscellaneous/About";
 import FAQs from "./components/miscellaneous/FAQs";
 import InternetConnection from "./components/miscellaneous/InternetConnection";
@@ -126,13 +124,15 @@ function App() {
                 }
               />
 
-              {/* librarian dashboard */}
+              {/* librarian reservation logs */}
               <Route
-                path="/librarianDashboard"
+                path="/librarianLogs"
                 element={
-                  authContext?.user ? (
+                  authContext?.user &&
+                  (authContext.userRole === "Librarian" ||
+                    authContext.userRole === "Admin") ? (
                     <Protected>
-                      <LibrarianDashboard />
+                      <LibrarianReservationLogs />
                     </Protected>
                   ) : (
                     <Navigate to="/" />
@@ -140,13 +140,13 @@ function App() {
                 }
               />
 
-              {/* librarian reservation logs */}
+              {/* librarian dashboard */}
               <Route
-                path="/librarianLogs"
+                path="/librarianDashboard"
                 element={
-                  authContext?.user ? (
+                  authContext?.user && authContext.userRole === "Librarian" ? (
                     <Protected>
-                      <LibrarianReservationLogs />
+                      <LibrarianDashboard />
                     </Protected>
                   ) : (
                     <Navigate to="/" />
@@ -158,37 +158,9 @@ function App() {
               <Route
                 path="/adminDashboard"
                 element={
-                  authContext?.user ? (
+                  authContext?.user && authContext.userRole === "Admin" ? (
                     <Protected>
                       <AdminDashboard />
-                    </Protected>
-                  ) : (
-                    <Navigate to="/" />
-                  )
-                }
-              />
-
-              {/* confirmation page */}
-              <Route
-                path="/confirmation"
-                element={
-                  authContext?.user ? (
-                    <Protected>
-                      <Confirmation messageKey="reservationSuccess" />
-                    </Protected>
-                  ) : (
-                    <Navigate to="/" />
-                  )
-                }
-              />
-
-              {/* cancellation page */}
-              <Route
-                path="/cancellation"
-                element={
-                  authContext?.user ? (
-                    <Protected>
-                      <Cancellation />
                     </Protected>
                   ) : (
                     <Navigate to="/" />
