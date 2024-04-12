@@ -100,7 +100,7 @@ function Timeline() {
             lineHeight: 1,
           }}>
             {authContext?.userRole === 'Librarian' ? 'You are now granted permission to oversee the management of rooms. You may undertake actions such as editing, deleting, marking as unavailable, or confirming the arrival/departure of guests.' :
-              authContext?.userRole === 'SHS-Student' || authContext?.userRole === 'Student' ? 'Should you wish to make changes to your current reservation, you have the option to relocate it to another open time slot or room by simply dragging and dropping it' :
+              authContext?.userRole === 'SHS-Student' || authContext?.userRole === 'Student' ? 'You can reserve a discussion room or cancel a reservation.' :
                 authContext?.userRole === 'Admin' ? 'You are now granted permission to oversee the management of rooms. You may undertake actions such as editing, deleting, marking as unavailable, or confirming the arrival/departure of guests.' : ''}
           </Typography>
         </Container>
