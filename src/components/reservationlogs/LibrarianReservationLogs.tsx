@@ -26,7 +26,7 @@ interface LogsFormat {
 	room: string;
 	representative: string;
 	pax: number;
-	participantEmails: string[],
+	participantEmails: string,
 	purpose: string;
 }
 
@@ -38,7 +38,7 @@ function LibrarianReservationLogs() {
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(5);
 	const [sortOrder, setSortOrder] = useState({ id: "", direction: "" });
-	const [resLogs, setLogs] = useState<ReserVationEvent[]>([])
+	const [resLogs, setLogs] = useState<ReservationEvent[]>([])
 
 	useEffect(() => {
 		// ----- FIRESTORE REALTIME UPDATES -----
@@ -66,7 +66,7 @@ function LibrarianReservationLogs() {
 				room: e.room_id.toString(),
 				representative: e.stuRep,
 				pax: e.pax,
-				participantEmails: e.stuEmails,
+				participantEmails: e.stuEmails.join('\n'),
 				purpose: e.purp
 			}));
 			console.log(formattedLogs[0].participantEmails)
@@ -150,7 +150,7 @@ function LibrarianReservationLogs() {
 
 		const workbook = utils.book_new();
 		branches.forEach(branch => {
-			const logs: ReservationEvent[] = resLogs.filter((log) => {return log.branchId === branch})
+			const logs: ReservationEvent[] = resLogs.filter((log) => {return log.branchId === branch}) 
 			const worksheet = utils.json_to_sheet(logs)
 			utils.book_append_sheet(workbook, worksheet, branch)
 		})
@@ -195,7 +195,7 @@ function LibrarianReservationLogs() {
 
 			<Paper sx={{ width: "90%", marginLeft: "5%", marginBottom: "60px" }}>
 				<TableContainer
-					sx={{ maxHeight: "calc(150vh - 350px)", overflowX: "auto", overflowY: "hidden" }}
+					sx={{ maxHeight: "calc(150vh - 350px)", overflow: "hidden" }}
 				>
 					<Table stickyHeader>
 						<TableHead>
