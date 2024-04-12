@@ -355,7 +355,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 sx={{
                     display: "flex",
                     justifyContent: "center",
-                    background: theme.palette.mode === 'dark' ? "#1E1F20" : "#FFFFFF",
                 }}>
                 <Grid item sx={{
                     p: "35px",
@@ -364,7 +363,9 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     flexDirection: "column",
                     gap: "20px",
                     overflowY: "auto",
-                    pb: "100px"
+                    pb: "100px",
+                    background: theme.palette.mode === 'dark' ? '#1E1F20' : '#E3E3E3'
+                    
                 }}>
                     <Typography variant="h4" sx={{ marginBottom: '30px' }}>{event ? "Edit" : "Reserve"} Room {scheduler.state.room_id.value}</Typography>
                     <TextField
@@ -557,29 +558,32 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 display: "flex",
                 flexDirection: "column",
                 gap: "5px",
-                color: '#000000',
+                color: theme.palette.mode === 'dark' ? '#000000' : '#000000',
                 background: theme.palette.mode === 'dark' ? '#1B1B1B' : '#E3E3E3'
+                //#1B1B1B
             }}>
-                <Box sx={{ display: "flex", alignItems: "center", gap: "7px" }}>
-                    <Portrait sx={{ marginLeft: "-4px", }} />
-                    <Typography variant="caption" >Representative: {event?.stuRep}</Typography>
+                
+                <Box sx={{ display: "flex", alignItems: "center", gap: "7px", color: theme.palette.mode === 'dark' ? '#E3E3E3' : '#000000' }}>
+                    <Portrait sx={{ marginLeft: "-4px"}} /> 
+                    <Typography variant="caption"  >Representative: {event?.stuRep}</Typography>
                 </Box>
-                <Box sx={{ display: "flex", alignItems: "center", gap: "7px" }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: "7px", color: theme.palette.mode === 'dark' ? '#E3E3E3' : '#000000' }}>
                     <School sx={{ marginLeft: "-4px", }} />
                     <Typography variant="caption" >Representative's College: {event?.stuRep.split('.')[2].split('@')[0].toUpperCase()}</Typography>
                 </Box>
-                <Box sx={{ display: "flex", alignItems: "center", gap: "7px" }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: "7px", color: theme.palette.mode === 'dark' ? '#E3E3E3' : '#000000' }}>
                     <Numbers sx={{ marginLeft: "-4px", }} />
                     <Typography variant="caption" >Number of Participants: {event?.pax}</Typography>
                 </Box>
-                <Box sx={{ display: "flex", alignItems: "center", gap: "7px" }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: "7px", color: theme.palette.mode === 'dark' ? '#E3E3E3' : '#000000' }}>
                     <TextSnippet sx={{ marginLeft: "-4px", }} />
                     <Typography variant="caption" >Reason for Reservation: {event?.purp}</Typography>
                 </Box>
 
-                <Box sx={{ mt: 2, mb: 1 }}>
+                <Box sx={{ mt: 2, mb: 1, color: theme.palette.mode === 'dark' ? '#E3E3E3' : '#000000' }}>
                     <Divider variant="middle" sx={{ backgroundColor: "#1E1F20" }} />
                 </Box>
+
 
                 {/* TODO: Retrieve and display all participant emails */}
                 {authContext?.userRole === "Admin" || authContext?.userRole === "Librarian" ?
@@ -596,15 +600,15 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                                 console.log("In custom edit")
                                 timelineRef.current?.scheduler.triggerDialog(true, event);
                                 close();
-                            }} sx={{ color: '#1E1F20', lineHeight: "1" }}>
-                                <EditNoteOutlinedIcon sx={{ marginRight: "10px" }} />
+                            }} sx={{ color: theme.palette.mode === 'dark' ? '#E3E3E3' : '#000000', lineHeight: "1" }}>
+                                <EditNoteOutlinedIcon sx={{ marginRight: "10px", color: "#E3E3E3" }} />
                                 Edit Reservation
                             </Button>
 
                             <Button size="small" onClick={() => {
                                 console.log("In custom delete")
                                 handleDelete(event.event_id + "");
-                            }} sx={{ marginLeft: '-2.5px', color: '#1E1F20', lineHeight: "1" }}>
+                            }} sx={{ marginLeft: '-2.5px', olor: theme.palette.mode === 'dark' ? '#E3E3E3' : '#000000', lineHeight: "1" }}>
                                 <DeleteOutlineOutlinedIcon sx={{ color: '#D22B2B', marginRight: "10px" }} />
                                 Delete Reservation
                             </Button>
@@ -615,20 +619,20 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
                         {/* 2nd Column */}
                         <Container sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "space-evenly", marginRight: "-45px" }}>
-                            <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Unavailable")} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }} sx={{ color: '#1E1F20', lineHeight: "1" }}>
+                            <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Unavailable")} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }} sx={{ color: theme.palette.mode === 'dark' ? '#E3E3E3' : '#000000', lineHeight: "1" }}>
                                 <EventBusyOutlinedIcon sx={{ color: '#D22B2B', marginRight: "10px" }} />
                                 Set as Unavailable
                             </Button>
 
                             {event.title === "Reserved" &&
-                                <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Occupied")} sx={{ color: '#1E1F20', lineHeight: "1" }}>
+                                <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Occupied")} sx={{ color: theme.palette.mode === 'dark' ? '#E3E3E3' : '#000000', lineHeight: "1" }}>
                                     <CheckBoxOutlinedIcon sx={{ color: '#009E60', marginRight: "10px" }} />
                                     Confirm Arrival
                                 </Button>
                             }
 
                             {event.title === "Occupied" &&
-                                <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Departed")} sx={{ color: '#1E1F20', lineHeight: "1" }}>
+                                <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Departed")} sx={{color: theme.palette.mode === 'dark' ? '#E3E3E3' : '#000000', lineHeight: "1" }}>
                                     <RunCircleOutlinedIcon />
                                     Confirm Departure
                                 </Button>
@@ -649,7 +653,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                                 <Button size="small" onClick={() => {
                                     console.log("In custom delete")
                                     handleDelete(event.event_id + "");
-                                }} sx={{ marginLeft: '-2.5px', color: '#1E1F20', lineHeight: "1" }}>
+                                }} sx={{ marginLeft: '-2.5px', color: theme.palette.mode === 'dark' ? '#E3E3E3' : '#000000', lineHeight: "1" }}>
                                     <CancelIcon sx={{ color: '#D22B2B', marginRight: "10px" }} />
                                     Cancel Reservation
                                 </Button>
