@@ -63,10 +63,10 @@ const LibrarianTable = () => {
 
         LibrariansData.forEach((librarian) => {
             const librarianProp = {
-            date: librarian.dateAdded.toDate().toDateString(),
-            name: librarian.librarianName,
-            email: librarian.userEmail,
-            department: librarian.librarianBranch
+                date: librarian.dateAdded.toDate().toDateString(),
+                name: librarian.librarianName,
+                email: librarian.userEmail,
+                department: librarian.librarianBranch
             }
 
             console.log(librarian);
