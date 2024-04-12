@@ -10,6 +10,7 @@ import {
 	TextField,
 	TablePagination,
 	IconButton,
+	Button,
 } from "@mui/material";
 import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
 import { Timestamp, collection, onSnapshot, query } from "firebase/firestore";
@@ -17,7 +18,7 @@ import { ReservationEvent } from "../../Types";
 import { db } from "../../firebase/config";
 import Loading from "../miscellaneous/Loading";
 import { format } from "date-fns";
-
+import { writeFileXLSX, utils, WorkSheet } from "xlsx"
 interface LogsFormat {
 	branch: string;
 	date: string;
@@ -37,6 +38,7 @@ function LibrarianReservationLogs() {
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(5);
 	const [sortOrder, setSortOrder] = useState({ id: "", direction: "" });
+	const [resLogs, setLogs] = useState<ReserVationEvent[]>([])
 
 	useEffect(() => {
 		// ----- FIRESTORE REALTIME UPDATES -----
@@ -54,7 +56,9 @@ function LibrarianReservationLogs() {
 				};
 				resEvents.push(resEvent);
 			});
-			
+
+			setLogs(resEvents)
+
 			const formattedLogs: LogsFormat[] = resEvents.map((e) => ({
 				branch: e.branchId,
 				date: e.date.toLocaleString(),
@@ -62,7 +66,7 @@ function LibrarianReservationLogs() {
 				room: e.room_id.toString(),
 				representative: e.stuRep,
 				pax: e.pax,
-				participantEmails: e.stuEmails.join('\n'),
+				participantEmails: e.stuEmails,
 				purpose: e.purp
 			}));
 			console.log(formattedLogs[0].participantEmails)
@@ -90,16 +94,6 @@ function LibrarianReservationLogs() {
 		{ id: "pax", name: "Pax" },
 		{ id: "participantEmails", name: "Participant Emails" },
 		{ id: "purpose", name: "Purpose" }
-	];
-
-	// Hardcoded data
-	const MockData = [
-		{
-			date: "02-03-2024",
-			time: "11:00 AM - 01:00 PM",
-			room: "ROOM 1",
-			representative: "representative.college@ust.edu.ph",
-		},
 	];
 
 	const handleSearchChange = (event: {
@@ -151,16 +145,53 @@ function LibrarianReservationLogs() {
 		)
 	);
 
+	const downloadLogs = () => {
+		let branches = [...new Set(resLogs.map(item => item.branchId))];
+
+		const workbook = utils.book_new();
+		branches.forEach(branch => {
+			const logs: ReservationEvent[] = resLogs.filter((log) => {return log.branchId === branch})
+			const worksheet = utils.json_to_sheet(logs)
+			utils.book_append_sheet(workbook, worksheet, branch)
+		})
+		
+		writeFileXLSX(workbook,	"Reservation Logs.xlsx", {compression: true})
+	}
+
 	return (
 		<div style={{ textAlign: "center", marginTop: "20px" }}>
 			<h3 style={{ marginBottom: "20px" }}>Librarian Reservation Logs</h3>
-			<TextField
-				label="Search"
-				variant="outlined"
-				value={searchQuery}
-				onChange={handleSearchChange}
-				style={{ width: "90%", marginBottom: "20px" }}
-			/>
+			<div
+				style={{
+					marginBottom: "20px",
+					display: "flex",
+					justifyContent: "space-between",
+					alignItems: "center",
+					width: "90%",
+					marginLeft: "5%",
+				}}
+			>
+				<TextField
+					label="Search"
+					variant="outlined"
+					value={searchQuery}
+					onChange={handleSearchChange}
+					style={{ width: "90%", marginBottom: "20px" }}
+				/>
+				<Button
+					variant="contained"
+					color="primary"
+					onClick={downloadLogs}
+					sx={{
+						textTransform: "none",
+						"@media (max-width: 600px)": {
+							margin: "0px 0",
+						},
+					}}
+				>
+					Download Reservation Logs
+				</Button>
+			</div>
 
 			<Paper sx={{ width: "90%", marginLeft: "5%", marginBottom: "60px" }}>
 				<TableContainer
