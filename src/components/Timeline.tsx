@@ -43,8 +43,8 @@ function Timeline() {
           position: 'absolute',
           width: '100vw',
           height: '100vh',
-          backgroundImage: `linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4)), url(${branchId === "genref" ? `${genRefImg}` :
-              branchId === "scitech" ? `${sciTechImg}` : `${shsImg}`})`,
+          backgroundImage: `linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5)), url(${branchId === "genref" ? "/src/styles/images/genref3.jpeg" :
+              branchId === "scitech" ? "/src/styles/images/scitech4.jpeg" :"/src/styles/images/shs2.jpeg"})`,
           backgroundPosition:
             branchId === "scitech" ? '0% 75%' :
             branchId === "genref" ? '0% 150%' :
@@ -72,7 +72,7 @@ function Timeline() {
           </Typography>
           <Typography variant="h5" sx={{
             mb: "10px",
-            fontWeight: "400",
+            fontWeight: "500",
             textAlign: "center",
             fontSize: ['16px', '20px', '24px'],
             color: 'white',
@@ -95,7 +95,7 @@ function Timeline() {
           </Typography>
           <Typography variant="subtitle1" sx={{
             mb: "10px",
-            fontWeight: "300",
+            fontWeight: "450",
             paddingBlockStart: "10px",
             paddingBlockEnd: "10px",
             textAlign: "center",
@@ -104,7 +104,7 @@ function Timeline() {
             lineHeight: 1,
           }}>
             {authContext?.userRole === 'Librarian' ? 'You are now granted permission to oversee the management of rooms. You may undertake actions such as editing, deleting, marking as unavailable, or confirming the arrival/departure of guests.' :
-              authContext?.userRole === 'SHS-Student' || authContext?.userRole === 'Student' ? 'You can reserve a discussion room or cancel a reservation.' :
+              authContext?.userRole === 'SHS-Student' || authContext?.userRole === 'Student' ? 'Your are now granted permission to make a reservation in your desired time slot given that the details required are provided. In the event that you change your mind, you may cancel your current reservation.' :
                 authContext?.userRole === 'Admin' ? 'You are now granted permission to oversee the management of rooms. You may undertake actions such as editing, deleting, marking as unavailable, or confirming the arrival/departure of guests.' : ''}
           </Typography>
         </Container>

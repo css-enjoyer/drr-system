@@ -12,19 +12,19 @@ function FAQs() {
   const faqs = [
     {
       question: 'How do I contact support?',
-      answer: 'You can email pegasus support at ralphjerson.cics@ust.edu.ph',
+      answer: 'You can contact support at Tel/Fax: +63 2-8731-3034 | +63 2-8740-9709 | Email: library@ust.edu.ph',
     },
     {
       question: 'How far in advance can I book a discussion room?',
-      answer: 'You can book a discussion room up to 1 day in advance.',
+      answer: 'You can book a discussion room up to one (1) day in advance.',
     },
     {
-      question: 'What is the minimum and maximum duration for a discussion room reservation?',
-      answer: 'Each reservation can be made for a minimum of fifteen minutes up to a maximum of two hours per day per group.',
+      question: 'What is the maximum duration for a discussion room reservation?',
+      answer: 'Each reservation can be made for a maximum duration of two (2) hours per day per group.',
     },
     {
-      question: 'Can I cancel or modify my discussion room reservation?',
-      answer: 'Yes, you can cancel your reservation by accessing your account on our website and managing your bookings. If you need to modify your reservation, kindly ask the library\'s front desk for help.',
+      question: 'Can I modify my discussion room reservation?',
+      answer: 'No, you may not modify your discussion room reservation, however you may cancel your existing reservation',
     },
     {
       question: 'Are there any restrictions on the number of people allowed in a discussion room?',
