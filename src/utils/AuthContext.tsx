@@ -6,7 +6,7 @@ import { getUserRole } from "../firebase/dbHandler";
 export interface AuthContextValues {
     user: User | null | undefined;
     setUser: React.Dispatch<React.SetStateAction<User | null | undefined>>;
-    userRole: UserRole;
+    userRole: UserRole | null;
 }
 export const AuthContext = createContext<AuthContextValues | null>(null);
 

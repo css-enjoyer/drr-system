@@ -142,8 +142,8 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         scheduler: SchedulerHelpers;
     }
     function getMinMax(roomsState: RoomProps[], roomId: number): number[] {
-        var min = 0;
-        var max = 0;
+        let min = 0;
+        let max = 0;
         roomsState.forEach(room => {
             if (room.room_id == roomId) {
                 min = room.roomMinPax
@@ -263,7 +263,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 return;
             }
 
-            const today = new Date()
+            let today = new Date()
             if (formState.start.getDate() > new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).getDate()) {
                 setErrorMessage("Error! Room reservations can only be done a day ahead of current time!");
                 return;
@@ -274,6 +274,8 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 setErrorMessage("Error! Duration should be within 15 minutes to 2 hours!");
                 return;
             }
+
+            today = new Date(formState.end)
             today.setHours(endTime)
             today.setMinutes(0) 
             if (formState.end > today) {

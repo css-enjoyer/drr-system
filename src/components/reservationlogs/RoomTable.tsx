@@ -236,43 +236,49 @@ const RoomTable: React.FC<RoomTableProps> = ({ selectedBranch }) => {
 
     return (
         <div style={{ textAlign: "center", marginTop: "20px" }}>
-            <h3 style={{ marginBottom: "20px" }}>Room Management</h3>
             <div
                 style={{
                     marginBottom: "20px",
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
+                    width: "100%",
+                    marginLeft: "0%",
+                }}>
+                <div
+                    style={{
+                    marginBottom: "20px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
                     width: "90%",
                     marginLeft: "5%",
-                }}
-            >
-                <TextField
-                    label="Search"
-                    variant="outlined"
-                    value={searchQuery}
-                    onChange={handleSearchChange}
-                    style={{ width: "85%" }}
-                />
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleAddBranch}
-                    sx={{
-                        textTransform: "none",
-                        "@media (max-width: 600px)": {
-                            margin: "0px 0",
-                        },
-                    }}
-                    disabled={!selectedBranch}
-                >
-                    Add Room
-                </Button>
+                    }}>
+                    <TextField
+                        label="Search"
+                        variant="outlined"
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                        style={{ flex: 1, marginRight: "20px" }}/>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleAddBranch}
+                        sx={{
+                            textTransform: "none",
+                            "@media (max-width: 600px)": {
+                                margin: "0px 0",
+                            },
+                        }}
+                        disabled={!selectedBranch}>
+                        Add Room
+                    </Button>
+                </div>
             </div>
 
             <Paper sx={{ width: "90%", marginLeft: "5%", marginBottom: "60px" }}>
                 <TableContainer
-                    sx={{ maxHeight: "calc(150vh - 350px)", overflow: "hidden" }}
+                    sx={{ maxHeight: "calc(150vh - 350px)", overflowX: "auto", overflowY: "hidden" }}
                 >
                     <Table stickyHeader>
                         <TableHead>

@@ -9,6 +9,8 @@ import RoomTable from './RoomTable';
 function LibrarianDashboard() {
     const [selectedBranch, setSelectedBranch] = useState('');
     const [branches, setBranches] = useState<Branch[]>([]);
+    const isAdminDashboard = location.pathname === "/adminDashboard";
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -23,29 +25,42 @@ function LibrarianDashboard() {
     }, []);
 
     return (
-        <Container sx={{
-            minHeight: "auto",
-            height: "100vh",
-            py: 3, pb: 20
-        }}>
-        <Typography variant="h4">Select a branch</Typography>
-        <FormControl fullWidth margin="normal" variant="outlined">
-            <InputLabel id="section-label">Branch</InputLabel>
-            <Select 
-              labelId="section-label"
-              value={selectedBranch}
-              onChange={(e) => setSelectedBranch(e.target.value)}
-              label="Department"
-            >
-                {branches.map((branch) => (
-                    <MenuItem key={branch.branchId} value={branch.branchId}>
-                        {branch.branchTitle}
-                    </MenuItem>
-                ))}
-            </Select>
-        </FormControl>
-        <RoomTable selectedBranch={selectedBranch}></RoomTable>
-        </Container>
+        <div style={{ textAlign: "center", marginTop: "60px" }}>
+            { isAdminDashboard ? null : <h1 style={{ marginBottom: "40px" }}>Librarian Dashboard</h1> }
+            {/* <Container sx={{
+                minHeight: "auto",
+                height: "auto",
+                py: 3, pb: 20,
+            }}> */}
+            <h3 style={{ marginBottom: "20px" }}>Room Management</h3>
+            <div
+                style={{
+                marginBottom: "20px",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                width: "90%",
+                marginLeft: "5%",
+                }}>
+                <FormControl fullWidth margin="normal" variant="outlined">
+                    <InputLabel id="section-label">Set Branch</InputLabel>
+                    <Select 
+                    labelId="section-label"
+                    value={selectedBranch}
+                    onChange={(e) => setSelectedBranch(e.target.value)}
+                    label="Department"
+                    >
+                        {branches.map((branch) => (
+                            <MenuItem key={branch.branchId} value={branch.branchId}>
+                                {branch.branchTitle}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+                </div>
+                <RoomTable selectedBranch={selectedBranch}></RoomTable>
+            {/* </Container> */}
+        </div>
     );
 };
 

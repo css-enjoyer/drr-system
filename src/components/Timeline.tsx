@@ -9,6 +9,10 @@ import { Branch } from '../Types';
 import { auth } from "../firebase/config";
 import { formatGreeting } from "../utils/formatGreeting";
 
+import sciTechImg from '/src/styles/images/scitech4.jpeg';
+import genRefImg from '/src/styles/images/genref3.jpeg';
+import shsImg from '/src/styles/images/shs2.jpeg';
+
 function Timeline() {
   const { branchId } = useParams<{ branchId: string }>();
   const authContext = useContext(AuthContext);
