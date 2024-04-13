@@ -85,7 +85,8 @@ function ResponsiveAppBar({ logoTitle }: AppBarProps) {
 
   const { theme } = useThemeContext();
   if (theme.palette.mode === "dark") {
-    background = "radial-gradient(circle, #2b2b2b -90%, #0e1111 80%)";
+    //background = "radial-gradient(circle, #OE1111 10%, #f4d484 80%)";
+    background = "radial-gradient(circle, #343434 -100%, #26282A 90%)";
     textColor = "#FFFFFF";
   } else {
     background =
