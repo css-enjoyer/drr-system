@@ -62,13 +62,13 @@ export function generateRandomSequence() {
     return randomSequence;
 }
 
-export function isReservationBeyondOpeningHrs(resEnd: Date): boolean {
+export function isReservationBeyondOpeningHrs(resEnd: Date, closingHour: number): boolean {
     // year/mos/day/hr:min:sec
     const closingHrs = new Date(
         resEnd.getFullYear(), 
         resEnd.getMonth(), 
         resEnd.getDate(), 
-        20, 30, 0
+        closingHour, 0, 0
     );
 
     if (resEnd > closingHrs) {
