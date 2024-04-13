@@ -39,6 +39,9 @@ import scitechroom4 from "../styles/images/scitech-room4.jpeg";
 import shsroom from "../styles/images/Shsroom.jpeg";
 
 
+import axios from "axios";
+const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 
 function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     const timelineRef = useRef<SchedulerRef>(null);
@@ -380,7 +383,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     background: theme.palette.mode === 'dark' ? '#1E1F20' : '#E3E3E3'
 
                 }}>
-                    <Typography variant="h4" sx={{ }}>{event ? "Edit" : "Reserve"} Room {scheduler.state.room_id.value}</Typography>
+                    <Typography variant="h4" sx={{}}>{event ? "Edit" : "Reserve"} Room {scheduler.state.room_id.value}</Typography>
                     <TextField
                         label="Group Representative"
                         value={event?.stuRep}
@@ -664,7 +667,37 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                             </Button>
 
                             {event.title === "Reserved" &&
-                                <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Occupied")} sx={{ color: theme.palette.mode === 'dark' ? '#E3E3E3' : '#000000', lineHeight: "1" }}>
+                                <Button size="small" onClick={ async () => {
+                                    updateEventTitle(event.event_id + "", "Occupied");
+
+                                    let minutesDelay = Math.ceil((event.start.getTime() - new Date().getTime()) / 60000);
+                                    console.log("MINUTES DELAY");
+                                    console.log(minutesDelay);
+
+                                    // no delay if less than 30 mins
+                                    if (minutesDelay > 30) {
+                                        minutesDelay -= 30;
+                                    }
+
+                                    try {
+                                        const response = await axios.post(`${VITE_BACKEND_URL}/api/functions/email`,
+                                        {
+                                            to: event.stuRep,
+                                            subject: "DRRS: Upcoming reservation",
+                                            html: `<h1>${minutesDelay < 30 ? minutesDelay : 30} minutes before your reservation in room ${event.room_id} at ${event.branchId}</h1>`,
+                                            minutesDelay: minutesDelay < 30 ? 0 : minutesDelay
+                                        },
+                                        {
+                                            headers: {
+                                                "Content-Type": "application/json"
+                                            }
+                                        })
+                                        console.log("SUCCESS: Reservation reminder sent to: " + response.data.to);
+                                    } catch (error) {
+                                        console.error(error);
+                                    }
+                                }}
+                                    sx={{ color: theme.palette.mode === 'dark' ? '#E3E3E3' : '#000000', lineHeight: "1" }}>
                                     <CheckBoxOutlinedIcon sx={{ color: '#009E60', marginRight: "10px" }} />
                                     Confirm Arrival
                                 </Button>
@@ -700,14 +733,14 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         </Container>
                         : <></>
                 }
-            </Grid>
+            </Grid >
         );
     }
 
     return (
-        <Scheduler dialogMaxWidth="xl" 
+        <Scheduler dialogMaxWidth="xl"
             ref={timelineRef}
-            customEditor={(scheduler) => <CustomEditor scheduler={scheduler} 
+            customEditor={(scheduler) => <CustomEditor scheduler={scheduler}
             />}
             customViewer={CustomViewer}
             view="day"
@@ -717,7 +750,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 endHour: endTime,
                 step: 30
             }}
-            
+
 
 
             resources={roomsState}
@@ -730,7 +763,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     type: "hidden",
                 },
             ]}
-            
+
             eventRenderer={({ event, ...props }) => {
                 // when an event is only 15 mins long, the details are compressed
                 if (event?.duration === 15) {
@@ -748,7 +781,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                             }}
                             {...props}
                         >
-                            <div style={{ margin: "5px",color: "#FFFFFF", }}>
+                            <div style={{ margin: "5px", color: "#FFFFFF", }}>
                                 {event.title} &nbsp;
                                 {event.start.toLocaleTimeString("en-US", { timeStyle: "short" })} - {event.end.toLocaleTimeString("en-US", { timeStyle: "short" })}
                             </div>
@@ -771,7 +804,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                             }}
                             {...props}
                         >
-                            <div style={{ margin: "5px",color: "#FFFFFF", }}>
+                            <div style={{ margin: "5px", color: "#FFFFFF", }}>
                                 {event.title} &nbsp;
                                 {event.start.toLocaleTimeString("en-US", { timeStyle: "short" })} - {event.end.toLocaleTimeString("en-US", { timeStyle: "short" })}
                             </div>
