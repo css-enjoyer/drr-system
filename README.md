@@ -2,6 +2,10 @@
 ## TODO
 - [ ] Unit and Integration tests using Jest
 
+## DRRS-BE API
+[drrs-be](https://github.com/kudegras/drrs-be)
+backend apis
+
 ## Installation
 1. Install the packages by typing `npm install`
 2. Create a new file, then name it as `.env`
