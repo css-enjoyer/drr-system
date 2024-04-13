@@ -703,9 +703,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                             </Button>
 
                             {event.title === "Reserved" &&
-                                <Button size="small" onClick={async () => {
-                                    updateEventTitle(event.event_id + "", "Occupied");
-                                }}
+                                <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Occupied")}
                                     sx={{ color: theme.palette.mode === 'dark' ? '#E3E3E3' : '#000000', lineHeight: "1" }}>
                                     <CheckBoxOutlinedIcon sx={{ color: '#009E60', marginRight: "10px" }} />
                                     Confirm Arrival
