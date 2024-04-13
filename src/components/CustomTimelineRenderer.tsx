@@ -22,10 +22,23 @@ import RunCircleOutlinedIcon from '@mui/icons-material/RunCircleOutlined';
 import { Timestamp, collection, onSnapshot, query, where } from "firebase/firestore";
 import { db } from "../firebase/config.ts";
 
-import shsroom from "../styles/images/Shsroom.jpeg";
-import scitechroom from "../styles/images/scitechroom.jpeg";
-import genrefroom from "../styles/images/genrefroom.jpeg";
 import { max } from "date-fns";
+
+//genref room images
+import genrefroom1 from "../styles/images/genref-room1.jpeg";
+import genrefroom2 from "../styles/images/genref-room2.jpeg";
+import genrefroom3 from "../styles/images/genref-room3.jpeg";
+
+//scitech room images
+import scitechroom1 from "../styles/images/scitech-room1.jpeg";
+import scitechroom2 from "../styles/images/scitech-room2.jpeg";
+import scitechroom3 from "../styles/images/scitech-room3.jpeg";
+import scitechroom4 from "../styles/images/scitech-room4.jpeg";
+
+//shs room images
+import shsroom from "../styles/images/Shsroom.jpeg";
+
+
 
 function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     const timelineRef = useRef<SchedulerRef>(null);
@@ -277,7 +290,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
             today = new Date(formState.end)
             today.setHours(endTime)
-            today.setMinutes(0) 
+            today.setMinutes(0)
             if (formState.end > today) {
                 setErrorMessage("Error! Cannot reserve past closing time");
                 return;
@@ -363,11 +376,11 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     flexDirection: "column",
                     gap: "20px",
                     overflowY: "auto",
-                    pb: "100px",
+                    pb: "30px",
                     background: theme.palette.mode === 'dark' ? '#1E1F20' : '#E3E3E3'
-                    
+
                 }}>
-                    <Typography variant="h4" sx={{ marginBottom: '30px' }}>{event ? "Edit" : "Reserve"} Room {scheduler.state.room_id.value}</Typography>
+                    <Typography variant="h4" sx={{ }}>{event ? "Edit" : "Reserve"} Room {scheduler.state.room_id.value}</Typography>
                     <TextField
                         label="Group Representative"
                         value={event?.stuRep}
@@ -501,7 +514,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         <Button onClick={scheduler.close}
                             sx=
                             {{
-                                marginTop: '50px',
+                                marginTop: '20px',
                                 width: "100%",
                                 color: theme.palette.mode === 'dark' ? '#FFFFFF' : '#000000'
                             }}>
@@ -511,7 +524,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         <Button onClick={handleSubmit}
                             sx=
                             {{
-                                marginTop: '50px',
+                                marginTop: '20px',
                                 width: "100%",
                                 color: theme.palette.mode === 'dark' ? '#FFFFFF' : '#000000'
                             }}>
@@ -522,23 +535,50 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     {authContext?.userRole === "Admin" || authContext?.userRole === "Librarian"
                         ? <Button
                             onClick={setRoomUnavailable}
-                            sx=
-                            {{
-                                color: theme.palette.mode === 'dark' ? '#FFFFFF' : 'red'
-                            }}>
+                            sx={{
+                                color: theme.palette.mode === 'dark' ? '#FFFFFF' : 'red',
+                                "&:hover": {
+                                    borderColor: "red", // Red outline
+                                    backgroundColor: "rgba(255, 0, 0, 0.1)" // Red shade
+                                }
+                            }}
+                        >
                             Set Room Unavailable
                         </Button>
+
                         : <></>
                     }
                 </Grid>
+
                 <Grid item
                     width={{ lg: "150vw", md: "120vw", sm: "80vw", xs: "0" }}
                     height={{ lg: "90vh", md: "90vh", sm: "90vh", xs: "0" }}
                     sx={{
+                        //scheduler.state.room_id.value
                         backgroundImage:
-                            branchId === "scitech" ? `url("${scitechroom}")` :
-                                branchId === "genref" ? `url("${genrefroom}")` :
-                                    `url("${shsroom}")`,
+                            branchId === "genref"
+                                ? scheduler.state.room_id.value === 1 ? `url("${genrefroom1}")` :
+                                    scheduler.state.room_id.value === 2 ? `url("${genrefroom2}")` :
+                                        scheduler.state.room_id.value === 3 ? `url("${genrefroom3}")` :
+                                            scheduler.state.room_id.value === 4 ? `url("${genrefroom3}")` :
+                                                `url("${genrefroom3}")`
+
+                                : branchId === "scitech"
+                                    ? scheduler.state.room_id.value === 1 ? `url("${scitechroom1}")` :
+                                        scheduler.state.room_id.value === 2 ? `url("${scitechroom2}")` :
+                                            scheduler.state.room_id.value === 3 ? `url("${scitechroom3}")` :
+                                                scheduler.state.room_id.value === 4 ? `url("${scitechroom4}")` :
+                                                    `url("${scitechroom4}")`
+
+                                    // update when shs rooms are added
+                                    : branchId === "shs"
+                                        ? scheduler.state.room_id.value === 1 ? `url("${shsroom}")` :
+                                            scheduler.state.room_id.value === 2 ? `url("${shsroom}")` :
+                                                scheduler.state.room_id.value === 3 ? `url("${shsroom}")` :
+                                                    scheduler.state.room_id.value === 4 ? `url("${shsroom}")` :
+                                                        `url("${shsroom}")` :
+
+                                        `url("${shsroom}")`,
 
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
@@ -558,13 +598,12 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 display: "flex",
                 flexDirection: "column",
                 gap: "5px",
-                color: theme.palette.mode === 'dark' ? '#000000' : '#000000',
+                color: theme.palette.mode === 'dark' ? '#E3E3E3' : '#000000',
                 background: theme.palette.mode === 'dark' ? '#1B1B1B' : '#E3E3E3'
-                //#1B1B1B
             }}>
-                
+
                 <Box sx={{ display: "flex", alignItems: "center", gap: "7px", color: theme.palette.mode === 'dark' ? '#E3E3E3' : '#000000' }}>
-                    <Portrait sx={{ marginLeft: "-4px"}} /> 
+                    <Portrait sx={{ marginLeft: "-4px" }} />
                     <Typography variant="caption"  >Representative: {event?.stuRep}</Typography>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center", gap: "7px", color: theme.palette.mode === 'dark' ? '#E3E3E3' : '#000000' }}>
@@ -601,14 +640,14 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                                 timelineRef.current?.scheduler.triggerDialog(true, event);
                                 close();
                             }} sx={{ color: theme.palette.mode === 'dark' ? '#E3E3E3' : '#000000', lineHeight: "1" }}>
-                                <EditNoteOutlinedIcon sx={{ marginRight: "10px", color: "#E3E3E3" }} />
+                                <EditNoteOutlinedIcon sx={{ marginRight: "10px", color: theme.palette.mode === 'dark' ? '#E3E3E3' : '#000000' }} />
                                 Edit Reservation
                             </Button>
 
                             <Button size="small" onClick={() => {
                                 console.log("In custom delete")
                                 handleDelete(event.event_id + "");
-                            }} sx={{ marginLeft: '-2.5px', olor: theme.palette.mode === 'dark' ? '#E3E3E3' : '#000000', lineHeight: "1" }}>
+                            }} sx={{ marginLeft: '-2.5px', color: theme.palette.mode === 'dark' ? '#E3E3E3' : '#000000', lineHeight: "1" }}>
                                 <DeleteOutlineOutlinedIcon sx={{ color: '#D22B2B', marginRight: "10px" }} />
                                 Delete Reservation
                             </Button>
@@ -632,7 +671,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                             }
 
                             {event.title === "Occupied" &&
-                                <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Departed")} sx={{color: theme.palette.mode === 'dark' ? '#E3E3E3' : '#000000', lineHeight: "1" }}>
+                                <Button size="small" onClick={() => updateEventTitle(event.event_id + "", "Departed")} sx={{ color: theme.palette.mode === 'dark' ? '#E3E3E3' : '#000000', lineHeight: "1" }}>
                                     <RunCircleOutlinedIcon />
                                     Confirm Departure
                                 </Button>
@@ -658,7 +697,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                                     Cancel Reservation
                                 </Button>
                             </Container>
-                        </Container> 
+                        </Container>
                         : <></>
                 }
             </Grid>
@@ -666,9 +705,10 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     }
 
     return (
-        <Scheduler dialogMaxWidth="xl"
+        <Scheduler dialogMaxWidth="xl" 
             ref={timelineRef}
-            customEditor={(scheduler) => <CustomEditor scheduler={scheduler} />}
+            customEditor={(scheduler) => <CustomEditor scheduler={scheduler} 
+            />}
             customViewer={CustomViewer}
             view="day"
             events={eventsState}
@@ -677,6 +717,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 endHour: endTime,
                 step: 30
             }}
+            
 
 
             resources={roomsState}
@@ -689,6 +730,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     type: "hidden",
                 },
             ]}
+            
             eventRenderer={({ event, ...props }) => {
                 // when an event is only 15 mins long, the details are compressed
                 if (event?.duration === 15) {
@@ -702,16 +744,38 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                                 width: "100%",
                                 background: `${event?.color}`,
                                 fontSize: "0.8em",
-                                color: "White",
+                                color: "#FFFFFF",
                             }}
                             {...props}
                         >
-                            <div
-                                style={{ margin: "5px" }}
-                            >
+                            <div style={{ margin: "5px",color: "#FFFFFF", }}>
                                 {event.title} &nbsp;
                                 {event.start.toLocaleTimeString("en-US", { timeStyle: "short" })} - {event.end.toLocaleTimeString("en-US", { timeStyle: "short" })}
                             </div>
+
+                        </div>
+                    );
+                }
+                if (event?.duration > 15) {
+                    return (
+                        <div
+                            style={{
+                                // display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "space-between",
+                                height: "100%",
+                                width: "100%",
+                                background: `${event?.color}`,
+                                fontSize: "0.8em",
+                                color: "#FFFFFF",
+                            }}
+                            {...props}
+                        >
+                            <div style={{ margin: "5px",color: "#FFFFFF", }}>
+                                {event.title} &nbsp;
+                                {event.start.toLocaleTimeString("en-US", { timeStyle: "short" })} - {event.end.toLocaleTimeString("en-US", { timeStyle: "short" })}
+                            </div>
+
                         </div>
                     );
                 }
