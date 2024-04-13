@@ -36,8 +36,11 @@ import scitechroom3 from "../styles/images/scitech-room3.jpeg";
 import scitechroom4 from "../styles/images/scitech-room4.jpeg";
 
 //shs room images
-import shsroom from "../styles/images/Shsroom.jpeg";
-
+import shsroom1 from "../styles/images/shs-room1.jpeg";
+import shsroom2 from "../styles/images/shs-room2.jpeg";
+import shsroom3 from "../styles/images/shs-room3.jpeg";
+import shsroom4 from "../styles/images/shs-room4.jpeg";
+import shsroom5 from "../styles/images/shs-room5.jpeg";
 
 import axios from "axios";
 const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -611,13 +614,14 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
                                     // update when shs rooms are added
                                     : branchId === "shs"
-                                        ? scheduler.state.room_id.value === 1 ? `url("${shsroom}")` :
-                                            scheduler.state.room_id.value === 2 ? `url("${shsroom}")` :
-                                                scheduler.state.room_id.value === 3 ? `url("${shsroom}")` :
-                                                    scheduler.state.room_id.value === 4 ? `url("${shsroom}")` :
-                                                        `url("${shsroom}")` :
+                                        ? scheduler.state.room_id.value === 1 ? `url("${shsroom1}")` :
+                                            scheduler.state.room_id.value === 2 ? `url("${shsroom2}")` :
+                                                scheduler.state.room_id.value === 3 ? `url("${shsroom3}")` :
+                                                    scheduler.state.room_id.value === 4 ? `url("${shsroom4}")` :
+                                                        scheduler.state.room_id.value === 5 ? `url("${shsroom5}")` :
+                                                            `url("${shsroom5}")` :
 
-                                        `url("${shsroom}")`,
+                                        `url("${shsroom5}")`,
 
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
