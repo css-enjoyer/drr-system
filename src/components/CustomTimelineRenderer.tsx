@@ -151,6 +151,36 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         }
     }
 
+    async function sendReminderEmail(start: Date, stuRep: string, roomId: number, branchId: string) {
+
+        let minutesDelay = Math.ceil((start.getTime() - new Date().getTime()) / 60000);
+        console.log("MINUTES DELAY");
+        console.log(minutesDelay);
+
+        // no delay if less than 30 mins
+        if (minutesDelay > 30) {
+            minutesDelay -= 30;
+        }
+
+        try {
+            const response = await axios.post(`${VITE_BACKEND_URL}/api/functions/email`,
+                {
+                    to: stuRep,
+                    subject: "DRRS: Upcoming reservation",
+                    html: `<h1>${minutesDelay < 30 ? minutesDelay : 30} minutes before your reservation in room ${roomId} at ${branchId}</h1>`,
+                    minutesDelay: minutesDelay < 30 ? 0 : minutesDelay
+                },
+                {
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                })
+            console.log("SUCCESS: Reservation reminder sent to: " + response.data.to);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     /******************************
      *  CUSTOM FORM EDITOR
      ******************************/
@@ -331,6 +361,12 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     if (!overlapping) {
                         scheduler.close();
                         await addReservationEvent(newResEvent);
+                        await sendReminderEmail(
+                            newResEvent.start,
+                            newResEvent.stuRep,
+                            newResEvent.room_id,
+                            newResEvent.branchId
+                        );
                         // fetchReservationEvents();
                     }
                     else {
@@ -667,35 +703,8 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                             </Button>
 
                             {event.title === "Reserved" &&
-                                <Button size="small" onClick={ async () => {
+                                <Button size="small" onClick={async () => {
                                     updateEventTitle(event.event_id + "", "Occupied");
-
-                                    let minutesDelay = Math.ceil((event.start.getTime() - new Date().getTime()) / 60000);
-                                    console.log("MINUTES DELAY");
-                                    console.log(minutesDelay);
-
-                                    // no delay if less than 30 mins
-                                    if (minutesDelay > 30) {
-                                        minutesDelay -= 30;
-                                    }
-
-                                    try {
-                                        const response = await axios.post(`${VITE_BACKEND_URL}/api/functions/email`,
-                                        {
-                                            to: event.stuRep,
-                                            subject: "DRRS: Upcoming reservation",
-                                            html: `<h1>${minutesDelay < 30 ? minutesDelay : 30} minutes before your reservation in room ${event.room_id} at ${event.branchId}</h1>`,
-                                            minutesDelay: minutesDelay < 30 ? 0 : minutesDelay
-                                        },
-                                        {
-                                            headers: {
-                                                "Content-Type": "application/json"
-                                            }
-                                        })
-                                        console.log("SUCCESS: Reservation reminder sent to: " + response.data.to);
-                                    } catch (error) {
-                                        console.error(error);
-                                    }
                                 }}
                                     sx={{ color: theme.palette.mode === 'dark' ? '#E3E3E3' : '#000000', lineHeight: "1" }}>
                                     <CheckBoxOutlinedIcon sx={{ color: '#009E60', marginRight: "10px" }} />
