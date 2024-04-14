@@ -41,10 +41,7 @@ import shsroom2 from "../styles/images/shs-room2.jpeg";
 import shsroom3 from "../styles/images/shs-room3.jpeg";
 import shsroom4 from "../styles/images/shs-room4.jpeg";
 import shsroom5 from "../styles/images/shs-room5.jpeg";
-
-import axios from "axios";
-const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-
+import { sendReminderEmail } from "../utils/Functions.ts";
 
 function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     const timelineRef = useRef<SchedulerRef>(null);
@@ -54,6 +51,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
     const startTime = 8;
     const endTime = 18;
+    const interval = 30;
     const [roomsState, setRoomsState] = useState<RoomProps[]>([]);
     const [eventsState, setEventsState] = useState<ProcessedEvent[]>([]);
     const [loading, setLoading] = useState(false);
@@ -154,36 +152,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         }
     }
 
-    async function sendReminderEmail(start: Date, stuRep: string, roomId: number, branchId: string) {
-
-        let minutesDelay = Math.ceil((start.getTime() - new Date().getTime()) / 60000);
-        console.log("MINUTES DELAY");
-        console.log(minutesDelay);
-
-        // no delay if less than 30 mins
-        if (minutesDelay > 30) {
-            minutesDelay -= 30;
-        }
-
-        try {
-            const response = await axios.post(`${VITE_BACKEND_URL}/api/functions/email`,
-                {
-                    to: stuRep,
-                    subject: "DRRS: Upcoming reservation",
-                    html: `<h1>${minutesDelay < 30 ? minutesDelay : 30} minutes before your reservation in room ${roomId} at ${branchId}</h1>`,
-                    minutesDelay: minutesDelay < 30 ? 0 : minutesDelay
-                },
-                {
-                    headers: {
-                        "Content-Type": "application/json"
-                    }
-                })
-            console.log("SUCCESS: Reservation reminder sent to: " + response.data.to);
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
     /******************************
      *  CUSTOM FORM EDITOR
      ******************************/
@@ -216,7 +184,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             eventId: event?.event_id || "lmao",
             title: event?.title || "Reserved",
             start: event?.start || scheduler.state.start.value,
-            end: event?.end || new Date(scheduler.state.end.value - 15 * 60000),
+            end: event?.end || interval > 15 ? new Date(scheduler.state.end.value - 15 * 60000) : scheduler.state.end.value,
 
             // optional event fields
             color: event?.color || "darkblue",
@@ -364,11 +332,13 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     if (!overlapping) {
                         scheduler.close();
                         await addReservationEvent(newResEvent);
+                        // ----- REMINDER EMAIL -----
                         await sendReminderEmail(
                             newResEvent.start,
                             newResEvent.stuRep,
                             newResEvent.room_id,
-                            newResEvent.branchId
+                            newResEvent.branchId,
+                            30
                         );
                         // fetchReservationEvents();
                     }
@@ -759,7 +729,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             day={{
                 startHour: startTime,
                 endHour: endTime,
-                step: 30
+                step: interval
             }}
 
 
