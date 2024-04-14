@@ -41,7 +41,7 @@ import shsroom2 from "../styles/images/shs-room2.jpeg";
 import shsroom3 from "../styles/images/shs-room3.jpeg";
 import shsroom4 from "../styles/images/shs-room4.jpeg";
 import shsroom5 from "../styles/images/shs-room5.jpeg";
-import { sendReminderEmail } from "../utils/Functions.ts";
+import { autoCancel, sendReminderEmail } from "../utils/Functions.ts";
 
 function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     const timelineRef = useRef<SchedulerRef>(null);
@@ -333,7 +333,9 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
                     if (!overlapping) {
                         scheduler.close();
-                        await addReservationEvent(newResEvent);
+                        const newAddedEventId = await addReservationEvent(newResEvent);
+                        console.log("Newly Added Event ID: " + newAddedEventId);
+                        // TODO: should be for students only, for checking its avail on all roles
                         // ----- REMINDER EMAIL -----
                         await sendReminderEmail(
                             newResEvent.start,
@@ -341,6 +343,16 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                             newResEvent.room_id,
                             newResEvent.branchId,
                             30
+                        );
+                        // ----- AUTO CANCEL -----
+                        await autoCancel(
+                            authContext?.user?.accessToken,
+                            newAddedEventId,
+                            newResEvent.start,
+                            newResEvent.stuRep,
+                            newResEvent.room_id,
+                            newResEvent.branchId,
+                            1
                         );
                         // fetchReservationEvents();
                     }

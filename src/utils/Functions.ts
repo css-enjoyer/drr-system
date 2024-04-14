@@ -27,8 +27,37 @@ export async function sendReminderEmail(start: Date, stuRep: string, roomId: num
                     "Content-Type": "application/json"
                 }
             })
-        console.log(`SUCCESS: Reservation reminder sent to: ${response.data.to} after ${response.data.minutesDelay} minutes delay`);
+        console.log(`SUCCESS: Reservation reminder sent to: ${stuRep} after ${delaySent} minutes delay`);
     } catch (error) {
         console.error(error);
     }
+}
+
+export async function autoCancel(token: string, eventId: string, start: Date, stuRep: string,
+    roomId: number, branchId: string, minsAfterCancellation: number) {
+
+    const cancellationDelay = Math.ceil((start.getTime() - new Date().getTime()) / 60000) + minsAfterCancellation;
+    console.log("MINUTES BEFORE RESERVATION IS CANCELLED");
+    console.log(cancellationDelay);
+
+    try {
+        const response = await axios.post(`${VITE_BACKEND_URL}/api/functions/autoCancel`,
+            {
+                eventId: eventId,
+                to: stuRep,
+                subject: "DRRS: Reservation Cancellation",
+                html: `<h1>Your reservation has been cancelled after not being occupied for ${minsAfterCancellation} minutes in room ${roomId} at ${branchId}</h1>`,
+                minutesDelay: cancellationDelay,
+            },
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                }
+            });
+        console.log(`SUCCESS: Auto cancel has been set ${stuRep} after ${cancellationDelay} minutes delay`);
+    } catch (error) {
+        console.error(error);
+    }
+
 }

@@ -10,9 +10,10 @@ import { ProcessedEvent } from '@aldabil/react-scheduler/types';
 ***************************/
 
 // ----- ADD RESERVATION EVENT -----
-export async function addReservationEvent(resEvent: ProcessedEvent): Promise<ProcessedEvent> {
-    console.log("Reservation Event:");
-    console.log(resEvent);
+export async function addReservationEvent(resEvent: ProcessedEvent): Promise<string> {
+    // console.log("Reservation Event:");
+    // console.log(resEvent);
+    let resEventId = "";
 
     const resEventRef = collection(db, "reservation-event");
 
@@ -33,11 +34,13 @@ export async function addReservationEvent(resEvent: ProcessedEvent): Promise<Pro
         await updateDoc(doc(db, "reservation-event-logs", newResEventsRef.id), {
             event_id: newResEventsRef.id
         });
+
+        resEventId = newResEventsRef.id;
     } catch (error) {
         console.log(error);
     }
 
-    return resEvent;
+    return resEventId;
 }
 
 // ----- GET RESERVATIONS EVENTS -----
