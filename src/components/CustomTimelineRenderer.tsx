@@ -49,9 +49,11 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
     const authContext = useContext(AuthContext);
 
+    // --- TIMELINE: START & ENDING HOUR --- //
     const startTime = 8;
     const endTime = 18;
     const interval = 30;
+    
     const [roomsState, setRoomsState] = useState<RoomProps[]>([]);
     const [eventsState, setEventsState] = useState<ProcessedEvent[]>([]);
     const [loading, setLoading] = useState(false);
@@ -264,7 +266,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 return
             }
 
-            if (isReservationBeyondOpeningHrs(formState.end)) {
+            if (isReservationBeyondOpeningHrs(formState.end, endTime)) {
                 setErrorMessage("Error! Your reservation exceeds library hours.");
                 return;
             }

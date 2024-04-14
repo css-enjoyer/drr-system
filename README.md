@@ -1,4 +1,9 @@
 # DRRS
+## Latest auto-deployment
+1. Go to [forked-drrs](https://github.com/DRRS-Pegasus/drr-system)
+2. `Sync Fork` if branch is behind
+3. Go to [DRRS Vercel](https://drr-system.vercel.app/)
+
 ## TODO
 - [ ] Unit and Integration tests using Jest
 
