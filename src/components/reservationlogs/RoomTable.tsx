@@ -278,7 +278,7 @@ const RoomTable: React.FC<RoomTableProps> = ({ selectedBranch }) => {
 
             <Paper sx={{ width: "90%", marginLeft: "5%", marginBottom: "60px" }}>
                 <TableContainer
-                    sx={{ maxHeight: "calc(150vh - 350px)", overflowX: "auto", overflowY: "hidden" }}
+                    sx={{ maxHeight: "calc(150vh - 350px)", overflowX: "auto", overflowY: "auto" }}
                 >
                     <Table stickyHeader>
                         <TableHead>
