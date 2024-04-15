@@ -33,6 +33,7 @@ export async function sendReminderEmail(start: Date, stuRep: string, roomId: num
     }
 }
 
+// add Access-Control-Allow-Origin: on header.
 export async function autoCancel(token: string, eventId: string, start: Date, stuRep: string,
     roomId: number, branchId: string, minsAfterCancellation: number) {
 
