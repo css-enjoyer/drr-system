@@ -337,7 +337,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         console.log("Newly Added Event ID: " + newAddedEventId);
                         // TODO: should be for students only, for checking its avail on all roles
                         // ----- REMINDER EMAIL -----
-                        await sendReminderEmail(
+                        sendReminderEmail(
                             newResEvent.start,
                             newResEvent.stuRep,
                             newResEvent.room_id,
@@ -345,7 +345,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                             30
                         );
                         // ----- AUTO CANCEL -----
-                        await autoCancel(
+                        autoCancel(
                             authContext?.user?.accessToken,
                             newAddedEventId,
                             newResEvent.start,
