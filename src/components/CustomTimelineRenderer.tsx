@@ -345,15 +345,15 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                             30
                         );
                         // ----- AUTO CANCEL -----
-                        autoCancel(
-                            authContext?.user?.accessToken,
-                            newAddedEventId,
-                            newResEvent.start,
-                            newResEvent.stuRep,
-                            newResEvent.room_id,
-                            newResEvent.branchId,
-                            1
-                        );
+                        // autoCancel(
+                        //     authContext?.user?.accessToken,
+                        //     newAddedEventId,
+                        //     newResEvent.start,
+                        //     newResEvent.stuRep,
+                        //     newResEvent.room_id,
+                        //     newResEvent.branchId,
+                        //     1
+                        // );
                         // fetchReservationEvents();
                     }
                     else {

@@ -48,7 +48,7 @@ export async function autoCancel(token: string, eventId: string, start: Date, st
                 to: stuRep,
                 subject: "DRRS: Reservation Cancellation",
                 html: `<h1>Your reservation has been cancelled after not being occupied for ${minsAfterCancellation} minutes in room ${roomId} at ${branchId}</h1>`,
-                minutesDelay: cancellationDelay,
+                minutesDelay: minsAfterCancellation,
             },
             {
                 headers: {
