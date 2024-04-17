@@ -463,6 +463,57 @@ export async function getBranchRooms(branchId?: string): Promise<BranchRoom[]> {
  *  ADMINS
  *********************/
 
+export async function addAdmin(admin: User): Promise<User> {
+    const adminRef = collection(db, "admins");
+
+    try {
+        const newAdminRef = doc(adminRef);
+        await setDoc(newAdminRef, admin);
+    } catch (error) {
+        console.error(error)
+    }
+
+    return admin;
+};
+
+// Remove Librarian (via Email)
+export async function deleteAdmin(userEmail: string): Promise<string> {
+    let adminIdToDelete = "";
+    let idDeleted: string = "";
+
+    const adminRef = collection(db, "admins");
+    const adminSnapshot = await getDocs(query(adminRef, where('userEmail', '==', userEmail)))
+    
+    adminSnapshot.forEach((doc) => {
+        adminIdToDelete = doc.id
+    })
+
+    const adminIdToDeleteRef = doc(db, "admins", adminIdToDelete);
+    try {
+        await deleteDoc(adminIdToDeleteRef);
+        idDeleted = adminIdToDelete;
+    } catch (error) {
+        console.error;
+    }
+
+    return idDeleted;
+};
+
+export async function editAdmin(userEmail: string, admin: User): Promise<User> {
+    const adminRef = collection(db, "admins");
+    const adminSnapshot = await getDocs(query(adminRef, where('userEmail', '==', userEmail)))
+    let adminIdToEdit = "";
+
+    adminSnapshot.forEach((doc) => {
+        adminIdToEdit = doc.id
+    });
+
+    const adminToEditRef = doc(db, "admins", adminIdToEdit);
+    const updatedAdmin = await updateDoc(adminToEditRef, admin as any);
+
+    return admin;
+};
+
 export async function getAdmins(): Promise<User[]> {
     const adminsRef = collection(db, "admins");
 
