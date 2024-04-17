@@ -462,7 +462,6 @@ export async function getBranchRooms(branchId?: string): Promise<BranchRoom[]> {
 /*********************
  *  ADMINS
  *********************/
-
 export async function addAdmin(admin: User): Promise<User> {
     const adminRef = collection(db, "admins");
 
@@ -476,13 +475,11 @@ export async function addAdmin(admin: User): Promise<User> {
     return admin;
 };
 
-// Remove Librarian (via Email)
-export async function deleteAdmin(userEmail: string): Promise<string> {
+export async function deleteAdmin(adminEmail: string): Promise<string> {
     let adminIdToDelete = "";
     let idDeleted: string = "";
-
     const adminRef = collection(db, "admins");
-    const adminSnapshot = await getDocs(query(adminRef, where('userEmail', '==', userEmail)))
+    const adminSnapshot = await getDocs(query(adminRef, where('userEmail', '==', adminEmail)))
     
     adminSnapshot.forEach((doc) => {
         adminIdToDelete = doc.id
@@ -499,9 +496,9 @@ export async function deleteAdmin(userEmail: string): Promise<string> {
     return idDeleted;
 };
 
-export async function editAdmin(userEmail: string, admin: User): Promise<User> {
+export async function editAdmin(adminEmail: string, admin: User): Promise<User> {
     const adminRef = collection(db, "admins");
-    const adminSnapshot = await getDocs(query(adminRef, where('userEmail', '==', userEmail)))
+    const adminSnapshot = await getDocs(query(adminRef, where('userEmail', '==', adminEmail)));
     let adminIdToEdit = "";
 
     adminSnapshot.forEach((doc) => {
@@ -516,14 +513,13 @@ export async function editAdmin(userEmail: string, admin: User): Promise<User> {
 
 export async function getAdmins(): Promise<User[]> {
     const adminsRef = collection(db, "admins");
-
     const admins: User[] = [];
 
     const querySnapshot = await getDocs(adminsRef);
     querySnapshot.forEach(doc => {
         const adminData = doc.data();
         const admin: User = {
-            userEmail: adminData.adminEmail
+            userEmail: adminData.userEmail
         };
         admins.push(admin);
     });
@@ -533,7 +529,6 @@ export async function getAdmins(): Promise<User[]> {
 /*********************
  *  LIBRARIANS
  *********************/
-
 export async function getLibrarians(): Promise<Librarian[]> {
     const librariansRef = collection(db, "librarians");
 
@@ -612,7 +607,7 @@ export async function getUserRole(userID: string | null | undefined, email: stri
             return undefined;
         }
 
-        let querySnapshot = await getDocs(query(collection(db, "admins"), where('adminEmail', '==', email)))
+        let querySnapshot = await getDocs(query(collection(db, "admins"), where('userEmail', '==', email)))
         if (!querySnapshot.empty) {
             return "Admin";
         }
