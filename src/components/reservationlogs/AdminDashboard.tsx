@@ -1,3 +1,4 @@
+import AdminTable from "./AdminTable";
 import BranchTable from "./BranchTable";
 import LibrarianDashboard from "./LibrarianDashboard";
 import LibrarianTable from "./LibrarianTable";
@@ -6,6 +7,8 @@ const Muitable = () => {
   return (
     <div style={{ textAlign: "center", marginTop: "60px" }}>
       <h1 style={{ marginBottom: "60px" }}>Admin Dashboard</h1>
+      {/* Table for Admins */}
+      <AdminTable></AdminTable>
       {/* Table for Librarian */}
       <LibrarianTable></LibrarianTable>
       {/* Table for Branches */}
