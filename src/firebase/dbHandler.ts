@@ -460,7 +460,7 @@ export async function getBranchRooms(branchId?: string): Promise<BranchRoom[]> {
 }
 
 /*********************
- *  USERS
+ *  ADMINS
  *********************/
 
 export async function getAdmins(): Promise<User[]> {
@@ -478,6 +478,10 @@ export async function getAdmins(): Promise<User[]> {
     });
     return admins;
 }
+
+/*********************
+ *  LIBRARIANS
+ *********************/
 
 export async function getLibrarians(): Promise<Librarian[]> {
     const librariansRef = collection(db, "librarians");
