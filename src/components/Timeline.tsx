@@ -40,13 +40,13 @@ function Timeline() {
 
     <Container maxWidth="xl" sx={{ pb: 4 }}>
       <div style={{ position: 'relative', overflow: 'hidden' }}>
+        {/* --- UPDATE: modular branch images --- */}
         <div style={{
           position: 'absolute',
           width: '100vw',
           height: '100vh',
           backgroundImage: 
             `linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5)), 
-            /* --- UPDATE: modular branch images --- */
             url(${branchId === "genref" 
                 ? `${genRefImg}` 
                 : branchId === "scitech" 
@@ -87,7 +87,7 @@ function Timeline() {
             fontSize: ['16px', '20px', '24px'],
             color: 'white',
           }}>
-            /* --- UPDATE: modular branch location desc --- */
+            {/* --- UPDATE: modular branch location desc --- */}
             {branchId === "genref" 
              ? "General References Section" 
              : branchId === "scitech" 
