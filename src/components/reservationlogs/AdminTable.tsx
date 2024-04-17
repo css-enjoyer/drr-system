@@ -25,7 +25,7 @@ import { addAdmin, deleteAdmin, editAdmin, getAdmins } from "../../firebase/dbHa
 
 const AdminTable = () => {
     const columns = [
-        { id: "email", name: "Email" },
+        { id: "userEmail", name: "Email" },
         { id: "actions", name: "Actions" },
     ];
     
@@ -53,17 +53,16 @@ const AdminTable = () => {
      ******************************/
     const fetchData = async () => {
         const adminsData = await getAdmins();
-        const adminProps: User[] = []
+        const adminProps: User[] = [];
 
         adminsData.forEach((admin) => {
             const adminProp = {
                 userEmail: admin.userEmail
-            }
+            };
 
             console.log(admin);
             adminProps.push(adminProp);
         });
-
         setRows(adminProps);
     }
 
@@ -119,7 +118,6 @@ const AdminTable = () => {
 
         if (rowToEdit) {
             console.log("Edit row:", rowToEdit.userEmail);
-
             setAdminEmailToEdit(rowToEdit.userEmail);
             setAdminEmail(rowToEdit.userEmail);
 
@@ -158,7 +156,7 @@ const AdminTable = () => {
         setRefreshTable(!refreshTable);
     };
 
-    const handleAddLibrarian = () => {
+    const handleAddAdmin = () => {
         setopenAddDialog(true);
     };
 
@@ -217,14 +215,14 @@ const AdminTable = () => {
                     <Button
                     variant="contained"
                     color="primary"
-                    onClick={handleAddLibrarian}
+                    onClick={handleAddAdmin}
                     sx={{
                         textTransform: "none",
                         "@media (max-width: 600px)": {
                         margin: "0px 0",
                         },
                     }}>
-                Add Librarian
+                Add Admin
                 </Button>
             </div>
 
@@ -265,28 +263,30 @@ const AdminTable = () => {
                     {filteredRows
                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                         .map((row) => (
-                        <TableRow key={row.userEmail}>
-                            {columns.map((column) => (
-                            <TableCell key={`${row.userEmail}-${column.id}`} style={{ height: "52px" }}>
-                                {column.id !== "actions" ? (
-                                row[column.id as keyof User]
-                                ) : (
-                                <div>
-                                    <IconButton
-                                        onClick={() => handleEdit(row.userEmail)}
-                                        aria-label="edit"
-                                    >
-                                    <EditIcon style={{ fontSize: 18 }} />
-                                    </IconButton>
-                                    <IconButton
-                                        onClick={() => handleRemove(row.userEmail)}
-                                        aria-label="delete"
-                                    >
-                                    <DeleteIcon style={{ fontSize: 18 }} />
-                                    </IconButton>
-                                </div>
-                                )}
-                            </TableCell>
+                            <TableRow key={row.userEmail}>
+                                {columns.map((column) => (
+                                <TableCell 
+                                    key={`${row.userEmail}-${column.id}`} 
+                                    style={{ height: "52px" }}>
+                                    {column.id !== "actions" ? (
+                                        row[column.id as keyof User]
+                                    ) : (
+                                    <div>
+                                        <IconButton
+                                            onClick={() => handleEdit(row.userEmail)}
+                                            aria-label="edit"
+                                        >
+                                        <EditIcon style={{ fontSize: 18 }} />
+                                        </IconButton>
+                                        <IconButton
+                                            onClick={() => handleRemove(row.userEmail)}
+                                            aria-label="delete"
+                                        >
+                                        <DeleteIcon style={{ fontSize: 18 }} />
+                                        </IconButton>
+                                    </div>
+                                    )}
+                                </TableCell>
                             ))}
                         </TableRow>
                         ))}
@@ -307,7 +307,7 @@ const AdminTable = () => {
             <Dialog 
                 open={openAddDialog} 
                 onClose={handleCancelAdd} maxWidth="lg">
-                <DialogTitle>Add Librarian</DialogTitle>
+                <DialogTitle>Add Admin</DialogTitle>
                 <DialogContent style={{ width: "500px", height: "275px" }}>
                 { errorMessage 
                     ? <Alert severity="error">
@@ -333,7 +333,7 @@ const AdminTable = () => {
             <Dialog 
                 open={openEditDialog} 
                 onClose={handleCancelEdit} maxWidth="lg">
-                <DialogTitle>Edit Librarian</DialogTitle>
+                <DialogTitle>Edit Admin</DialogTitle>
                 <DialogContent style={{ width: "500px", height: "340px" }}>
                 <TextField
                     label="Admin to Edit"
