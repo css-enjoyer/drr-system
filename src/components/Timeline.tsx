@@ -46,6 +46,7 @@ function Timeline() {
           height: '100vh',
           backgroundImage: 
             `linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5)), 
+            /* --- UPDATE: modular branch images --- */
             url(${branchId === "genref" 
                 ? `${genRefImg}` 
                 : branchId === "scitech" 
@@ -86,6 +87,7 @@ function Timeline() {
             fontSize: ['16px', '20px', '24px'],
             color: 'white',
           }}>
+            /* --- UPDATE: modular branch location desc --- */
             {branchId === "genref" 
              ? "General References Section" 
              : branchId === "scitech" 
