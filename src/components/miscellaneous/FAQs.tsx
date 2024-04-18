@@ -49,6 +49,7 @@ function FAQs() {
                 <Typography variant="h6" sx={{ mb: 2 }}>
                     {faq.question}
                 </Typography>
+                {/* ADD: BUTTON TO EDIT / DELETE FAQ IF USER IS LIBRARIAN */}
                 <IconButton
                   sx={{ position: 'absolute', top: '10px', right: '10px', zIndex: 1 }}
                   onClick={() => handleToggle(index)}>
