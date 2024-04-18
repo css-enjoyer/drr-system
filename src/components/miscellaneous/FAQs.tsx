@@ -5,8 +5,17 @@ import { FAQ } from '../../Types';
 import { getFAQs } from '../../firebase/dbHandler';
 
 function FAQs() {
-  const [open, setOpen] = useState({});
+  type OpenState = { [key: number]: boolean };
+
+  const [open, setOpen] = useState<OpenState>({});
   const [FAQs, setFAQs] = useState<FAQ[]>([]);
+
+  const handleToggle = (index: number) => {
+    setOpen((prevOpen: OpenState) => ({ 
+      ...prevOpen, 
+      [index]: !prevOpen[index] 
+    }));
+  };
 
   useEffect(() => {
     const fetchFAQs = async () => {
@@ -26,10 +35,6 @@ function FAQs() {
 
     fetchFAQs();
   }, []);
-
-  const handleToggle = (index: number) => {
-    setOpen((prevOpen) => ({ ...prevOpen, [index]: !prevOpen[index] }));
-  };
 
   // const faqs = [
   //   {
@@ -73,12 +78,12 @@ function FAQs() {
             <Grid item xs={12} key={index}>
               <Paper elevation={3} sx={{ p: 3, paddingRight: '48px', position: 'relative' }}>
                 <Typography variant="h6" sx={{ mb: 2 }}>
-                  {faq.question}
+                    {faq.question}
                 </Typography>
                 <IconButton
                   sx={{ position: 'absolute', top: '10px', right: '10px', zIndex: 1 }}
                   onClick={() => handleToggle(index)}>
-                  {open[index] ? <CloseIcon /> : <AddIcon />}
+                  { open[index] ? <CloseIcon /> : <AddIcon /> }
                 </IconButton>
                 <Collapse in={open[index]}>
                   <Typography variant="body1">
