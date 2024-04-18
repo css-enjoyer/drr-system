@@ -36,37 +36,6 @@ function FAQs() {
     fetchFAQs();
   }, []);
 
-  // const faqs = [
-  //   {
-  //     question: 'How do I contact support?',
-  //     answer: 'You can contact support at Tel/Fax: +63 2-8731-3034 | +63 2-8740-9709 | Email: library@ust.edu.ph',
-  //   },
-  //   {
-  //     question: 'How far in advance can I book a discussion room?',
-  //     answer: 'You can book a discussion room up to one (1) day in advance.',
-  //   },
-  //   {
-  //     question: 'What is the maximum duration for a discussion room reservation?',
-  //     answer: 'Each reservation can be made for a maximum duration of two (2) hours per day per group.',
-  //   },
-  //   {
-  //     question: 'Can I modify my discussion room reservation?',
-  //     answer: 'No, you may not modify your discussion room reservation, however you may cancel your existing reservation',
-  //   },
-  //   {
-  //     question: 'Are there any restrictions on the number of people allowed in a discussion room?',
-  //     answer: 'Discussion rooms have varying capacities, and reservations must adhere to these limits. Please ensure your group size matches the capacity of the room you reserve.',
-  //   },
-  //   {
-  //     question: 'Am I allowed to bring food and drinks into the discussion rooms?',
-  //     answer: 'Food and drinks are generally not permitted in the discussion rooms to maintain cleanliness and prevent damage to the facilities.',
-  //   },
-  //   {
-  //     question: 'What should I do if I encounter issues with my discussion room reservation?',
-  //     answer: 'If you encounter any problems with your reservation or the discussion room itself, please contact the library\'s front desk or our website\'s support team for assistance.',
-  //   },
-  // ];
-
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 6 }}>
       <Container maxWidth="lg">
