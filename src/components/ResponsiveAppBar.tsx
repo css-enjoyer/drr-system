@@ -27,8 +27,10 @@ import { Link, useNavigate } from "react-router-dom";
 
 let pages: string[] = [];
 let pageRoutes: string[] = [];
+
 const studentPages = ["Branches", "FAQs", "About"];
 const studentPageRoutes = ["/branches", "/FAQs", "/About"];
+
 const adminPages = ["Branches", "Dashboard", "Logs", "FAQs", "About"];
 const adminPageRoutes = [
   "/branches",
@@ -37,6 +39,8 @@ const adminPageRoutes = [
   "/FAQs",
   "/About",
 ];
+
+// ADD: Announcements Page
 const librarianPages = ["Branches", "Dashboard", "Logs", "FAQs", "About"];
 const librarianPageRoutes = [
   "/branches",
