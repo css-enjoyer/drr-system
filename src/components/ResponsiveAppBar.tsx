@@ -28,26 +28,27 @@ import { Link, useNavigate } from "react-router-dom";
 let pages: string[] = [];
 let pageRoutes: string[] = [];
 
-const studentPages = ["Branches", "FAQs", "About"];
-const studentPageRoutes = ["/branches", "/FAQs", "/About"];
+const studentPages = ["Branches", "FAQs", "About", "Announcements"];
+const studentPageRoutes = ["/branches", "/FAQs", "/About", "/Announcements"];
 
-const adminPages = ["Branches", "Dashboard", "Logs", "FAQs", "About"];
+const adminPages = ["Branches", "Dashboard", "Logs", "FAQs", "About", "Announcements"];
 const adminPageRoutes = [
   "/branches",
   "/adminDashboard",
   "/librarianLogs",
   "/FAQs",
   "/About",
+  "/Announcements"
 ];
 
-// ADD: Announcements Page
-const librarianPages = ["Branches", "Dashboard", "Logs", "FAQs", "About"];
+const librarianPages = ["Branches", "Dashboard", "Logs", "FAQs", "About", "Announcements"];
 const librarianPageRoutes = [
   "/branches",
   "/librarianDashboard",
   "/librarianLogs",
   "/FAQs",
   "/About",
+  "/Announcements"
 ];
 
 const pageIcons: React.ReactNode[] = []; // change these to components in the future
