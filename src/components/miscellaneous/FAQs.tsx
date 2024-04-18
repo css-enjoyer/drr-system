@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Typography, Paper, IconButton, Collapse, Grid, Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button } from '@mui/material';
 import { Add as AddIcon, Close as CloseIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
-import { FAQ } from '../../Types';
+import { FAQ, OpenState } from '../../Types';
 import { getFAQs } from '../../firebase/dbHandler';
 import { AuthContext } from '../../utils/AuthContext';
 
 function FAQs() {
-  type OpenState = { [key: number]: boolean };
+  const authContext = React.useContext(AuthContext);
 
   const [open, setOpen] = useState<OpenState>({});
   const [FAQs, setFAQs] = useState<FAQ[]>([]);
+
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [editedQuestion, setEditedQuestion] = useState<string>('');
   const [editedAnswer, setEditedAnswer] = useState<string>('');
-  const authContext = React.useContext(AuthContext);
 
   const handleToggle = (index: number) => {
     setOpen((prevOpen: OpenState) => ({ 
@@ -31,10 +31,12 @@ function FAQs() {
       console.log(faqs);
 
       const transformedResources: FAQ[] = faqs.map((faq) => ({
+        id:  faq.id,
         question: faq.question,
         answer: faq.answer
       }));
 
+      transformedResources.sort((a, b) => a.id - b.id);
       setFAQs(transformedResources);
     }
 
