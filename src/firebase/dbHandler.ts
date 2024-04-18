@@ -1,6 +1,6 @@
 import { Timestamp, addDoc, collection, collectionGroup, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { db } from './config';
-import { Branch, BranchRoom, ReservationEvent, Room, User, Librarian, UserRole} from '../Types';
+import { Branch, BranchRoom, FAQ, ReservationEvent, Room, User, Librarian, UserRole} from '../Types';
 import { ProcessedEvent } from '@aldabil/react-scheduler/types';
 
 // Disregard warnings when adding new fields in Firebase, takes time to reflect -isaac
@@ -628,4 +628,24 @@ export async function getUserRole(userID: string | null | undefined, email: stri
     }
 
     return "Student";
+}
+
+/*********************
+ *  FAQs
+ *********************/
+export async function getFAQs(): Promise<FAQ[]> {
+    const faqsRef = collection(db, "faqs");
+    const faqs: FAQ[] = [];
+    const querySnapshot = await getDocs(faqsRef);
+    
+    querySnapshot.forEach(doc => {
+        const faqsData = doc.data();
+        const faq: FAQ = {
+            question: faqsData.question,
+            answer: faqsData.answer
+        };
+        faqs.push(faq);
+    });
+
+    return faqs;
 }
