@@ -79,4 +79,9 @@ export type DurationOption = {
     label: string
 }
 
+export type FAQ = {
+    question: string, 
+    answer: string
+}
+
 export type UserRole = "Admin" | "Librarian" | "Student" | "SHS-Student" | null | undefined
