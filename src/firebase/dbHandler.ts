@@ -641,6 +641,7 @@ export async function getFAQs(): Promise<FAQ[]> {
     querySnapshot.forEach(doc => {
         const faqsData = doc.data();
         const faq: FAQ = {
+            id: faqsData.id,
             question: faqsData.question,
             answer: faqsData.answer
         };
