@@ -1,6 +1,20 @@
 import { Timestamp } from "firebase/firestore";
 
-// reservation event
+export interface Branch {
+    branchId: string;
+    branchTitle: string;
+    branchLoc: string;
+    imgSrc: string;
+}
+
+export interface BranchRoom {
+    roomId: number;
+    roomBranch: string;
+    roomName: string;
+    roomPax: number;
+    roomAvailable: boolean;
+}
+
 export interface ReservationEvent {
     // required types for events
     event_id: string;
@@ -22,13 +36,6 @@ export interface ReservationEvent {
     rcpt: string;
 }
 
-export interface Branch {
-    branchId: string;
-    branchTitle: string;
-    branchLoc: string;
-    imgSrc: string;
-}
-
 export interface Room {
     roomId: number;
     roomTitle: string;
@@ -36,14 +43,6 @@ export interface Room {
     roomBranch: string;
     roomMinPax: number;
     roomMaxPax: number;
-}
-
-export interface BranchRoom {
-    roomId: number;
-    roomBranch: string;
-    roomName: string;
-    roomPax: number;
-    roomAvailable: boolean;
 }
 
 export interface User {
@@ -56,22 +55,11 @@ export interface Librarian extends User {
     librarianBranch: string;
 }
 
-
-// ------ Prop Types -----
-export type RoomProps = {
-    room_id: number,
-    roomBranch: string,
-    title: string,
-    roomMinPax: number,
-    roomMaxPax: number,
-    color: string,
-}
-
-export interface LibrarianProp {
-    date: string;
-    name: string;
-    email: string;
-    department: string;
+/* ------ Prop Types ----- */
+export type Announcement = {
+    dateCreation: Date,
+    heading: string,
+    content: string
 }
 
 export type DurationOption = {
@@ -82,6 +70,24 @@ export type DurationOption = {
 export type FAQ = {
     question: string, 
     answer: string
+}
+
+export interface LibrarianProp {
+    date: string;
+    name: string;
+    email: string;
+    department: string;
+}
+
+export type OpenState = { [key: number]: boolean };
+
+export type RoomProps = {
+    room_id: number,
+    roomBranch: string,
+    title: string,
+    roomMinPax: number,
+    roomMaxPax: number,
+    color: string,
 }
 
 export type UserRole = "Admin" | "Librarian" | "Student" | "SHS-Student" | null | undefined
