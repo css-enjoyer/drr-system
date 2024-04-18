@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Typography, Paper, IconButton, Collapse, Grid, Box } from '@mui/material';
 import { Add as AddIcon, Close as CloseIcon } from '@mui/icons-material';
-import { FAQ } from '../../Types';
+import { FAQ, OpenState } from '../../Types';
 import { getFAQs } from '../../firebase/dbHandler';
 
 function FAQs() {
-  type OpenState = { [key: number]: boolean };
-
   const [open, setOpen] = useState<OpenState>({});
   const [FAQs, setFAQs] = useState<FAQ[]>([]);
 
