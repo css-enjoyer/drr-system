@@ -68,6 +68,7 @@ export type DurationOption = {
 }
 
 export type FAQ = {
+    id: number, 
     question: string, 
     answer: string
 }
