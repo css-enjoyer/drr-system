@@ -30,6 +30,7 @@ import { Cancel, Login } from "@mui/icons-material";
 
 //Images
 import ustLogo from "/src/styles/images/UST_LOGO_WHT.png";
+import Announcements from "./components/miscellaneous/Announcements";
 
 function App() {
   const { theme } = useThemeContext();
@@ -175,6 +176,20 @@ function App() {
                   authContext?.user ? (
                     <Protected>
                       <FAQs />
+                    </Protected>
+                  ) : (
+                    <Navigate to="/" />
+                  )
+                }
+              />
+
+              {/* Announcements page */}
+              <Route
+                path="/announcements"
+                element={
+                  authContext?.user ? (
+                    <Protected>
+                      <Announcements />
                     </Protected>
                   ) : (
                     <Navigate to="/" />
