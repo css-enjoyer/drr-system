@@ -1,6 +1,6 @@
 import { Timestamp, addDoc, collection, collectionGroup, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { db } from './config';
-import { Branch, BranchRoom, FAQ, ReservationEvent, Room, User, Librarian, UserRole} from '../Types';
+import { Announcement, Branch, BranchRoom, FAQ, ReservationEvent, Room, User, Librarian, UserRole } from '../Types';
 import { ProcessedEvent } from '@aldabil/react-scheduler/types';
 
 // Disregard warnings when adding new fields in Firebase, takes time to reflect -isaac
@@ -648,4 +648,25 @@ export async function getFAQs(): Promise<FAQ[]> {
     });
 
     return faqs;
+}
+
+/*********************
+ *  Announcements
+ *********************/
+export async function getAnnouncements(): Promise<Announcement[]> {
+    const announcementsRef = collection(db, "announcements");
+    const announcements: Announcement[] = [];
+    const querySnapshot = await getDocs(announcementsRef);
+
+    querySnapshot.forEach((doc) => {
+        const announcementsData = doc.data();
+        const announcement: Announcement = {
+            dateCreation: (announcementsData.dateCreation as Timestamp).toDate(),
+            heading: announcementsData.heading,
+            content: announcementsData.content
+        };
+        announcements.push(announcement);
+    });
+
+    return announcements;
 }
