@@ -79,7 +79,7 @@ function FAQs() {
                 <Typography variant="h6" sx={{ mb: 2 }}>
                     {faq.question}
                 </Typography>
-                {authContext?.userRole === "Librarian" && ( // Only render for librarian
+                {authContext?.userRole === "Librarian" || authContext?.userRole === "Admin" && ( // Only render for librarian
               <React.Fragment>
                 {/* EDIT */}
                 <IconButton
