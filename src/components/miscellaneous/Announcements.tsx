@@ -16,6 +16,7 @@ const Announcements = () => {
             console.log(announcements);
 
             const transformedResources: Announcement[] = announcements.map((announcement) => ({
+                id: announcement.id,
                 dateCreation: announcement.dateCreation,
                 heading: announcement.heading,
                 content: announcement.content
