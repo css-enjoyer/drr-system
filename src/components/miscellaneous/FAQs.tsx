@@ -11,8 +11,8 @@ function FAQs() {
   const [open, setOpen] = useState<OpenState>({});
   const [FAQs, setFAQs] = useState<FAQ[]>([]);
 
-  const [editIndex, setEditIndex] = useState<number | null>(null);
-  const [editedQuestion, setEditedQuestion] = useState<string>('');
+  const [editFAQ, setEditFAQ] = useState<FAQ | null>(null);
+  const [editedQuestion, setEditedQuestion] = useState<string>(''); 
   const [editedAnswer, setEditedAnswer] = useState<string>('');
 
   const handleToggle = (index: number) => {
@@ -43,28 +43,39 @@ function FAQs() {
     fetchFAQs();
   }, []);
 
-  const handleEdit = (index: number) => {
-    setEditIndex(index);
-    setEditedQuestion(FAQs[index].question);
-    setEditedAnswer(FAQs[index].answer);
+  const handleEdit = (id: number) => {
+    const editedFAQ = FAQs.find(faq => faq.id === id);
+    if (editedFAQ) {
+      setEditFAQ(editedFAQ);
+      setEditedQuestion(editedFAQ.question);
+      setEditedAnswer(editedFAQ.answer);
+    }
   };
 
   const handleSaveEdit = () => {
-    // Save edited question and answer
-    const updatedFAQs = [...FAQs];
-    updatedFAQs[editIndex!].question = editedQuestion;
-    updatedFAQs[editIndex!].answer = editedAnswer;
-    setFAQs(updatedFAQs);
+    if (editFAQ) {
+        // Save edited question and answer
+        const updatedFAQs = FAQs.map(faq => {
+            if (faq.id === editFAQ.id) {
+                return {
+                    ...faq,
+                    question: editedQuestion,
+                    answer: editedAnswer
+                };
+            }
+            return faq;
+        });
+        setFAQs(updatedFAQs);
 
-    // Reset edit mode
-    setEditIndex(null);
-  };
+        // Reset edit mode
+        setEditFAQ(null);
+    }
+};
 
-  const handleDelete = (index: number) => {
+  const handleDelete = (id: number) => {
     // Implement delete functionality, e.g., confirm deletion and remove the FAQ item
-    console.log("Delete FAQ at index:", index);
+    console.log("Delete FAQ with id:", id);
   };
-
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 6 }}>
@@ -79,19 +90,19 @@ function FAQs() {
                 <Typography variant="h6" sx={{ mb: 2 }}>
                     {faq.question}
                 </Typography>
-                {authContext?.userRole === "Librarian" || authContext?.userRole === "Admin" && ( // Only render for librarian
+                {authContext?.userRole === "Librarian" || authContext?.userRole === "Admin" && (
               <React.Fragment>
                 {/* EDIT */}
                 <IconButton
                   sx={{ position: 'absolute', top: '12px', right: '70px', zIndex: 1 }}
-                  onClick={() => handleEdit(index)}
+                  onClick={() => handleEdit(faq.id)}
                 >
                   <EditIcon style={{ fontSize: 20 }} />
                 </IconButton>
                 {/* DELETE */}
                 <IconButton
                   sx={{ position: 'absolute', top: '12px', right: '40px', zIndex: 1 }}
-                  onClick={() => handleDelete(index)}
+                  onClick={() => handleDelete(faq.id)}
                 >
                   <DeleteIcon style={{ fontSize: 20 }} />
                 </IconButton>
@@ -113,7 +124,7 @@ function FAQs() {
           ))}
         </Grid>
       </Container>
-      <Dialog open={editIndex !== null} onClose={() => setEditIndex(null)}>
+      <Dialog open={!!editFAQ} onClose={() => setEditFAQ(null)}>
         <DialogTitle>Edit FAQ</DialogTitle>
         <DialogContent>
           <TextField
@@ -133,7 +144,7 @@ function FAQs() {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setEditIndex(null)}>Cancel</Button>
+          <Button onClick={() => setEditFAQ(null)}>Cancel</Button>
           <Button onClick={handleSaveEdit}>Confirm</Button>
         </DialogActions>
       </Dialog>
