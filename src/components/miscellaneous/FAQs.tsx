@@ -15,6 +15,7 @@ function FAQs() {
   const [editedQuestion, setEditedQuestion] = useState<string>(''); 
   const [editedAnswer, setEditedAnswer] = useState<string>('');
 
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [newQuestion, setNewQuestion] = useState('');
   const [newAnswer, setNewAnswer] = useState('');
@@ -42,6 +43,14 @@ function FAQs() {
 
   const handleAdd = async () => {
     try {
+      const existingQuestion = FAQs.find(faq => faq.question === newQuestion);
+      if (existingQuestion) {
+        setErrorMessage("This question already exists. Please enter a different one.");
+        return;
+      }
+  
+      setErrorMessage('');
+  
       const existingFAQs = await getFAQs();
       const maxId = existingFAQs.reduce((max, faq) => (faq.id > max ? faq.id : max), 0);
       const newId = maxId + 1;
@@ -55,7 +64,7 @@ function FAQs() {
       await addFAQ(newFAQ);
       const updatedFAQs = await getFAQs();
       updatedFAQs.sort((a, b) => a.id - b.id);
-      
+  
       setFAQs(updatedFAQs);
   
       setOpenAddDialog(false);
@@ -130,6 +139,7 @@ function FAQs() {
               onChange={(e) => setNewQuestion(e.target.value)}
               fullWidth
               margin="normal"
+              error={!!errorMessage}
             />
             <TextField
               label="Answer"
@@ -139,9 +149,13 @@ function FAQs() {
               margin="normal"
               multiline
             />
+            {errorMessage && (
+              <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+                {errorMessage}
+              </Typography>
+            )}
           </DialogContent>
           <DialogActions>
-            {/* Buttons to confirm or cancel adding */}
             <Button onClick={() => setOpenAddDialog(false)}>Cancel</Button>
             <Button onClick={handleAdd}>Confirm</Button>
           </DialogActions>
