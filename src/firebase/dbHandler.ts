@@ -637,6 +637,21 @@ export async function getUserRole(userID: string | null | undefined, email: stri
 /*********************
  *  Announcements
  *********************/
+export async function editAnnouncement(id: number, announcement: Announcement): Promise<Announcement> {
+    let announcementIdToEdit = "";
+    const announcementsRef = collection(db, "announcements");
+    const announcementSnapshot = await getDocs(query(announcementsRef, where('id', '==', id)))
+
+    announcementSnapshot.forEach((doc) => {
+        announcementIdToEdit = doc.id
+    });
+
+    const announcementToEditRef = doc(db, "announcements", announcementIdToEdit);
+    const updatedAnnouncement = await updateDoc(announcementToEditRef, announcement as any);
+
+    return announcement;
+}
+
 export async function getAnnouncements(): Promise<Announcement[]> {
     const announcementsRef = collection(db, "announcements");
     const announcements: Announcement[] = [];
