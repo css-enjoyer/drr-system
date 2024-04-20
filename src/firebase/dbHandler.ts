@@ -662,7 +662,7 @@ export async function deleteAnnouncement(id: string): Promise<string> {
     });
 
     const announcementToDeleteRef = doc(db, "announcements", announcementIdToDelete);
-    
+
     try {
         await deleteDoc(announcementToDeleteRef);
         idDeleted = announcementIdToDelete;
@@ -711,6 +711,58 @@ export async function getAnnouncements(): Promise<Announcement[]> {
 /*********************
  *  FAQs
  *********************/
+export async function addFAQ(faq: FAQ): Promise<FAQ> {
+    const faqRef = collection(db, "faqs");
+
+    try {
+        const newFAQRef = doc(faqRef);
+        await setDoc(newFAQRef, faq);
+    } catch (error) {
+        console.error(error)
+    }
+
+    return faq;
+}
+
+export async function deleteFAQ(id: string): Promise<string> {
+    let idDeleted: string = "";
+    let faqIdToDelete = "";
+
+    const faqRef = collection(db, "faqs");
+    const faqSnapshot = await getDocs(query(faqRef, where('id', '==', id)));
+    
+    faqSnapshot.forEach((doc) => {
+        faqIdToDelete = doc.id;
+    });
+
+    const faqToDeleteRef = doc(db, "announcements", faqIdToDelete);
+    
+    try {
+        await deleteDoc(faqToDeleteRef);
+        idDeleted = faqIdToDelete;
+    } catch (error) {
+        console.error;
+    }
+
+    return idDeleted;
+}
+
+
+export async function editFAQ(id: number, faq: FAQ): Promise<FAQ> {
+    let faqIdToEdit = "";
+    const faqsRef = collection(db, "faqs");
+    const faqSnapshot = await getDocs(query(faqsRef, where('id', '==', id)))
+
+    faqSnapshot.forEach((doc) => {
+        faqIdToEdit = doc.id
+    });
+
+    const faqToEditRef = doc(db, "faqs", faqIdToEdit);
+    const updatedFAQ = await updateDoc(faqToEditRef, faq as any);
+
+    return faq;
+}
+
 export async function getFAQs(): Promise<FAQ[]> {
     const faqsRef = collection(db, "faqs");
     const faqs: FAQ[] = [];
