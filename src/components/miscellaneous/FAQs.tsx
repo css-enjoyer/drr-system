@@ -11,71 +11,103 @@ function FAQs() {
   const [open, setOpen] = useState<OpenState>({});
   const [FAQs, setFAQs] = useState<FAQ[]>([]);
 
-  const [editFAQ, setEditFAQ] = useState<FAQ | null>(null);
+  const [editFAQId, setEditFAQId] = useState<number | null>(null);
   const [editedQuestion, setEditedQuestion] = useState<string>(''); 
   const [editedAnswer, setEditedAnswer] = useState<string>('');
 
-  const handleToggle = (index: number) => {
-    setOpen((prevOpen: OpenState) => ({ 
-      ...prevOpen, 
-      [index]: !prevOpen[index] 
-    }));
-  };
+  const [openAddDialog, setOpenAddDialog] = useState(false);
+  const [newQuestion, setNewQuestion] = useState('');
+  const [newAnswer, setNewAnswer] = useState('');
 
   useEffect(() => {
     const fetchFAQs = async () => {
       const faqs = await getFAQs();
-
+  
       // --- VALIDATION --- //
       console.log("FAQs");
       console.log(faqs);
-
+  
       const transformedResources: FAQ[] = faqs.map((faq) => ({
         id:  faq.id,
         question: faq.question,
         answer: faq.answer
       }));
-
+  
       transformedResources.sort((a, b) => a.id - b.id);
-      setFAQs(transformedResources);
+        setFAQs(transformedResources);
     }
-
+  
     fetchFAQs();
   }, []);
 
+  const handleAdd = async () => {
+    try {
+      const existingFAQs = await getFAQs();
+      const maxId = existingFAQs.reduce((max, faq) => (faq.id > max ? faq.id : max), 0);
+      const newId = maxId + 1;
+  
+      const newFAQ: FAQ = {
+        id: newId,
+        question: newQuestion,
+        answer: newAnswer
+      };
+  
+      await addFAQ(newFAQ);
+      const updatedFAQs = await getFAQs();
+      updatedFAQs.sort((a, b) => a.id - b.id);
+      
+      setFAQs(updatedFAQs);
+  
+      setOpenAddDialog(false);
+  
+      setNewQuestion('');
+      setNewAnswer('');
+    } catch (error) {
+      console.error("Error adding FAQ:", error);
+    }
+  };
+
   const handleEdit = (id: number) => {
+    setEditFAQId(id);
     const editedFAQ = FAQs.find(faq => faq.id === id);
     if (editedFAQ) {
-      setEditFAQ(editedFAQ);
       setEditedQuestion(editedFAQ.question);
       setEditedAnswer(editedFAQ.answer);
     }
   };
 
-  const handleSaveEdit = () => {
-    if (editFAQ) {
-        // Save edited question and answer
-        const updatedFAQs = FAQs.map(faq => {
-            if (faq.id === editFAQ.id) {
-                return {
-                    ...faq,
-                    question: editedQuestion,
-                    answer: editedAnswer
-                };
-            }
-            return faq;
-        });
-        setFAQs(updatedFAQs);
-
-        // Reset edit mode
-        setEditFAQ(null);
+  const handleSaveEdit = async () => {
+    if (editFAQId !== null) {
+      const editedFAQ = { id: editFAQId, question: editedQuestion, answer: editedAnswer };
+      await editFAQ(editFAQId, editedFAQ);
+      const updatedFAQs = FAQs.map(faq => (faq.id === editFAQId ? editedFAQ : faq));
+      setFAQs(updatedFAQs);
+      setEditFAQId(null);
     }
-};
-
-  const handleDelete = (id: number) => {
-    // Implement delete functionality, e.g., confirm deletion and remove the FAQ item
-    console.log("Delete FAQ with id:", id);
   };
+
+  const handleDelete = async (id: string) => {
+    try {
+      console.log("Deleting FAQ with ID:", id);
+      const deletedId = await deleteFAQ(id);
+      console.log("Deleted FAQ ID:", deletedId);
+      if (deletedId !== "") {
+        // Remove the deleted FAQ from the state immediately
+        setFAQs(prevFAQs => prevFAQs.filter(faq => faq.id !== id));
+      } else {
+        console.error("FAQ deletion failed.");
+      }
+    } catch (error) {
+      console.error("Error deleting FAQ:", error);
+    }
+  };
+
+  function handleToggle(index: number): void {
+    setOpen((prevOpen) => ({
+      ...prevOpen,
+      [index]: !prevOpen[index],
+    }));
+  }
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 6 }}>
@@ -83,6 +115,39 @@ function FAQs() {
         <Typography variant="h3" gutterBottom align="center" sx={{ pb: 4, fontSize: '2.7rem' }}>
             Frequently Asked Questions
         </Typography>
+        {authContext?.userRole === "Librarian" || authContext?.userRole === "Admin" && (
+          <React.Fragment>
+        {/* Add FAQ button */}
+        <Button variant="contained" onClick={() => setOpenAddDialog(true)} sx={{ mb: 2 }}>Add FAQ</Button>
+        {/* Add FAQ dialog */}
+        <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>
+          <DialogTitle>Add FAQ</DialogTitle>
+          <DialogContent>
+            {/* Input fields for question and answer */}
+            <TextField
+              label="Question"
+              value={newQuestion}
+              onChange={(e) => setNewQuestion(e.target.value)}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label="Answer"
+              value={newAnswer}
+              onChange={(e) => setNewAnswer(e.target.value)}
+              fullWidth
+              margin="normal"
+              multiline
+            />
+          </DialogContent>
+          <DialogActions>
+            {/* Buttons to confirm or cancel adding */}
+            <Button onClick={() => setOpenAddDialog(false)}>Cancel</Button>
+            <Button onClick={handleAdd}>Confirm</Button>
+          </DialogActions>
+        </Dialog>
+          </React.Fragment>
+        )}
         <Grid container spacing={4}>
           {FAQs.map((faq, index) => (
             <Grid item xs={12} key={index}>
@@ -91,22 +156,22 @@ function FAQs() {
                     {faq.question}
                 </Typography>
                 {authContext?.userRole === "Librarian" || authContext?.userRole === "Admin" && (
-              <React.Fragment>
-                {/* EDIT */}
-                <IconButton
-                  sx={{ position: 'absolute', top: '12px', right: '70px', zIndex: 1 }}
-                  onClick={() => handleEdit(faq.id)}
-                >
-                  <EditIcon style={{ fontSize: 20 }} />
-                </IconButton>
-                {/* DELETE */}
-                <IconButton
-                  sx={{ position: 'absolute', top: '12px', right: '40px', zIndex: 1 }}
-                  onClick={() => handleDelete(faq.id)}
-                >
-                  <DeleteIcon style={{ fontSize: 20 }} />
-                </IconButton>
-              </React.Fragment>
+                  <React.Fragment>
+                    {/* EDIT */}
+                    <IconButton
+                      sx={{ position: 'absolute', top: '12px', right: '70px', zIndex: 1 }}
+                      onClick={() => handleEdit(faq.id)}
+                    >
+                      <EditIcon style={{ fontSize: 20 }} />
+                    </IconButton>
+                    {/* DELETE */}
+                    <IconButton
+                      sx={{ position: 'absolute', top: '12px', right: '40px', zIndex: 1 }}
+                      onClick={() => handleDelete(faq.id)}
+                    >
+                      <DeleteIcon style={{ fontSize: 20 }} />
+                    </IconButton>
+                  </React.Fragment>
                 )}
                 <IconButton
                   sx={{ position: 'absolute', top: '10px', right: '10px', zIndex: 1 }}
@@ -124,7 +189,7 @@ function FAQs() {
           ))}
         </Grid>
       </Container>
-      <Dialog open={!!editFAQ} onClose={() => setEditFAQ(null)}>
+      <Dialog open={editFAQId !== null} onClose={() => setEditFAQId(null)}>
         <DialogTitle>Edit FAQ</DialogTitle>
         <DialogContent>
           <TextField
@@ -144,7 +209,7 @@ function FAQs() {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setEditFAQ(null)}>Cancel</Button>
+          <Button onClick={() => setEditFAQId(null)}>Cancel</Button>
           <Button onClick={handleSaveEdit}>Confirm</Button>
         </DialogActions>
       </Dialog>

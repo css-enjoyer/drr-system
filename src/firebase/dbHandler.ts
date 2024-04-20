@@ -735,7 +735,7 @@ export async function deleteFAQ(id: string): Promise<string> {
         faqIdToDelete = doc.id;
     });
 
-    const faqToDeleteRef = doc(db, "announcements", faqIdToDelete);
+    const faqToDeleteRef = doc(db, "faqs", faqIdToDelete);
     
     try {
         await deleteDoc(faqToDeleteRef);
