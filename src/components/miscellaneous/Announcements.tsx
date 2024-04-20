@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Announcement, OpenState } from '../../Types';
-import { getAnnouncements } from '../../firebase/dbHandler';
+import { addAnnouncement, deleteAnnouncement, editAnnouncement, getAnnouncements } from '../../firebase/dbHandler';
 import { Add as AddIcon, Close as CloseIcon } from '@mui/icons-material';
 import { Box, Collapse, Container, Grid, IconButton, Paper, Typography } from '@mui/material';
 

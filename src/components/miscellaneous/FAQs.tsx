@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Container, Typography, Paper, IconButton, Collapse, Grid, Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button } from '@mui/material';
 import { Add as AddIcon, Close as CloseIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { FAQ, OpenState } from '../../Types';
-import { getFAQs } from '../../firebase/dbHandler';
+import { addFAQ, deleteFAQ, editFAQ, getFAQs } from '../../firebase/dbHandler';
 import { AuthContext } from '../../utils/AuthContext';
 
 function FAQs() {
