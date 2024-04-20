@@ -43,34 +43,39 @@ function FAQs() {
 
   const handleAdd = async () => {
     try {
-      const existingQuestion = FAQs.find(faq => faq.question === newQuestion);
-      if (existingQuestion) {
-        setErrorMessage("This question already exists. Please enter a different one.");
+      if (!newQuestion.trim() || !newAnswer.trim()) {
+        setErrorMessage("Please enter both question and answer.");
         return;
       }
-  
+
+      const existingQuestion = FAQs.find(faq => faq.question === newQuestion);
+      if (existingQuestion) {
+        return;
+      }
+
       setErrorMessage('');
-  
+
       const existingFAQs = await getFAQs();
       const maxId = existingFAQs.reduce((max, faq) => (faq.id > max ? faq.id : max), 0);
       const newId = maxId + 1;
-  
+
       const newFAQ: FAQ = {
         id: newId,
         question: newQuestion,
         answer: newAnswer
       };
-  
+
       await addFAQ(newFAQ);
       const updatedFAQs = await getFAQs();
       updatedFAQs.sort((a, b) => a.id - b.id);
-  
+
       setFAQs(updatedFAQs);
-  
+
       setOpenAddDialog(false);
-  
+
       setNewQuestion('');
       setNewAnswer('');
+      setErrorMessage('');
     } catch (error) {
       console.error("Error adding FAQ:", error);
     }
@@ -118,18 +123,30 @@ function FAQs() {
     }));
   }
 
+  const handleDialogClose = () => {
+    setNewQuestion('');
+    setNewAnswer('');
+    setErrorMessage('');
+  };
+
+  const handleCancel = () => {
+    setNewQuestion('');
+    setNewAnswer('');
+    setErrorMessage('');
+  };
+
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 6 }}>
       <Container maxWidth="lg">
         <Typography variant="h3" gutterBottom align="center" sx={{ pb: 4, fontSize: '2.7rem' }}>
             Frequently Asked Questions
         </Typography>
-        {authContext?.userRole === "Librarian" || authContext?.userRole === "Admin" && (
+        {(authContext?.userRole === "Librarian" || authContext?.userRole === "Admin") && (
           <React.Fragment>
         {/* Add FAQ button */}
         <Button variant="contained" onClick={() => setOpenAddDialog(true)} sx={{ mb: 2 }}>Add FAQ</Button>
         {/* Add FAQ dialog */}
-        <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>
+        <Dialog open={openAddDialog} onClose={() => { setOpenAddDialog(false); handleDialogClose(); }}>
           <DialogTitle>Add FAQ</DialogTitle>
           <DialogContent>
             {/* Input fields for question and answer */}
@@ -139,7 +156,8 @@ function FAQs() {
               onChange={(e) => setNewQuestion(e.target.value)}
               fullWidth
               margin="normal"
-              error={!!errorMessage}
+              error={FAQs.some(faq => faq.question === newQuestion)}
+              helperText={FAQs.some(faq => faq.question === newQuestion) ? "This question already exists. Please enter a different one." : ''}
             />
             <TextField
               label="Answer"
@@ -156,7 +174,7 @@ function FAQs() {
             )}
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setOpenAddDialog(false)}>Cancel</Button>
+            <Button onClick={() => { setOpenAddDialog(false); handleCancel(); }}>Cancel</Button>
             <Button onClick={handleAdd}>Confirm</Button>
           </DialogActions>
         </Dialog>
@@ -169,7 +187,7 @@ function FAQs() {
                 <Typography variant="h6" sx={{ mb: 2 }}>
                     {faq.question}
                 </Typography>
-                {authContext?.userRole === "Librarian" || authContext?.userRole === "Admin" && (
+                {(authContext?.userRole === "Librarian" || authContext?.userRole === "Admin") && (
                   <React.Fragment>
                     {/* EDIT */}
                     <IconButton
