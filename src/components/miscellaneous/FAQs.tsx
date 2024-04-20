@@ -100,7 +100,7 @@ function FAQs() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: number) => {
     try {
       console.log("Deleting FAQ with ID:", id);
       const deletedId = await deleteFAQ(id);

@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Announcement, OpenState } from '../../Types';
 import { addAnnouncement, deleteAnnouncement, editAnnouncement, getAnnouncements } from '../../firebase/dbHandler';
-import { Add as AddIcon, Close as CloseIcon } from '@mui/icons-material';
+import { Add as AddIcon, Close as CloseIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { Box, Collapse, Container, Grid, IconButton, Paper, Typography } from '@mui/material';
+import { AuthContext } from '../../utils/AuthContext';
 
 const Announcements = () => {
+    const authContext = React.useContext(AuthContext);
+
     const [announcement, setAnnouncement] = useState<Announcement[]>([]);
     const [open, setOpen] = useState<OpenState>({});
 
@@ -84,7 +87,23 @@ const Announcements = () => {
                         <Typography variant="h4" sx={{ mb: 2 }}>
                             { announcement.heading }
                         </Typography>
-                        {/* ADD: BUTTON TO EDIT / DELETE FAQ IF USER IS LIBRARIAN */}
+                        {(authContext?.userRole === "Librarian" || authContext?.userRole === "Admin") && (
+                            <React.Fragment>
+
+                        {/* EDIT */}
+                        <IconButton
+                            sx={{ position: 'absolute', top: '12px', right: '70px', zIndex: 1 }}
+                        >
+                            <EditIcon style={{ fontSize: 20 }} />
+                        </IconButton>
+                        {/* DELETE */}
+                        <IconButton
+                            sx={{ position: 'absolute', top: '12px', right: '40px', zIndex: 1 }}
+                        >
+                            <DeleteIcon style={{ fontSize: 20 }} />
+                        </IconButton>
+                        </React.Fragment>
+                )}
                         <IconButton
                             sx={{ position: 'absolute', top: '10px', right: '10px', zIndex: 1 }}
                             onClick={() => handleToggle(index)}>
