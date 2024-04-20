@@ -631,6 +631,47 @@ export async function getUserRole(userID: string | null | undefined, email: stri
 }
 
 /*********************
+ *  MISC
+ *********************/
+
+/*********************
+ *  Announcements
+ *********************/
+export async function editAnnouncement(id: number, announcement: Announcement): Promise<Announcement> {
+    let announcementIdToEdit = "";
+    const announcementsRef = collection(db, "announcements");
+    const announcementSnapshot = await getDocs(query(announcementsRef, where('id', '==', id)))
+
+    announcementSnapshot.forEach((doc) => {
+        announcementIdToEdit = doc.id
+    });
+
+    const announcementToEditRef = doc(db, "announcements", announcementIdToEdit);
+    const updatedAnnouncement = await updateDoc(announcementToEditRef, announcement as any);
+
+    return announcement;
+}
+
+export async function getAnnouncements(): Promise<Announcement[]> {
+    const announcementsRef = collection(db, "announcements");
+    const announcements: Announcement[] = [];
+    const querySnapshot = await getDocs(announcementsRef);
+
+    querySnapshot.forEach((doc) => {
+        const announcementsData = doc.data();
+        const announcement: Announcement = {
+            id: announcementsData.number,
+            dateCreation: (announcementsData.dateCreation as Timestamp).toDate(),
+            heading: announcementsData.heading,
+            content: announcementsData.content
+        };
+        announcements.push(announcement);
+    });
+
+    return announcements;
+}
+
+/*********************
  *  FAQs
  *********************/
 export async function getFAQs(): Promise<FAQ[]> {
@@ -649,25 +690,4 @@ export async function getFAQs(): Promise<FAQ[]> {
     });
 
     return faqs;
-}
-
-/*********************
- *  Announcements
- *********************/
-export async function getAnnouncements(): Promise<Announcement[]> {
-    const announcementsRef = collection(db, "announcements");
-    const announcements: Announcement[] = [];
-    const querySnapshot = await getDocs(announcementsRef);
-
-    querySnapshot.forEach((doc) => {
-        const announcementsData = doc.data();
-        const announcement: Announcement = {
-            dateCreation: (announcementsData.dateCreation as Timestamp).toDate(),
-            heading: announcementsData.heading,
-            content: announcementsData.content
-        };
-        announcements.push(announcement);
-    });
-
-    return announcements;
 }

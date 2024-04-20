@@ -57,6 +57,7 @@ export interface Librarian extends User {
 
 /* ------ Prop Types ----- */
 export type Announcement = {
+    id: number,
     dateCreation: Date,
     heading: string,
     content: string
