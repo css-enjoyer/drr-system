@@ -697,7 +697,7 @@ export async function getAnnouncements(): Promise<Announcement[]> {
     querySnapshot.forEach((doc) => {
         const announcementsData = doc.data();
         const announcement: Announcement = {
-            id: announcementsData.number,
+            id: announcementsData.id,
             dateCreation: (announcementsData.dateCreation as Timestamp).toDate(),
             heading: announcementsData.heading,
             content: announcementsData.content
