@@ -55,8 +55,10 @@ function FAQs() {
 
       setErrorMessage('');
 
+      // Finds the maximum id number, increment by 1
       const existingFAQs = await getFAQs();
       const maxId = existingFAQs.reduce((max, faq) => (faq.id > max ? faq.id : max), 0);
+      // Creates unique id
       const newId = maxId + 1;
 
       const newFAQ: FAQ = {
