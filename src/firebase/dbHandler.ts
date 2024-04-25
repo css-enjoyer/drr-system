@@ -1,6 +1,6 @@
 import { Timestamp, addDoc, collection, collectionGroup, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { db } from './config';
-import { Branch, BranchRoom, ReservationEvent, Room, User, Librarian, UserRole} from '../Types';
+import { Announcement, Branch, BranchRoom, FAQ, ReservationEvent, Room, User, Librarian, UserRole } from '../Types';
 import { ProcessedEvent } from '@aldabil/react-scheduler/types';
 
 // Disregard warnings when adding new fields in Firebase, takes time to reflect -isaac
@@ -460,25 +460,75 @@ export async function getBranchRooms(branchId?: string): Promise<BranchRoom[]> {
 }
 
 /*********************
- *  USERS
+ *  ADMINS
  *********************/
+export async function addAdmin(admin: User): Promise<User> {
+    const adminRef = collection(db, "admins");
+
+    try {
+        const newAdminRef = doc(adminRef);
+        await setDoc(newAdminRef, admin);
+    } catch (error) {
+        console.error(error)
+    }
+
+    return admin;
+};
+
+export async function deleteAdmin(adminEmail: string): Promise<string> {
+    let adminIdToDelete = "";
+    let idDeleted: string = "";
+    const adminRef = collection(db, "admins");
+    const adminSnapshot = await getDocs(query(adminRef, where('userEmail', '==', adminEmail)))
+    
+    adminSnapshot.forEach((doc) => {
+        adminIdToDelete = doc.id
+    })
+
+    const adminIdToDeleteRef = doc(db, "admins", adminIdToDelete);
+    try {
+        await deleteDoc(adminIdToDeleteRef);
+        idDeleted = adminIdToDelete;
+    } catch (error) {
+        console.error;
+    }
+
+    return idDeleted;
+};
+
+export async function editAdmin(adminEmail: string, admin: User): Promise<User> {
+    const adminRef = collection(db, "admins");
+    const adminSnapshot = await getDocs(query(adminRef, where('userEmail', '==', adminEmail)));
+    let adminIdToEdit = "";
+
+    adminSnapshot.forEach((doc) => {
+        adminIdToEdit = doc.id
+    });
+
+    const adminToEditRef = doc(db, "admins", adminIdToEdit);
+    const updatedAdmin = await updateDoc(adminToEditRef, admin as any);
+
+    return admin;
+};
 
 export async function getAdmins(): Promise<User[]> {
     const adminsRef = collection(db, "admins");
-
     const admins: User[] = [];
 
     const querySnapshot = await getDocs(adminsRef);
     querySnapshot.forEach(doc => {
         const adminData = doc.data();
         const admin: User = {
-            userEmail: adminData.adminEmail
+            userEmail: adminData.userEmail
         };
         admins.push(admin);
     });
     return admins;
 }
 
+/*********************
+ *  LIBRARIANS
+ *********************/
 export async function getLibrarians(): Promise<Librarian[]> {
     const librariansRef = collection(db, "librarians");
 
@@ -557,7 +607,7 @@ export async function getUserRole(userID: string | null | undefined, email: stri
             return undefined;
         }
 
-        let querySnapshot = await getDocs(query(collection(db, "admins"), where('adminEmail', '==', email)))
+        let querySnapshot = await getDocs(query(collection(db, "admins"), where('userEmail', '==', email)))
         if (!querySnapshot.empty) {
             return "Admin";
         }
@@ -578,4 +628,155 @@ export async function getUserRole(userID: string | null | undefined, email: stri
     }
 
     return "Student";
+}
+
+/*********************
+ *  MISC
+ *********************/
+
+/*********************
+ *  Announcements
+ *********************/
+export async function addAnnouncement(announcement: Announcement): Promise<Announcement> {
+    const announcementRef = collection(db, "announcements");
+
+    try {
+        const newAnnouncementRef = doc(announcementRef);
+        await setDoc(newAnnouncementRef, announcement);
+    } catch (error) {
+        console.error(error)
+    }
+
+    return announcement;
+}
+
+export async function deleteAnnouncement(id: string): Promise<string> {
+    let idDeleted: string = "";
+    let announcementIdToDelete = "";
+
+    const announcementRef = collection(db, "announcements");
+    const announcementSnapshot = await getDocs(query(announcementRef, where('id', '==', id)));
+    
+    announcementSnapshot.forEach((doc) => {
+        announcementIdToDelete = doc.id;
+    });
+
+    const announcementToDeleteRef = doc(db, "announcements", announcementIdToDelete);
+
+    try {
+        await deleteDoc(announcementToDeleteRef);
+        idDeleted = announcementIdToDelete;
+    } catch (error) {
+        console.error;
+    }
+
+    return idDeleted;
+}
+
+
+export async function editAnnouncement(id: number, announcement: Announcement): Promise<Announcement> {
+    let announcementIdToEdit = "";
+    const announcementsRef = collection(db, "announcements");
+    const announcementSnapshot = await getDocs(query(announcementsRef, where('id', '==', id)))
+
+    announcementSnapshot.forEach((doc) => {
+        announcementIdToEdit = doc.id
+    });
+
+    const announcementToEditRef = doc(db, "announcements", announcementIdToEdit);
+    const updatedAnnouncement = await updateDoc(announcementToEditRef, announcement as any);
+
+    return announcement;
+}
+
+export async function getAnnouncements(): Promise<Announcement[]> {
+    const announcementsRef = collection(db, "announcements");
+    const announcements: Announcement[] = [];
+    const querySnapshot = await getDocs(announcementsRef);
+
+    querySnapshot.forEach((doc) => {
+        const announcementsData = doc.data();
+        const announcement: Announcement = {
+            id: announcementsData.id,
+            dateCreation: (announcementsData.dateCreation as Timestamp).toDate(),
+            heading: announcementsData.heading,
+            content: announcementsData.content
+        };
+        announcements.push(announcement);
+    });
+
+    return announcements;
+}
+
+/*********************
+ *  FAQs
+ *********************/
+export async function addFAQ(faq: FAQ): Promise<FAQ> {
+    const faqRef = collection(db, "faqs");
+
+    try {
+        const newFAQRef = doc(faqRef);
+        await setDoc(newFAQRef, faq);
+    } catch (error) {
+        console.error(error)
+    }
+
+    return faq;
+}
+
+export async function deleteFAQ(id: string): Promise<string> {
+    let idDeleted: string = "";
+    let faqIdToDelete = "";
+
+    const faqRef = collection(db, "faqs");
+    const faqSnapshot = await getDocs(query(faqRef, where('id', '==', id)));
+    
+    faqSnapshot.forEach((doc) => {
+        faqIdToDelete = doc.id;
+    });
+
+    const faqToDeleteRef = doc(db, "faqs", faqIdToDelete);
+    
+    try {
+        await deleteDoc(faqToDeleteRef);
+        idDeleted = faqIdToDelete;
+    } catch (error) {
+        console.error;
+    }
+
+    return idDeleted;
+}
+
+
+export async function editFAQ(id: number, faq: FAQ): Promise<FAQ> {
+    let faqIdToEdit = "";
+    const faqsRef = collection(db, "faqs");
+    const faqSnapshot = await getDocs(query(faqsRef, where('id', '==', id)))
+
+    faqSnapshot.forEach((doc) => {
+        faqIdToEdit = doc.id
+    });
+
+    const faqToEditRef = doc(db, "faqs", faqIdToEdit);
+    const updatedFAQ = await updateDoc(faqToEditRef, faq as any);
+
+    return faq;
+}
+
+export async function getFAQs(): Promise<FAQ[]> {
+    const faqsRef = collection(db, "faqs");
+    const faqs: FAQ[] = [];
+    const querySnapshot = await getDocs(faqsRef);
+    
+    querySnapshot.forEach(doc => {
+        const faqsData = doc.data();
+        const faq: FAQ = {
+            id: faqsData.id,
+            question: faqsData.question,
+            answer: faqsData.answer
+        };
+        faqs.push(faq);
+    });
+
+    return faqs;
 }

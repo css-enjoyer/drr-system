@@ -12,6 +12,7 @@ import { formatGreeting } from "../utils/formatGreeting";
 import sciTechImg from '/src/styles/images/scitech4.jpeg';
 import genRefImg from '/src/styles/images/genref3.jpeg';
 import shsImg from '/src/styles/images/shs2.jpeg';
+import defImg from '/src/styles/images/default-img.png';
 
 function Timeline() {
   const { branchId } = useParams<{ branchId: string }>();
@@ -39,16 +40,25 @@ function Timeline() {
 
     <Container maxWidth="xl" sx={{ pb: 4 }}>
       <div style={{ position: 'relative', overflow: 'hidden' }}>
+        {/* --- UPDATE: modular branch images --- */}
         <div style={{
           position: 'absolute',
           width: '100vw',
           height: '100vh',
-          backgroundImage: `linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5)), url(${branchId === "genref" ? `${genRefImg}` :
-              branchId === "scitech" ? `${sciTechImg}` : `${shsImg}`})`,
+          backgroundImage: 
+            `linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5)), 
+            url(${branchId === "genref" 
+                ? `${genRefImg}` 
+                : branchId === "scitech" 
+                ? `${sciTechImg}` 
+                : branchId === "shs"
+                ? `${shsImg}` 
+                : `${defImg}`})`,
           backgroundPosition:
             branchId === "scitech" ? '0% 75%' :
             branchId === "genref" ? '0% 150%' :
-            '0% 130%',
+            branchId === "shs" ? '0% 130%' :
+            '0% 50%',
           backgroundSize: 'cover',
           backgroundRepeat: 'no-repeat',
           zIndex: -1,
@@ -77,9 +87,14 @@ function Timeline() {
             fontSize: ['16px', '20px', '24px'],
             color: 'white',
           }}>
-            {branchId === "genref" ? "General References Section" :
-              branchId === "scitech" ? "Science and Technology Section" :
-                "Senior High School Library Section"}
+            {/* --- UPDATE: modular branch location desc --- */}
+            {branchId === "genref" 
+             ? "General References Section" 
+             : branchId === "scitech" 
+             ? "Science and Technology Section" 
+             : branchId === "shs"
+             ? "Senior High School Library Section"
+             : ""}
           </Typography>
           <Typography variant="subtitle1" sx={{
             mt: "30px",
