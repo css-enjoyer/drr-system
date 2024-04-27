@@ -53,7 +53,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
     const startTime = 8;
     const endTime = 18;
     const interval = 30;
-    
+
     const [roomsState, setRoomsState] = useState<RoomProps[]>([]);
     const [eventsState, setEventsState] = useState<ProcessedEvent[]>([]);
     const [loading, setLoading] = useState(false);
@@ -213,6 +213,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         });
 
         const [errorMessage, setErrorMessage] = useState("");
+        const [suggestionMsg, setSuggestionMsg] = useState("");
 
         const handleChange = (value: string | number, name: string) => { // retrieves fields values
             setFormState((prev) => { return { ...prev, [name]: value }; });
@@ -259,46 +260,62 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         const handleSubmit = async () => {
             console.log("in handle submit");
 
-            // TODO: Seperate all errors into a function
-            if (checkParticipantEmails(formState.pax, formState.participantEmails)) {
-                setErrorMessage("Error! Your reservation must include all valid emails of the participants.");
-                console.log(formState.participantEmails)
-                return
+            const checkErrors = (): boolean => {
+                if (checkParticipantEmails(formState.pax, formState.participantEmails)) {
+                    setErrorMessage("Error! Your reservation must include all valid emails of the participants.");
+                    console.log(formState.participantEmails)
+                    return true;
+                }
+
+                if (isReservationBeyondOpeningHrs(formState.end, endTime)) {
+                    setErrorMessage("Error! Your reservation exceeds library hours.");
+                    return true;
+                }
+
+                if (isStudentReservationConcurrent(formState.eventId, formState.stuRep, eventsState)) {
+                    setErrorMessage("Error! You already have a reservation.");
+                    return true;
+                }
+
+                if (formState.start < new Date() &&
+                    (authContext?.userRole === "Student" || authContext?.userRole === "SHS-Student")) {
+                    setErrorMessage("Error! Your reservation is before the current time!");
+                    return true;
+                }
+
+                let today = new Date()
+                if (formState.start.getDate() > new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).getDate()) {
+                    setErrorMessage("Error! Room reservations can only be done a day ahead of current time!");
+                    return true;
+                }
+
+
+                if (formState.duration < 15 || formState.duration > 120) {
+                    setErrorMessage("Error! Duration should be within 15 minutes to 2 hours!");
+                    return true;
+                }
+
+                today = new Date(formState.end)
+                today.setHours(endTime)
+                today.setMinutes(0)
+                if (formState.end > today) {
+                    setErrorMessage("Error! Cannot reserve past closing time");
+                    return true;
+                }
+
+                return false;
             }
 
-            if (isReservationBeyondOpeningHrs(formState.end, endTime)) {
-                setErrorMessage("Error! Your reservation exceeds library hours.");
-                return;
-            }
-
-            if (isStudentReservationConcurrent(formState.eventId, formState.stuRep, eventsState)) {
-                setErrorMessage("Error! You already have a reservation.");
-                return;
-            }
-
-            if (formState.start < new Date() &&
-                (authContext?.userRole === "Student" || authContext?.userRole === "SHS-Student")) {
-                setErrorMessage("Error! Your reservation is before the current time!");
-                return;
-            }
-
-            let today = new Date()
-            if (formState.start.getDate() > new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).getDate()) {
-                setErrorMessage("Error! Room reservations can only be done a day ahead of current time!");
-                return;
-            }
-
-
-            if (formState.duration < 15 || formState.duration > 120) {
-                setErrorMessage("Error! Duration should be within 15 minutes to 2 hours!");
-                return;
-            }
-
-            today = new Date(formState.end)
-            today.setHours(endTime)
-            today.setMinutes(0)
-            if (formState.end > today) {
-                setErrorMessage("Error! Cannot reserve past closing time");
+            if (checkErrors()) {
+                // TODO: ADD SUGGESTION LOGIC HERE
+                const tipNumber = Math.floor(Math.random() * 3);
+                if (tipNumber == 0) {
+                    setSuggestionMsg("Tip: You can try reserving on a different room");
+                } else if (tipNumber == 1) {
+                    setSuggestionMsg("Tip: You can try reserving on a different time");
+                } else if (tipNumber == 2) {
+                    setSuggestionMsg("Tip: You can try reserving on a different day");
+                }
                 return;
             }
 
@@ -428,6 +445,11 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         </Alert>
                         :
                         <></>
+                    }
+                    {suggestionMsg &&
+                        <Alert severity="info">
+                            {suggestionMsg}
+                        </Alert>
                     }
                     <TimePicker
                         label="Start time"
