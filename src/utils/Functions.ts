@@ -10,7 +10,7 @@ export async function sendReminderEmail(start: Date, stuRep: string, roomId: num
     console.log(minsBeforeRes);
 
     // no delay if less than 30 mins
-    if (minsBeforeRes > minsBeforeNotif) {
+    if (minsBeforeRes > minsBeforeNotif && minsBeforeNotif > 0) {
         delaySent = minsBeforeRes - minsBeforeNotif;
     }
 
@@ -19,7 +19,7 @@ export async function sendReminderEmail(start: Date, stuRep: string, roomId: num
             {
                 to: stuRep,
                 subject: "DRRS: Upcoming reservation",
-                html: `<h1>${minsBeforeRes < minsBeforeNotif ? minsBeforeRes : minsBeforeNotif} minutes before your reservation in room ${roomId} at ${branchId}</h1>`,
+                html: `<h1>${(minsBeforeRes > minsBeforeNotif && minsBeforeNotif > 0) ? minsBeforeNotif : minsBeforeRes} minutes before your reservation in room ${roomId} at ${branchId}</h1>`,
                 minutesDelay: delaySent,
             },
             {
@@ -37,18 +37,19 @@ export async function sendReminderEmail(start: Date, stuRep: string, roomId: num
 export async function autoCancel(token: string, eventId: string, start: Date, stuRep: string,
     roomId: number, branchId: string, minsAfterCancellation: number) {
 
-    const cancellationDelay = Math.ceil((start.getTime() - new Date().getTime()) / 60000) + minsAfterCancellation;
+    const cancellationDelay = minsAfterCancellation + Math.ceil((start.getTime() - new Date().getTime()) / 60000);
     console.log("MINUTES BEFORE RESERVATION IS CANCELLED");
     console.log(cancellationDelay);
 
     try {
+        console.log(`Processing: Auto cancel has been set ${stuRep} after ${cancellationDelay} minutes delay`);
         const response = await axios.post(`${VITE_BACKEND_URL}/api/functions/autoCancel`,
             {
                 eventId: eventId,
                 to: stuRep,
                 subject: "DRRS: Reservation Cancellation",
                 html: `<h1>Your reservation has been cancelled after not being occupied for ${minsAfterCancellation} minutes in room ${roomId} at ${branchId}</h1>`,
-                minutesDelay: minsAfterCancellation,
+                minutesDelay: cancellationDelay,
             },
             {
                 headers: {
@@ -56,7 +57,7 @@ export async function autoCancel(token: string, eventId: string, start: Date, st
                     Authorization: `Bearer ${token}`
                 }
             });
-        console.log(`SUCCESS: Auto cancel has been set ${stuRep} after ${cancellationDelay} minutes delay`);
+        console.log(`Succes: Auto cancel has been set ${stuRep} after ${cancellationDelay} minutes delay is done!`);
     } catch (error) {
         console.error(error);
     }

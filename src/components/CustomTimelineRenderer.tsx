@@ -342,18 +342,18 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                             newResEvent.stuRep,
                             newResEvent.room_id,
                             newResEvent.branchId,
-                            30
+                            0 // NO MINUTES DELAY BEFORE REMINDER, INSTANT EMAIL
                         );
                         // ----- AUTO CANCEL -----
-                        // autoCancel(
-                        //     authContext?.user?.accessToken,
-                        //     newAddedEventId,
-                        //     newResEvent.start,
-                        //     newResEvent.stuRep,
-                        //     newResEvent.room_id,
-                        //     newResEvent.branchId,
-                        //     1
-                        // );
+                        autoCancel(
+                            authContext?.user?.accessToken,
+                            newAddedEventId,
+                            newResEvent.start,
+                            newResEvent.stuRep,
+                            newResEvent.room_id,
+                            newResEvent.branchId,
+                            10 // 10 MINUTES DELAY AFTER RESERVATION START
+                        );
                         // fetchReservationEvents();
                     }
                     else {
