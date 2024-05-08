@@ -29,6 +29,8 @@ export async function sendReminderEmail(start: Date, stuRep: string, roomId: num
                     }
                 })
             console.log(`SUCCESS: Reservation reminder sent to: ${stuRep} after ${delaySent} minutes delay`);
+            console.log("EMAIL NOTIF RESPONSE:")
+            console.log(response);
         } catch (error) {
             console.error(error);
         }
@@ -61,9 +63,10 @@ export async function autoCancel(token: string, eventId: string, start: Date, st
                     }
                 });
             console.log(`Succes: Auto cancel has been set ${stuRep} after ${cancellationDelay} minutes delay is done!`);
+            console.log("AUTO CANCEL RESPONSE:")
+            console.log(response)
         } catch (error) {
             console.error(error);
         }
     }
-
 }

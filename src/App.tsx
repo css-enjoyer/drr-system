@@ -32,6 +32,9 @@ import { Cancel, Login } from "@mui/icons-material";
 import ustLogo from "/src/styles/images/UST_LOGO_WHT.png";
 import Announcements from "./components/miscellaneous/Announcements";
 
+import axios from "axios";
+const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 function App() {
   const { theme } = useThemeContext();
   const authContext = React.useContext(AuthContext);
@@ -40,6 +43,11 @@ function App() {
 
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+  
+  useEffect(() => {
+    const response = async () => await axios.get(`${VITE_BACKEND_URL}`);
+    console.log("INITIAL BACKEND CALL");
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {

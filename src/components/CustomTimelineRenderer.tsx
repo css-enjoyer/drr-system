@@ -305,8 +305,8 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
                 return false;
             }
-
-            if (checkErrors()) {
+            
+            const showSuggestion = () => {
                 // TODO: ADD SUGGESTION LOGIC HERE
                 const tipNumber = Math.floor(Math.random() * 3);
                 if (tipNumber == 0) {
@@ -316,6 +316,33 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 } else if (tipNumber == 2) {
                     setSuggestionMsg("Tip: You can try reserving on a different day");
                 }
+            };
+
+            // const showSuggestion = (start: Date, end: Date) => {
+                // TODO: ADD SUGGESTION LOGIC HERE
+                // const occupied = eventsState.filter((event) => 
+                //     event.start.getFullYear() === start.getFullYear() &&
+                //     event.start.getMonth() === start.getMonth() &&
+                //     event.start.getDay() === start.getDay()
+                // );
+
+                // if (occupied) {
+                //     setSuggestionMsg("Tip: ROOM IS ALREADY OCCUPIED");
+                //     console.log("OCCUPIED ROOM");
+                //     console.log(occupied);
+                // }
+
+                // const tipNumber = Math.floor(Math.random() * 3);
+                // if (tipNumber == 0) {
+                //     setSuggestionMsg("Tip: You can try reserving on a different room");
+                // } else if (tipNumber == 1) {
+                //     setSuggestionMsg("Tip: You can try reserving on a different time");
+                // } else if (tipNumber == 2) {
+                //     setSuggestionMsg("Tip: You can try reserving on a different day");
+                // }
+            // };
+
+            if (checkErrors()) {
                 return;
             }
 
@@ -374,6 +401,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         // fetchReservationEvents();
                     }
                     else {
+                        showSuggestion();
                         setErrorMessage("Reservation will overlap!");
                         return;
                     }
@@ -393,6 +421,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         // fetchReservationEvents();
                     }
                     else {
+                        showSuggestion();
                         setErrorMessage("Editing this reservation will result in an overlap!")
                         return;
                     }
