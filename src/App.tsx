@@ -11,7 +11,8 @@ import LibrarianDashboard from "./components/reservationlogs/LibrarianDashboard"
 import LibrarianReservationLogs from "./components/reservationlogs/LibrarianReservationLogs";
 import About from "./components/miscellaneous/About";
 import FAQs from "./components/miscellaneous/FAQs";
-import InternetConnection from "./components/miscellaneous/InternetConnection";
+import NetworkError from "./errorpages/NetworkError";
+import Error from "./errorpages/Error";
 
 // Modules
 import { ThemeProvider } from "@mui/material/styles";
@@ -44,11 +45,38 @@ function App() {
 
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
-  
+
   useEffect(() => {
-    const response = async () => await axios.get(`${VITE_BACKEND_URL}`);
-    console.log("INITIAL BACKEND CALL");
+    const fetchBackend = async () => {
+      try {
+        const response = await axios.get(`${VITE_BACKEND_URL}`);
+        console.log("Backend call successful");
+      } catch (error) {
+        console.error("Error fetching backend:", error);
+      }
+    };
+
+    fetchBackend();
   }, []);
+
+  axios.interceptors.response.use(
+    (response) => {
+      return response;
+    },
+    (error) => {
+      if (error.response) {
+        const status = error.response.status;
+        if (status === 500) {
+          // Error 500
+          return <Error messageKey={"error500"} />;
+        } else if (status === 503) {
+          // Eerror 503
+          return <Error messageKey={"error503"} />;
+        }
+      }
+      return Promise.reject(error);
+    }
+  );
 
   useEffect(() => {
     const handleScroll = () => {
@@ -86,6 +114,7 @@ function App() {
       behavior: "smooth",
     });
   };
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -145,7 +174,9 @@ function App() {
                       <LibrarianReservationLogs />
                     </Protected>
                   ) : (
-                    <Navigate to="/" />
+                    <Protected>
+                      <Error messageKey={"error403"} />
+                    </Protected>
                   )
                 }
               />
@@ -159,7 +190,9 @@ function App() {
                       <LibrarianDashboard />
                     </Protected>
                   ) : (
-                    <Navigate to="/" />
+                    <Protected>
+                      <Error messageKey={"error403"} />
+                    </Protected>
                   )
                 }
               />
@@ -173,7 +206,9 @@ function App() {
                       <AdminDashboard />
                     </Protected>
                   ) : (
-                    <Navigate to="/" />
+                    <Protected>
+                      <Error messageKey={"error403"} />
+                    </Protected>
                   )
                 }
               />
@@ -182,12 +217,16 @@ function App() {
               <Route
                 path="/analytics"
                 element={
-                  authContext?.user && (authContext.userRole === "Admin" || authContext.userRole === "Librarian") ? (
+                  authContext?.user &&
+                  (authContext.userRole === "Admin" ||
+                    authContext.userRole === "Librarian") ? (
                     <Protected>
                       <Analytics />
                     </Protected>
                   ) : (
-                    <Navigate to="/" />
+                    <Protected>
+                      <Error messageKey={"error403"} />
+                    </Protected>
                   )
                 }
               />
@@ -234,13 +273,27 @@ function App() {
                 }
               />
 
-              {/* No Internet Connection Page */}
+                {/* Error 404 */}
+                <Route
+                path="*"
+                element={
+                  authContext?.user ? (
+                    <Protected>
+                      <Error messageKey={"error404"} />
+                    </Protected>
+                  ) : (
+                    <Navigate to="/" />
+                  )
+                }
+              />
+
+              {/* Network Error */}
               <Route
                 path="/netError"
                 element={
                   authContext?.user ? (
                     <Protected>
-                      <InternetConnection />
+                      <NetworkError />
                     </Protected>
                   ) : (
                     <Navigate to="/" />
@@ -249,7 +302,7 @@ function App() {
               />
             </Routes>
           ) : (
-            <InternetConnection />
+            <NetworkError />
           )}
         </div>
         {authContext?.user && <Footer />}
