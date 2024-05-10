@@ -83,6 +83,44 @@ export async function getReservationEvents(branch: string): Promise<ProcessedEve
 }
 */
 
+// ----- GET ALL RESERVATIONS EVENTS -----
+export async function getAllReservationEvents(): Promise<ProcessedEvent[]> {
+    const q = query(collection(db, "reservation-event"));
+    const querySnapshot = await getDocs(q);
+
+    const resEvents: ReservationEvent[] = []
+
+    try {
+        querySnapshot.forEach((doc) => {
+            const resEventData = doc.data();
+            const resEvent: ReservationEvent = {
+                event_id: resEventData.event_id,
+                title: resEventData.title,
+                start: (resEventData.start as Timestamp).toDate(),
+                end: (resEventData.end as Timestamp).toDate(),
+
+                color: resEventData.color,
+
+                branchId: resEventData.branchId,
+                room_id: resEventData.room_id,
+                date: (resEventData.date as Timestamp).toDate(),
+                stuRep: resEventData.stuRep,
+                duration: resEventData.duration,
+                pax: resEventData.pax,
+                purp: resEventData.purp,
+                rcpt: resEventData.rcpt,
+                stuEmails: []
+            }
+
+            resEvents.push(resEvent);
+        })
+    } catch (error) {
+        console.error(error);
+    }
+
+    return resEvents;
+}
+
 // ----- GET SPECIFIC RESERVATION EVENT BY ID -----
 export async function getReservationEventById(resEventId: string): Promise<ProcessedEvent> {
     const resEventRef = doc(db, "reservation-event", resEventId);
