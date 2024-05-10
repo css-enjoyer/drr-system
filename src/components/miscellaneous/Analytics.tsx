@@ -4,7 +4,7 @@ import { Branch } from "../../Types";
 import { getAllReservationEvents, getBranches } from "../../firebase/dbHandler";
 import Loading from "./Loading";
 import { ProcessedEvent } from "@aldabil/react-scheduler/types";
-import { PieChart } from "@mui/x-charts";
+import { PieChart, pieArcLabelClasses } from "@mui/x-charts";
 
 export interface PieChartData {
     id: number,
@@ -64,6 +64,34 @@ function Analytics() {
         return resPerBranch;
     }
 
+    const PieChartGenerator = ({PieChartLabel, PieChartData}) => {
+        return (
+            <Container>
+                <Typography variant="h3" sx={{ fontSize: "25px" }}>
+                    {PieChartLabel}
+                </Typography>
+                <PieChart
+                    series={[
+                        {
+                            arcLabel: (item) => `${item.value}`,
+                            arcLabelMinAngle: 10,
+                            data: PieChartData
+                        },
+                    ]}
+                    width={800}
+                    height={300}
+                    sx={{
+                        [`& .${pieArcLabelClasses.root}`]: {
+                            fill: 'white',
+                            fontWeight: 'bold',
+                            fontSize: "20px"
+                        }
+                    }}
+                />
+            </Container>
+        );
+    }
+
     return (
         <>
             <Container sx={{ marginTop: "60px" }}>
@@ -75,31 +103,8 @@ function Analytics() {
                 </Typography>
             </Container>
 
-            <Container>
-                <Typography variant="h3" sx={{ marginTop: "20px", fontSize: "25px" }}>
-                    Reservation per branch
-                </Typography>
-                <PieChart
-                    series={[
-                        {
-                            // data: [
-                            //     { id: 0, value: 10, label: 'series A' },
-                            //     { id: 1, value: 15, label: 'series B' },
-                            //     { id: 2, value: 20, label: 'series C' },
-                            // ],
-                            arcLabel: (item) => `${item.value}`,
-                            arcLabelMinAngle: 45,
-                            data: getResPerBranchData()
-                        },
-                    ]}
-                    width={800}
-                    height={300}
-                    sx={{
-                        color: 'white',
-                        fontWeight: 'bold',
-                        fontSize: "20px"
-                    }}
-                />
+            <Container sx={{ marginTop: "20px", marginBottom: "20px" }}>
+                <PieChartGenerator PieChartLabel={"Reservation per branch"} PieChartData={getResPerBranchData()}/>
             </Container>
         </>
     )
