@@ -104,14 +104,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             setEventsState(resEvents);
         })
         return () => unsub();
-
-        // fetchReservationEvents();
     }, []);
-
-    // const fetchReservationEvents = async () => {
-    //     const resEvents = await getReservationEvents(branchId);
-    //     setEventsState(resEvents);
-    // }
 
     // ----- LOADING STATE WHILE FETCHING ROOMS -----
     if (loading) {
@@ -182,7 +175,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
         const [formState, setFormState] = useState({
             // event fields
-
             eventId: event?.event_id || "lmao",
             title: event?.title || "Reserved",
             start: event?.start || scheduler.state.start.value,
@@ -215,9 +207,9 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         const [errorMessage, setErrorMessage] = useState("");
         const [suggestionMsg, setSuggestionMsg] = useState("");
 
-        const handleChange = (value: string | number, name: string) => { // retrieves fields values
+        const handleChange = (value: string | number, name: string) => { 
+            // retrieves fields values
             setFormState((prev) => { return { ...prev, [name]: value }; });
-            // console.log(value)
         };
 
         const handleDurationChange = (duration: number, start: Date) => {
@@ -277,34 +269,34 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     return true;
                 }
 
-                if (formState.start < new Date() &&
-                    (authContext?.userRole === "Student" || authContext?.userRole === "SHS-Student")) {
+                if (formState.start < new Date() 
+                    && (authContext?.userRole === "Student" 
+                    || authContext?.userRole === "SHS-Student")) {
                     setErrorMessage("Error! Your reservation is before the current time!");
                     return true;
                 }
 
-                let today = new Date()
+                let today = new Date();
                 if (formState.start.getDate() > new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).getDate()) {
                     setErrorMessage("Error! Room reservations can only be done a day ahead of current time!");
                     return true;
                 }
-
 
                 if (formState.duration < 15 || formState.duration > 120) {
                     setErrorMessage("Error! Duration should be within 15 minutes to 2 hours!");
                     return true;
                 }
 
-                today = new Date(formState.end)
-                today.setHours(endTime)
-                today.setMinutes(0)
+                today = new Date(formState.end);
+                today.setHours(endTime);
+                today.setMinutes(0);
+
                 if (formState.end > today) {
                     setErrorMessage("Error! Cannot reserve past closing time");
                     return true;
                 }
-
                 return false;
-            }
+            };
             
             // const showSuggestion = () => {
             //     const tipNumber = Math.floor(Math.random() * 3);
@@ -325,8 +317,6 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     event.start.getDate() === start.getDate() &&
                     event.start.getHours() === start.getHours() &&
                     event.start.getMinutes() === start.getMinutes()
-                    // event.end.getHours() === end.getHours() &&
-                    // event.end.getMinutes() === end.getMinutes()
                 );
 
                 const sameRoomNextAvailTime = eventsState.filter((event) =>
@@ -337,16 +327,13 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     event.start.getDate() === start.getDate()
                 );
                 sameRoomNextAvailTime.sort((a, b) => a.start.valueOf() - b.end.valueOf());
-                // console.log(sameRoomNextAvailTime);
 
                 const lastResInSameRoom = sameRoomNextAvailTime.slice((-1));
-                // console.log(lastResInSameRoom);
                 const lastResInSameRoomTime = new Date(lastResInSameRoom[0].start.getTime() + (duration * 60 * 1000));
                 const closingTime = new Date();
+                
                 closingTime.setHours(endTime, 0, 0, 0);
 
-                // console.log("========== SAME ROOM NEXT AVAILABLE TIME");
-                // console.log(`${lastResInSameRoomTime} < ${closingTime}`);
                 if (roomsState.length - sameTimeDifferentRoom.length - 1 > 0) {
                     setSuggestionMsg("Tip: You can reserve with the same time but in a different room");
                 } else if (lastResInSameRoomTime < closingTime) {
@@ -392,6 +379,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     if (!overlapping) {
                         scheduler.close();
                         const newAddedEventId = await addReservationEvent(newResEvent);
+
                         console.log("Newly Added Event ID: " + newAddedEventId);
                         // TODO: should be for students only, for checking its avail on all roles
                         // ----- REMINDER EMAIL -----
@@ -400,7 +388,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                             newResEvent.stuRep,
                             newResEvent.room_id,
                             newResEvent.branchId,
-                            0 // NO MINUTES DELAY BEFORE REMINDER, INSTANT EMAIL
+                            0 // NO DELAY BEFORE REMINDER, INSTANT EMAIL
                         );
                         // ----- AUTO CANCEL -----
                         autoCancel(
@@ -412,16 +400,14 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                             newResEvent.branchId,
                             10 // 10 MINUTES DELAY AFTER RESERVATION START
                         );
-                        // fetchReservationEvents();
                     }
                     else {
-                        // showSuggestion();
                         showSuggestion2(newResEvent.start, newResEvent.branchId, newResEvent.room_id, newResEvent.duration);
                         setErrorMessage("Reservation will overlap!");
                         return;
                     }
                 } else {
-                    console.log("in edit")
+                    console.log("in edit");
                     const overlapping = isReservationOverlapping(
                         eventsState,
                         newResEvent.start,
@@ -433,15 +419,12 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     if (!overlapping) {
                         scheduler.close();
                         await editReservationEvent(event.event_id + "", newResEvent);
-                        // fetchReservationEvents();
                     }
                     else {
-                        // showSuggestion();
-                        setErrorMessage("Editing this reservation will result in an overlap!")
+                        setErrorMessage("Editing this reservation will result in an overlap!");
                         return;
                     }
                 }
-                // scheduler.close();
             } finally {
                 scheduler.loading(false);
             }
