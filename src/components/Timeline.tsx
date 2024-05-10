@@ -13,6 +13,7 @@ import sciTechImg from '/src/styles/images/scitech4.jpeg';
 import genRefImg from '/src/styles/images/genref3.jpeg';
 import shsImg from '/src/styles/images/shs2.jpeg';
 import defImg from '/src/styles/images/default-img.png';
+import healthSciImg from '/src/styles/images/healthsciHeaderpic.jpeg';
 
 function Timeline() {
   const { branchId } = useParams<{ branchId: string }>();
@@ -53,11 +54,14 @@ function Timeline() {
                 ? `${sciTechImg}` 
                 : branchId === "shs"
                 ? `${shsImg}` 
+                : branchId === "healthSci"
+                ? `${healthSciImg}` 
                 : `${defImg}`})`,
           backgroundPosition:
             branchId === "scitech" ? '0% 75%' :
             branchId === "genref" ? '0% 150%' :
             branchId === "shs" ? '0% 130%' :
+            branchId === "healthSci" ? '0% 140%' :
             '0% 50%',
           backgroundSize: 'cover',
           backgroundRepeat: 'no-repeat',
@@ -87,15 +91,9 @@ function Timeline() {
             fontSize: ['16px', '20px', '24px'],
             color: 'white',
           }}>
-            {/* --- UPDATE: modular branch location desc --- */}
-            {branchId === "genref" 
-             ? "General References Section" 
-             : branchId === "scitech" 
-             ? "Science and Technology Section" 
-             : branchId === "shs"
-             ? "Senior High School Library Section"
-             : ""}
+            {branch?.branchTitle} Library Section
           </Typography>
+
           <Typography variant="subtitle1" sx={{
             mt: "30px",
             fontWeight: "300",
