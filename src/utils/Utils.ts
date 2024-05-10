@@ -6,14 +6,13 @@ export function checkReservationTimeOverlap(
     b_start: Date, 
     b_end: Date
 ) {
-
-if (b_start.getTime() <= a_start.getTime() && a_end.getTime() <= b_end.getTime() 
-    ||b_start.getTime() < a_end.getTime() && a_start.getTime() < b_end.getTime()) {
+    if (b_start.getTime() <= a_start.getTime() && a_end.getTime() <= b_end.getTime() 
+        ||b_start.getTime() < a_end.getTime() && a_start.getTime() < b_end.getTime()) {
     
-    return true;
-}
+        return true;
+    }
 
-return a_start.getTime() < b_start.getTime() && a_end.getTime() > b_end.getTime();
+    return a_start.getTime() < b_start.getTime() && a_end.getTime() > b_end.getTime();
 }
 
 export function filterReservations(
