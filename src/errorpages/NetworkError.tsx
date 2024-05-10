@@ -2,8 +2,8 @@ import React from "react";
 import { Typography, Container, Grid } from "@mui/material";
 import NoInternetImage from "/src/styles/images/wifiError.png"; // Import no internet illustration
 
-// Define the InternetConnection component
-const InternetConnection: React.FC = () => {
+// Define the NetworkError component
+const NetworkError: React.FC = () => {
   const handleReturn = () => {};
 
   return (
@@ -41,4 +41,4 @@ const InternetConnection: React.FC = () => {
   );
 };
 
-export default InternetConnection;
+export default NetworkError;
