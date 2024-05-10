@@ -99,17 +99,17 @@ function Analytics() {
 
     return (
         <>
-            <Container sx={{ marginTop: "60px" }}>
-                <Typography variant="h1" sx={{ fontSize: "40px", fontWeight: "Bold" }}>
+            <Container sx={{ marginTop: "40px" }}>
+                <Typography variant="h1" sx={{ marginBottom: "10px", fontSize: "40px", fontWeight: "Bold" }}>
                     Analytics and Reports
                 </Typography>
                 <Typography variant="h2" sx={{ fontSize: "30px" }}>
-                    Total number of reservations: {resEvents.length}
+                    Total number of reservations: <strong>{resEvents.length}</strong>
                 </Typography>
             </Container>
 
             <Container sx={{ marginTop: "20px", marginBottom: "20px" }}>
-                <PieChartGenerator PieChartLabel={"Reservation per branch"} PieChartData={getResPerBranchData()}/>
+                <PieChartGenerator PieChartLabel={"Reservations per branch"} PieChartData={getResPerBranchData()}/>
             </Container>
         </>
     )
