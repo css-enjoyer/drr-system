@@ -31,20 +31,22 @@ let pageRoutes: string[] = [];
 const studentPages = ["Branches", "FAQs", "About", "Announcements"];
 const studentPageRoutes = ["/branches", "/FAQs", "/About", "/Announcements"];
 
-const adminPages = ["Branches", "Dashboard", "Logs", "FAQs", "About", "Announcements"];
+const adminPages = ["Branches", "Dashboard", "Analytics", "Logs", "FAQs", "About", "Announcements"];
 const adminPageRoutes = [
   "/branches",
   "/adminDashboard",
+  "/analytics",
   "/librarianLogs",
   "/FAQs",
   "/About",
   "/Announcements"
 ];
 
-const librarianPages = ["Branches", "Dashboard", "Logs", "FAQs", "About", "Announcements"];
+const librarianPages = ["Branches", "Dashboard", "Analytics", "Logs", "FAQs", "About", "Announcements"];
 const librarianPageRoutes = [
   "/branches",
   "/librarianDashboard",
+  "/analytics",
   "/librarianLogs",
   "/FAQs",
   "/About",
