@@ -309,7 +309,12 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             //     }
             // };
 
-            const showSuggestion2 = (start: Date, branchId: string, roomId: string | number, duration: number) => {
+            const showSuggestion = (
+                start: Date, 
+                branchId: string, 
+                roomId: string | number, 
+                duration: number
+            ) => {
                 // TODO: ADD SUGGESTION LOGIC HERE
                 const sameTimeDifferentRoom = eventsState.filter((event) => 
                     event.start.getFullYear() === start.getFullYear() &&
@@ -402,7 +407,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         );
                     }
                     else {
-                        showSuggestion2(newResEvent.start, newResEvent.branchId, newResEvent.room_id, newResEvent.duration);
+                        showSuggestion(newResEvent.start, newResEvent.branchId, newResEvent.room_id, newResEvent.duration);
                         setErrorMessage("Reservation will overlap!");
                         return;
                     }
