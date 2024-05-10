@@ -12,6 +12,11 @@ export interface PieChartData {
     label: string
 }
 
+export interface PieChartGeneratorProps {
+    PieChartLabel: string,
+    PieChartData: PieChartData[]
+}
+
 function Analytics() {
     const [branches, setBranches] = useState<Branch[]>([]);
     const [resEvents, setResEvents] = useState<ProcessedEvent[]>([]);
@@ -64,7 +69,7 @@ function Analytics() {
         return resPerBranch;
     }
 
-    const PieChartGenerator = ({PieChartLabel, PieChartData}) => {
+    const PieChartGenerator = ({PieChartLabel, PieChartData}: PieChartGeneratorProps): JSX.Element => {
         return (
             <Container>
                 <Typography variant="h3" sx={{ fontSize: "25px" }}>
