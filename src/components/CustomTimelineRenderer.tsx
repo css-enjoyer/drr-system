@@ -272,7 +272,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     return true;
                 }
 
-                if (isStudentReservationConcurrent(formState.eventId, formState.stuRep, eventsState)) {
+                if (isStudentReservationConcurrent(formState.eventId, formState.stuRep, eventsState) && (authContext?.userRole !== "Admin" && authContext?.userRole !== "Librarian")) {
                     setErrorMessage("Error! You already have a reservation.");
                     return true;
                 }
@@ -306,41 +306,55 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 return false;
             }
             
-            const showSuggestion = () => {
+            // const showSuggestion = () => {
+            //     const tipNumber = Math.floor(Math.random() * 3);
+            //     if (tipNumber == 0) {
+            //         setSuggestionMsg("Tip: You can reserve with the same time but in a different room");
+            //     } else if (tipNumber == 1) {
+            //         setSuggestionMsg("Tip: You can reserve on the next available time, in the same room");
+            //     } else if (tipNumber == 2) {
+            //         setSuggestionMsg("Tip: You can reserve with the same time but in a different branch");
+            //     }
+            // };
+
+            const showSuggestion2 = (start: Date, branchId: string, roomId: string | number, duration: number) => {
                 // TODO: ADD SUGGESTION LOGIC HERE
-                const tipNumber = Math.floor(Math.random() * 3);
-                if (tipNumber == 0) {
-                    setSuggestionMsg("Tip: You can try reserving on a different room");
-                } else if (tipNumber == 1) {
-                    setSuggestionMsg("Tip: You can try reserving on a different time");
-                } else if (tipNumber == 2) {
-                    setSuggestionMsg("Tip: You can try reserving on a different day");
+                const sameTimeDifferentRoom = eventsState.filter((event) => 
+                    event.start.getFullYear() === start.getFullYear() &&
+                    event.start.getMonth() === start.getMonth() &&
+                    event.start.getDate() === start.getDate() &&
+                    event.start.getHours() === start.getHours() &&
+                    event.start.getMinutes() === start.getMinutes()
+                    // event.end.getHours() === end.getHours() &&
+                    // event.end.getMinutes() === end.getMinutes()
+                );
+
+                const sameRoomNextAvailTime = eventsState.filter((event) =>
+                    event.branchId === branchId &&
+                    event.room_id === roomId &&
+                    event.start.getFullYear() === start.getFullYear() &&
+                    event.start.getMonth() === start.getMonth() &&
+                    event.start.getDate() === start.getDate()
+                );
+                sameRoomNextAvailTime.sort((a, b) => a.start.valueOf() - b.end.valueOf());
+                // console.log(sameRoomNextAvailTime);
+
+                const lastResInSameRoom = sameRoomNextAvailTime.slice((-1));
+                // console.log(lastResInSameRoom);
+                const lastResInSameRoomTime = new Date(lastResInSameRoom[0].start.getTime() + (duration * 60 * 1000));
+                const closingTime = new Date();
+                closingTime.setHours(endTime, 0, 0, 0);
+
+                // console.log("========== SAME ROOM NEXT AVAILABLE TIME");
+                // console.log(`${lastResInSameRoomTime} < ${closingTime}`);
+                if (roomsState.length - sameTimeDifferentRoom.length - 1 > 0) {
+                    setSuggestionMsg("Tip: You can reserve with the same time but in a different room");
+                } else if (lastResInSameRoomTime < closingTime) {
+                    setSuggestionMsg("Tip: You can reserve on the next available time, in the same room");
+                } else {
+                    setSuggestionMsg("Tip: You can reserve with the same time but in a different branch");
                 }
             };
-
-            // const showSuggestion = (start: Date, end: Date) => {
-                // TODO: ADD SUGGESTION LOGIC HERE
-                // const occupied = eventsState.filter((event) => 
-                //     event.start.getFullYear() === start.getFullYear() &&
-                //     event.start.getMonth() === start.getMonth() &&
-                //     event.start.getDay() === start.getDay()
-                // );
-
-                // if (occupied) {
-                //     setSuggestionMsg("Tip: ROOM IS ALREADY OCCUPIED");
-                //     console.log("OCCUPIED ROOM");
-                //     console.log(occupied);
-                // }
-
-                // const tipNumber = Math.floor(Math.random() * 3);
-                // if (tipNumber == 0) {
-                //     setSuggestionMsg("Tip: You can try reserving on a different room");
-                // } else if (tipNumber == 1) {
-                //     setSuggestionMsg("Tip: You can try reserving on a different time");
-                // } else if (tipNumber == 2) {
-                //     setSuggestionMsg("Tip: You can try reserving on a different day");
-                // }
-            // };
 
             if (checkErrors()) {
                 return;
@@ -401,7 +415,8 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         // fetchReservationEvents();
                     }
                     else {
-                        showSuggestion();
+                        // showSuggestion();
+                        showSuggestion2(newResEvent.start, newResEvent.branchId, newResEvent.room_id, newResEvent.duration);
                         setErrorMessage("Reservation will overlap!");
                         return;
                     }
@@ -421,7 +436,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         // fetchReservationEvents();
                     }
                     else {
-                        showSuggestion();
+                        // showSuggestion();
                         setErrorMessage("Editing this reservation will result in an overlap!")
                         return;
                     }
