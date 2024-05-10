@@ -33,6 +33,7 @@ import ustLogo from "/src/styles/images/UST_LOGO_WHT.png";
 import Announcements from "./components/miscellaneous/Announcements";
 
 import axios from "axios";
+import Analytics from "./components/miscellaneous/Analytics";
 const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 function App() {
@@ -170,6 +171,20 @@ function App() {
                   authContext?.user && authContext.userRole === "Admin" ? (
                     <Protected>
                       <AdminDashboard />
+                    </Protected>
+                  ) : (
+                    <Navigate to="/" />
+                  )
+                }
+              />
+
+              {/* analytics and reports */}
+              <Route
+                path="/analytics"
+                element={
+                  authContext?.user && (authContext.userRole === "Admin" || authContext.userRole === "Librarian") ? (
+                    <Protected>
+                      <Analytics />
                     </Protected>
                   ) : (
                     <Navigate to="/" />
