@@ -1,6 +1,7 @@
 import { Box, Container, Grid, Paper, Typography } from '@mui/material'
 import { getBranches } from '../firebase/dbHandler';
 import { useContext, useEffect, useState } from 'react';
+import { fetchCollege } from '../utils/fetchCollege';
 import { formatGreeting } from '../utils/formatGreeting';
 import { AuthContext } from '../utils/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -8,9 +9,10 @@ import { Branch } from '../Types';
 import Loading from './miscellaneous/Loading';
 
 function SelectBranch() {
-
     const authContext = useContext(AuthContext);
     const navigate = useNavigate();
+    const college = fetchCollege(authContext);
+
     const [loading, setLoading] = useState(true); // State to track loading status
     const [branches, setBranches] = useState<Branch[]>([]);
 
@@ -19,8 +21,17 @@ function SelectBranch() {
             try {
                 const branchesData = await getBranches();
                 const filteredBranches = authContext?.userRole === "Student"
-                    ? branchesData.filter((branch) => branch.branchId !== "shs")
-                    : branchesData;
+                    ? branchesData.filter((branch) => {
+                            if (college === "CRS" || college === "MED" || college === "NUR") {
+                                return branch.branchId !== "shs";
+                            }
+                            return (
+                                branch.branchId !== "shs" 
+                                && branch.branchId !== "healthSci"
+                            );
+                        }
+                    )
+                    : branchesData
                 setBranches(filteredBranches);
             } catch (error) {
                 console.error('Error fetching branches:', error);
