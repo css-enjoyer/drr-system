@@ -352,7 +352,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 } else if (lastResInSameRoomTime < closingTime) {
                     setSuggestionMsg("Tip: You can reserve on the next available time, in the same room");
                 } else {
-                    setSuggestionMsg("Tip: You can reserve with the same time but in a different branch");
+                    setSuggestionMsg("Tip: You can reserve tomorrow with the same time and room");
                 }
             };
 
