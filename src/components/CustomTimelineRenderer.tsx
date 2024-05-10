@@ -41,6 +41,14 @@ import shsroom2 from "../styles/images/shs-room2.jpeg";
 import shsroom3 from "../styles/images/shs-room3.jpeg";
 import shsroom4 from "../styles/images/shs-room4.jpeg";
 import shsroom5 from "../styles/images/shs-room5.jpeg";
+
+//healthsci room images
+import healthsciroom1 from "../styles/images/healthSci-room1.jpeg";
+import healthsciroom2 from "../styles/images/healthSci-room2.jpeg";
+import healthsciroom3 from "../styles/images/healthSci-room3.jpeg";
+import healthsciroom4 from "../styles/images/healthSci-room4.jpeg";
+import healthsciroom5 from "../styles/images/healthSci-room5.jpeg";
+
 import { autoCancel, sendReminderEmail } from "../utils/Functions.ts";
 
 function CustomTimelineRenderer({ branchId }: { branchId: string }) {
@@ -654,6 +662,14 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                                                 scheduler.state.room_id.value === 3 ? `url("${shsroom3}")` :
                                                     scheduler.state.room_id.value === 4 ? `url("${shsroom4}")` :
                                                         scheduler.state.room_id.value === 5 ? `url("${shsroom5}")` :
+                                                            `url("${shsroom5}")` 
+
+                                    : branchId === "healthSci"
+                                        ? scheduler.state.room_id.value === 1 ? `url("${healthsciroom1}")` :
+                                            scheduler.state.room_id.value === 2 ? `url("${healthsciroom2}")` :
+                                                scheduler.state.room_id.value === 3 ? `url("${healthsciroom3}")` :
+                                                    scheduler.state.room_id.value === 4 ? `url("${healthsciroom4}")` :
+                                                        scheduler.state.room_id.value === 5 ? `url("${healthsciroom5}")` :
                                                             `url("${shsroom5}")` :
 
                                         `url("${shsroom5}")`,
