@@ -26,7 +26,7 @@ export interface GaugeGeneratorProps {
 
 function Analytics() {
     const [branches, setBranches] = useState<Branch[]>([]);
-    const [ rooms, setRooms] = useState<Room[]>([])
+    const [rooms, setRooms] = useState<Room[]>([])
     const [resEvents, setResEvents] = useState<ProcessedEvent[]>([]);
     const [loading, setLoading] = useState(true);
     const [open, setOpen] = useState(false);
@@ -72,7 +72,7 @@ function Analytics() {
             setLoading(false);
         };
         fetchData()
-        
+
     }, []);
 
     if (loading) {
@@ -165,13 +165,13 @@ function Analytics() {
                     {GaugeLabel}
                 </Typography>
             </Container>
-            
+
         );
     }
 
     function getRoomUsage(room: Room, branchId: string): number {
         const roomReservations: ProcessedEvent[] = filteredResEvents.filter(event =>
-            event.room_id == room.roomId 
+            event.room_id == room.roomId
             && event.branchId == branchId
             && event.title == "Departed"
         )
@@ -241,7 +241,7 @@ function Analytics() {
                             {branch.branchTitle}
                         </Typography>
                         <Stack direction={"row"}>
-                            {rooms?.filter(room => room.roomBranch == branch.branchId).sort((a, b) => {if (a.roomId < b.roomId) {return -1} else {return 1}}).map(room => <GaugeGenerator GaugeLabel={"Room" + room.roomId} GaugeData={getRoomUsage(room, branch.branchId)} />)}
+                            {rooms?.filter(room => room.roomBranch == branch.branchId).sort((a, b) => { if (a.roomId < b.roomId) { return -1 } else { return 1 } }).map(room => <GaugeGenerator GaugeLabel={"Room" + room.roomId} GaugeData={getRoomUsage(room, branch.branchId)} />)}
                         </Stack>
                     </Container>)}
             </Container>
@@ -274,8 +274,8 @@ function Analytics() {
 
                         } else if (formJson['timeGranularity'] == 'Weekly') {
                             start = new Date(formJson['weekStart'])
-                            end = start
-                            end.setDate(endDate.getDate() + 7)
+                            end = new Date(formJson['weekStart'])
+                            end.setDate(end.getDate() + 7)
 
                         } else if (formJson['timeGranularity'] == 'Monthly') {
                             const monthNames = ["January", "February", "March", "April", "May", "June",
@@ -306,9 +306,9 @@ function Analytics() {
                             })
                             start = (resEvents[0].start)
                             end = (resEvents[resEvents.length - 1].start)
-                            
+
                         }
-                        end.setHours( 23, 59, 59)
+                        end.setHours(23, 59, 59)
                         console.log(start)
                         console.log(end)
 
