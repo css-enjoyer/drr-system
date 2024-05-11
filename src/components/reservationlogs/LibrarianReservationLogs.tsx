@@ -339,11 +339,13 @@ function LibrarianReservationLogs() {
 					<DialogContentText>
 						Choose a date range to generate the reservation logs.
 					</DialogContentText>
+					<div style={{ marginBottom: '16px' }}></div>
 					<Select
 						name="timeGranularity"
 						value={timeGranularity}
 						label="Time Granularity"
 						onChange={handleTimeGranularityChange}
+						style={{ minWidth: '130px', marginRight: '10px' }}
 					>
 						<MenuItem value={"Daily"}>Daily</MenuItem>
 						<MenuItem value={"Weekly"}>Weekly</MenuItem>
@@ -377,12 +379,14 @@ function LibrarianReservationLogs() {
 									/>
 									: formState.timeGranularity == "Custom" ?
 										<>
+											<div style={{ display: 'flex', marginTop: '16px'}}>
 											<DatePicker
 												name="customStart"
 												label="Start"
 												value={customStart}
 												onChange={(newValue) => setCustomStart(newValue)}
 											/>
+											<div style={{ marginRight: '10px'}}></div>
 											<DatePicker
 												name="customEnd"
 												label="End"
@@ -390,6 +394,7 @@ function LibrarianReservationLogs() {
 												value={customEnd}
 												onChange={(newValue) => setCustomEnd(newValue)}
 											/>
+											</div>
 										</>
 
 										:

@@ -49,7 +49,7 @@ function App() {
   useEffect(() => {
     const fetchBackend = async () => {
       try {
-        const response = await axios.get(`${VITE_BACKEND_URL}`);
+        await axios.get(`${VITE_BACKEND_URL}`);
         console.log("Backend call successful");
       } catch (error) {
         console.error("Error fetching backend:", error);
@@ -57,7 +57,7 @@ function App() {
     };
 
     fetchBackend();
-  }, []);
+}, []);
 
   axios.interceptors.response.use(
     (response) => {
@@ -70,7 +70,7 @@ function App() {
           // Error 500
           return <Error messageKey={"error500"} />;
         } else if (status === 503) {
-          // Eerror 503
+          // Error 503
           return <Error messageKey={"error503"} />;
         }
       }
