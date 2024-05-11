@@ -11,8 +11,8 @@ import LibrarianDashboard from "./components/reservationlogs/LibrarianDashboard"
 import LibrarianReservationLogs from "./components/reservationlogs/LibrarianReservationLogs";
 import About from "./components/miscellaneous/About";
 import FAQs from "./components/miscellaneous/FAQs";
-import NetworkError from "./errorpages/NetworkError";
-import Error from "./errorpages/Error";
+import NetworkError from "./components/errorpages/NetworkError";
+import Error from "./components/errorpages/Error";
 
 // Modules
 import { ThemeProvider } from "@mui/material/styles";
