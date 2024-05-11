@@ -244,7 +244,7 @@ function LibrarianReservationLogs() {
 				startDate = new Date(year as number, month, 1);
 				endDate = new Date(year as number, month + 1, 0)
 
-			} else if (formJson['timeGranularity'] == 'Yearly') {
+			} else if (formJson['timeGranularity'] == 'Annually') {
 				startDate = new Date(formJson['year'] as number, 0, 1);
 				endDate = new Date(formJson['year'] as number, 11, 31)
 

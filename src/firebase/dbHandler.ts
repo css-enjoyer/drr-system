@@ -461,7 +461,28 @@ export async function getRooms(branch: string): Promise<Room[]> {
     const rooms = query(collectionGroup(db, 'rooms'), where("roomBranch", "==", branch));
     const querySnapshot = await getDocs(rooms);
     querySnapshot.forEach((doc) => {
-        console.log(doc.id, '=>', doc.data());
+        // console.log(doc.id, '=>', doc.data());
+        const roomData = doc.data();
+        const room: Room = {
+            roomId: roomData.roomId,
+            roomBranch: roomData.roomBranch,
+            roomTitle: roomData.roomTitle,
+            roomAvailable: roomData.roomAvailable,
+            roomMinPax: roomData.roomMinPax,
+            roomMaxPax: roomData.roomMaxPax
+        };
+        roomsArray.push(room);
+    })
+    return roomsArray;
+}
+
+export async function getAllRooms(): Promise<Room[]> {
+    const roomsArray: Room[] = [];
+
+    const rooms = query(collectionGroup(db, 'rooms'));
+    const querySnapshot = await getDocs(rooms);
+    querySnapshot.forEach((doc) => {
+        // console.log(doc.id, '=>', doc.data());
         const roomData = doc.data();
         const room: Room = {
             roomId: roomData.roomId,
