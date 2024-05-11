@@ -1,15 +1,6 @@
 # DRRS
-## Latest auto-deployment
-1. Go to [forked-drrs](https://github.com/DRRS-Pegasus/drr-system)
-2. `Sync Fork` if branch is behind
-3. Go to [DRRS Vercel](https://drr-system.vercel.app/)
-
-## TODO
-- [ ] Unit and Integration tests using Jest
-
 ## DRRS-BE API
-[drrs-be](https://github.com/kudegras/drrs-be)
-backend apis
+Go to [drrs-be](https://github.com/kudegras/drrs-be) to check the backend apis
 
 ## Installation
 1. Install the packages by typing `npm install`
