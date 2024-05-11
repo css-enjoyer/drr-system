@@ -14,6 +14,7 @@ import EventBusyOutlinedIcon from '@mui/icons-material/EventBusyOutlined';
 import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
 import CancelIcon from '@mui/icons-material/Cancel';
 import Loading from "./miscellaneous/Loading";
+import "../styles/HandleView.css";
 
 import { fetchCollege } from '../utils/fetchCollege';
 import { useThemeContext } from "../theme/ThemeContextProvider";
@@ -679,7 +680,25 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
 
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
+                        position: 'relative',
                     }} />
+                {/* Room Details */}
+                <div className="hideOnSmallDevices" style={{ 
+                    position: 'absolute',
+                    bottom: '20px',
+                    right: '20px',
+                    zIndex: 1,
+                    backgroundColor: 'rgba(224, 224, 224, 0.6)',
+                    padding: '20px',
+                    borderRadius: '5px',
+                }}>
+                    <Typography variant="h6" sx={{ color: '#000000', fontWeight: 'bold' }}>
+                        Room {scheduler.state.room_id.value}
+                    </Typography>
+                    <Typography variant="h6" sx={{ color: '#000000', fontSize: "1rem" }}>
+                        Number of participants: {formState.minPax} - {formState.maxPax}
+                    </Typography>
+                </div>
             </Grid>
         );
     };
