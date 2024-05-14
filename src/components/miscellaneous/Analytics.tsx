@@ -30,13 +30,13 @@ function Analytics() {
     const [resEvents, setResEvents] = useState<ProcessedEvent[]>([]);
     const [loading, setLoading] = useState(true);
     const [open, setOpen] = useState(false);
-    const [timeGranularity, setTimeGranularity] = useState<string>("All")
+    const [timeGranularity, setTimeGranularity] = useState<string>("Custom")
     const [startDate, setStartDate] = useState<Date>(new Date())
     const [endDate, setEndDate] = useState<Date>(new Date())
     const [filteredResEvents, setFilteredResEvents] = useState<ProcessedEvent[]>([]);
 
     const [formState, setFormState] = useState({
-        timeGranularity: "All"
+        timeGranularity: "Custom"
     });
 
     const [customStart, setCustomStart] = useState(new Date());
@@ -180,8 +180,8 @@ function Analytics() {
             hours += Math.abs(resEvent.start.getTime() - resEvent.end.getTime()) / 3600000
         })
         const percentage: number = hours / (10 * Math.ceil(Math.abs(startDate.getTime() - endDate.getTime()) / 86400000))
-
-        return percentage * 100
+        console.log(percentage)
+        return (Number.isNaN(percentage) || percentage > 100) ? 0 : percentage * 100
     }
 
 
@@ -346,17 +346,20 @@ function Analytics() {
                         <DatePicker
                             name="day"
                             label={"Day"}
+                            defaultValue={new Date()}
                         />
                         : formState.timeGranularity == "Weekly" ?
                             <DatePicker
                                 name="weekStart"
                                 label={"Week Start"}
+                                defaultValue={new Date()}
                             />
                             : formState.timeGranularity == "Monthly" ?
                                 <DatePicker
                                     name="month"
                                     label={'Month'}
                                     views={['month', 'year']}
+                                    defaultValue={new Date()}
                                 />
                                 : formState.timeGranularity == "Annually" ?
                                     <DatePicker
@@ -364,6 +367,7 @@ function Analytics() {
                                         label={"Year"}
                                         views={['year']}
                                         openTo="year"
+                                        defaultValue={new Date()}
                                     />
                                     : formState.timeGranularity == "Custom" ?
                                         <>
@@ -372,6 +376,7 @@ function Analytics() {
                                                     name="customStart"
                                                     label="Start"
                                                     value={customStart}
+                                                    defaultValue={new Date()}
                                                     onChange={(newValue) => setCustomStart(newValue)}
                                                 />
                                                 <div style={{ marginRight: '10px' }}></div>
@@ -380,6 +385,7 @@ function Analytics() {
                                                     label="End"
                                                     minDate={customStart}
                                                     value={customEnd}
+                                                    defaultValue={new Date()}   
                                                     onChange={(newValue) => setCustomEnd(newValue)}
                                                 />
                                             </div>
