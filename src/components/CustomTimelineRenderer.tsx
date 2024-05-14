@@ -1,13 +1,13 @@
 import { Scheduler } from "@aldabil/react-scheduler"
 import { ProcessedEvent, SchedulerHelpers, SchedulerRef } from "@aldabil/react-scheduler/types";
-import { Alert, Autocomplete, Box, Button, Container, DialogActions, Grid, TextField, Typography } from "@mui/material";
+import { Alert, Autocomplete, Box, Button, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, TextField, Typography } from "@mui/material";
 import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../utils/AuthContext";
 import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getRooms } from "../firebase/dbHandler";
 import { TimePicker } from "@mui/x-date-pickers";
 import { DurationOption, ReservationEvent, RoomProps, Room } from "../Types";
 import { generateRandomSequence, isReservationBeyondOpeningHrs, isReservationOverlapping, isStudentReservationConcurrent } from "../utils/Utils.ts"
-import { Numbers, Portrait, School, TextSnippet } from "@mui/icons-material";
+import { Numbers, Portrait, School, SouthAmerica, TextSnippet } from "@mui/icons-material";
 import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import EventBusyOutlinedIcon from '@mui/icons-material/EventBusyOutlined';
@@ -216,7 +216,28 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
         const [errorMessage, setErrorMessage] = useState("");
         const [suggestionMsg, setSuggestionMsg] = useState("");
 
-        const handleChange = (value: string | number, name: string) => { 
+        const [openSuggestionDialog, setOpenSuggestionDialog] = useState(false);
+        const [dialogSuggestionContentText, setDialogSuggestionContentText] = useState("Aaaaaa UMAY!");
+        const [suggestedReservationSchedule, setSuggestedReservationSchedule] = useState<ProcessedEvent>();
+
+        const handleOpenSuggestionDialog = () => {
+            setOpenSuggestionDialog(true);
+        };
+
+        const handleCloseSuggestionDialog = () => {
+            setOpenSuggestionDialog(false);
+        };
+
+        const handleConfirmSuggestionDialog = () => {
+            if (suggestedReservationSchedule == undefined) {
+                console.error("Error: Suggested reservation schedule is undefined");
+            } else {
+                addReservationEvent(suggestedReservationSchedule);
+            }
+            scheduler.close();
+        }
+
+        const handleChange = (value: string | number, name: string) => {
             // retrieves fields values
             setFormState((prev) => { return { ...prev, [name]: value }; });
         };
@@ -278,9 +299,9 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     return true;
                 }
 
-                if (formState.start < new Date() 
-                    && (authContext?.userRole === "Student" 
-                    || authContext?.userRole === "SHS-Student")) {
+                if (formState.start < new Date()
+                    && (authContext?.userRole === "Student"
+                        || authContext?.userRole === "SHS-Student")) {
                     setErrorMessage("Error! Your reservation is before the current time!");
                     return true;
                 }
@@ -306,7 +327,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 }
                 return false;
             };
-            
+
             // const showSuggestion = () => {
             //     const tipNumber = Math.floor(Math.random() * 3);
             //     if (tipNumber == 0) {
@@ -319,37 +340,51 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
             // };
 
             const showSuggestion = (
-                start: Date, 
-                branchId: string, 
-                roomId: string | number, 
-                duration: number
+                // start: Date,
+                // branchId: string,
+                // roomId: string | number,
+                // duration: number
+                currentReservation: ProcessedEvent
             ) => {
                 // TODO: ADD SUGGESTION LOGIC HERE
-                const sameTimeDifferentRoom = eventsState.filter((event) => 
-                    event.start.getFullYear() === start.getFullYear() &&
-                    event.start.getMonth() === start.getMonth() &&
-                    event.start.getDate() === start.getDate() &&
-                    event.start.getHours() === start.getHours() &&
-                    event.start.getMinutes() === start.getMinutes()
+                const sameTimeDifferentRoom = eventsState.filter((event) =>
+                    event.start.getFullYear() === currentReservation.start.getFullYear() &&
+                    event.start.getMonth() === currentReservation.start.getMonth() &&
+                    event.start.getDate() === currentReservation.start.getDate() &&
+                    event.start.getHours() === currentReservation.start.getHours() &&
+                    event.start.getMinutes() === currentReservation.start.getMinutes()
                 );
 
                 const sameRoomNextAvailTime = eventsState.filter((event) =>
-                    event.branchId === branchId &&
-                    event.room_id === roomId &&
-                    event.start.getFullYear() === start.getFullYear() &&
-                    event.start.getMonth() === start.getMonth() &&
-                    event.start.getDate() === start.getDate()
+                    event.branchId === currentReservation.branchId &&
+                    event.room_id === currentReservation.room_id &&
+                    event.start.getFullYear() === currentReservation.start.getFullYear() &&
+                    event.start.getMonth() === currentReservation.start.getMonth() &&
+                    event.start.getDate() === currentReservation.start.getDate()
                 );
                 sameRoomNextAvailTime.sort((a, b) => a.start.valueOf() - b.end.valueOf());
 
                 const lastResInSameRoom = sameRoomNextAvailTime.slice((-1));
-                const lastResInSameRoomTime = new Date(lastResInSameRoom[0].start.getTime() + (duration * 60 * 1000));
+                const lastResInSameRoomTime = new Date(lastResInSameRoom[0].start.getTime() + (currentReservation.duration * 60 * 1000));
                 const closingTime = new Date();
-                
                 closingTime.setHours(endTime, 0, 0, 0);
 
                 if (roomsState.length - sameTimeDifferentRoom.length - 1 > 0) {
-                    setSuggestionMsg("Tip: You can reserve with the same time but in a different room");
+                    console.log("INVERSE SAME TIME DIFF ROOM");
+                    const unavailableRooms = sameTimeDifferentRoom.map((event) => event.room_id);
+                    const unavailableRoomsSet = new Set();
+                    unavailableRoomsSet.add(currentReservation.room_id);
+                    unavailableRooms.forEach((roomId) => unavailableRoomsSet.add(roomId));
+                    // console.log(unavailableRooms);
+                    const availableRooms = roomsState.filter((room) => !unavailableRoomsSet.has(room.room_id));
+                    const availableRoomsArr = availableRooms.map((room) => room.room_id);
+                    const availableRoomsStr = availableRoomsArr.toString();
+                    console.log(availableRoomsStr);
+                    setSuggestionMsg(`Tip: You can reserve with the same time but in a different room/s (Room: ${availableRoomsStr})`);
+
+                    const newScheduledRoom: ProcessedEvent = {...currentReservation, room_id: availableRoomsArr[0]};
+                    setSuggestedReservationSchedule(newScheduledRoom);
+                    setDialogSuggestionContentText(`Your reservation would be scheduled in the same time but in Room ${availableRoomsArr[0]}`)
                 } else if (lastResInSameRoomTime < closingTime) {
                     setSuggestionMsg("Tip: You can reserve on the next available time, in the same room");
                 } else {
@@ -416,7 +451,8 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                         );
                     }
                     else {
-                        showSuggestion(newResEvent.start, newResEvent.branchId, newResEvent.room_id, newResEvent.duration);
+                        // showSuggestion(newResEvent.start, newResEvent.branchId, newResEvent.room_id, newResEvent.duration);
+                        showSuggestion(newResEvent);
                         setErrorMessage("Reservation will overlap!");
                         return;
                     }
@@ -490,6 +526,38 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     {suggestionMsg &&
                         <Alert severity="info">
                             {suggestionMsg}
+
+                            <Button onClick={handleOpenSuggestionDialog}
+                                sx=
+                                {{
+                                    marginTop: '5px',
+                                    width: "100%",
+                                    color: theme.palette.mode === 'dark' ? '#FFFFFF' : '#000000'
+                                }}>
+                                Use suggestion
+                            </Button>
+
+                            <Dialog
+                                open={openSuggestionDialog}
+                                onClose={handleCloseSuggestionDialog}
+                                aria-labelledby="alert-dialog-title"
+                                aria-describedby="alert-dialog-description"
+                            >
+                                <DialogTitle id="alert-dialog-title">
+                                    {"Use suggested room and schedule?"}
+                                </DialogTitle>
+                                <DialogContent>
+                                    <DialogContentText id="alert-dialog-description">
+                                        {dialogSuggestionContentText}
+                                    </DialogContentText>
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button onClick={handleCloseSuggestionDialog}>Cancel</Button>
+                                    <Button onClick={handleConfirmSuggestionDialog} autoFocus>
+                                        Confirm
+                                    </Button>
+                                </DialogActions>
+                            </Dialog>
                         </Alert>
                     }
                     <TimePicker
@@ -666,24 +734,24 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                                                 scheduler.state.room_id.value === 3 ? `url("${shsroom3}")` :
                                                     scheduler.state.room_id.value === 4 ? `url("${shsroom4}")` :
                                                         scheduler.state.room_id.value === 5 ? `url("${shsroom5}")` :
-                                                            `url("${shsroom5}")` 
+                                                            `url("${shsroom5}")`
 
-                                    : branchId === "healthSci"
-                                        ? scheduler.state.room_id.value === 1 ? `url("${healthsciroom1}")` :
-                                            scheduler.state.room_id.value === 2 ? `url("${healthsciroom2}")` :
-                                                scheduler.state.room_id.value === 3 ? `url("${healthsciroom3}")` :
-                                                    scheduler.state.room_id.value === 4 ? `url("${healthsciroom4}")` :
-                                                        scheduler.state.room_id.value === 5 ? `url("${healthsciroom5}")` :
-                                                            `url("${shsroom5}")` :
+                                        : branchId === "healthSci"
+                                            ? scheduler.state.room_id.value === 1 ? `url("${healthsciroom1}")` :
+                                                scheduler.state.room_id.value === 2 ? `url("${healthsciroom2}")` :
+                                                    scheduler.state.room_id.value === 3 ? `url("${healthsciroom3}")` :
+                                                        scheduler.state.room_id.value === 4 ? `url("${healthsciroom4}")` :
+                                                            scheduler.state.room_id.value === 5 ? `url("${healthsciroom5}")` :
+                                                                `url("${shsroom5}")` :
 
-                                        `url("${shsroom5}")`,
+                                            `url("${shsroom5}")`,
 
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         position: 'relative',
                     }} />
                 {/* Room Details */}
-                <div className="hideOnSmallDevices" style={{ 
+                <div className="hideOnSmallDevices" style={{
                     position: 'absolute',
                     bottom: '20px',
                     right: '20px',
