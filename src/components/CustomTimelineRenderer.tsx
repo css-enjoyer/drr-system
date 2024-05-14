@@ -6,7 +6,7 @@ import { AuthContext } from "../utils/AuthContext";
 import { addReservationEvent, deleteReservationEvent, editReservationEvent, editReservationEventTitle, getRooms } from "../firebase/dbHandler";
 import { TimePicker } from "@mui/x-date-pickers";
 import { DurationOption, ReservationEvent, RoomProps, Room } from "../Types";
-import { generateRandomSequence, isReservationBeyondOpeningHrs, isReservationOverlapping, isStudentReservationConcurrent } from "../utils/Utils.ts"
+import { formatTo12HourTime, generateRandomSequence, isReservationBeyondOpeningHrs, isReservationOverlapping, isStudentReservationConcurrent } from "../utils/Utils.ts"
 import { Numbers, Portrait, School, SouthAmerica, TextSnippet } from "@mui/icons-material";
 import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
@@ -370,7 +370,7 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                 closingTime.setHours(endTime, 0, 0, 0);
 
                 if (roomsState.length - sameTimeDifferentRoom.length - 1 > 0) {
-                    console.log("INVERSE SAME TIME DIFF ROOM");
+                    // console.log("INVERSE SAME TIME DIFF ROOM");
                     const unavailableRooms = sameTimeDifferentRoom.map((event) => event.room_id);
                     const unavailableRoomsSet = new Set();
                     unavailableRoomsSet.add(currentReservation.room_id);
@@ -379,16 +379,34 @@ function CustomTimelineRenderer({ branchId }: { branchId: string }) {
                     const availableRooms = roomsState.filter((room) => !unavailableRoomsSet.has(room.room_id));
                     const availableRoomsArr = availableRooms.map((room) => room.room_id);
                     const availableRoomsStr = availableRoomsArr.toString();
-                    console.log(availableRoomsStr);
-                    setSuggestionMsg(`Tip: You can reserve with the same time but in a different room/s (Room: ${availableRoomsStr})`);
-
+                    // console.log(availableRoomsStr);
                     const newScheduledRoom: ProcessedEvent = {...currentReservation, room_id: availableRoomsArr[0]};
+
+                    setSuggestionMsg(`Tip: You can reserve with the same time but in a different room/s (Room: ${availableRoomsStr}).`);
+                    setDialogSuggestionContentText(`Your reservation will be scheduled in the same time but in Room ${availableRoomsArr[0]}.`)
                     setSuggestedReservationSchedule(newScheduledRoom);
-                    setDialogSuggestionContentText(`Your reservation would be scheduled in the same time but in Room ${availableRoomsArr[0]}`)
+
                 } else if (lastResInSameRoomTime < closingTime) {
-                    setSuggestionMsg("Tip: You can reserve on the next available time, in the same room");
+                    const newScheduledStart = new Date(lastResInSameRoom[0].end.getTime() + (1 * 60 * 1000));
+                    const newScheduledEnd = new Date(lastResInSameRoom[0].end.getTime() + (currentReservation.duration * 60 * 1000));
+                    const newScheduledRoom: ProcessedEvent = {...currentReservation, start: newScheduledStart, end: newScheduledEnd};
+
+                    setSuggestionMsg(`Tip: You can reserve on the next available time, in the same room. The next vailable time is: ${formatTo12HourTime(newScheduledStart)} - ${formatTo12HourTime(newScheduledEnd)}.`);
+                    setDialogSuggestionContentText(`Your reservation will be scheduled in the same room but in different time: ${formatTo12HourTime(newScheduledStart)} - ${formatTo12HourTime(newScheduledEnd)}.`);
+                    setSuggestedReservationSchedule(newScheduledRoom)
+
                 } else {
-                    setSuggestionMsg("Tip: You can reserve tomorrow with the same time and room");
+                    const newScheduledDateTomorrow = new Date(currentReservation.date);
+                    newScheduledDateTomorrow.setDate(currentReservation.date.getDate() + 1)
+                    const newScheduledStartTomorrow = new Date(currentReservation.start);
+                    newScheduledStartTomorrow.setDate(currentReservation.start.getDate() + 1)
+                    const newScheduledEndTomorrow = new Date(currentReservation.end);
+                    newScheduledEndTomorrow.setDate(currentReservation.end.getDate() + 1)
+                    const newScheduledRoom: ProcessedEvent = {...currentReservation, date: newScheduledDateTomorrow, start: newScheduledStartTomorrow, end: newScheduledEndTomorrow}
+
+                    setSuggestionMsg(`Tip: You can reserve tomorrow with the same time and room. The new scheduled date tomorrow is: ${newScheduledStartTomorrow.toLocaleDateString()}.`);
+                    setDialogSuggestionContentText(`Your reservation will be scheduled tomorrow ${newScheduledDateTomorrow.toLocaleDateString()} with the same room and time.`);
+                    setSuggestedReservationSchedule(newScheduledRoom);
                 }
             };
 
