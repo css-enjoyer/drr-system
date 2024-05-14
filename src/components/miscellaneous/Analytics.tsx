@@ -30,13 +30,13 @@ function Analytics() {
     const [resEvents, setResEvents] = useState<ProcessedEvent[]>([]);
     const [loading, setLoading] = useState(true);
     const [open, setOpen] = useState(false);
-    const [timeGranularity, setTimeGranularity] = useState<string>("Custom")
+    const [timeGranularity, setTimeGranularity] = useState<string>("All")
     const [startDate, setStartDate] = useState<Date>(new Date())
     const [endDate, setEndDate] = useState<Date>(new Date())
     const [filteredResEvents, setFilteredResEvents] = useState<ProcessedEvent[]>([]);
 
     const [formState, setFormState] = useState({
-        timeGranularity: "Custom"
+        timeGranularity: "All"
     });
 
     const [customStart, setCustomStart] = useState(new Date());
@@ -60,6 +60,17 @@ function Analytics() {
                 const branchesData = await getBranches().then();
                 const resEventsData = await getAllReservationEvents();
                 const allRooms = await getAllRooms()
+                resEventsData.sort((a, b) => {
+                    if (a.start < b.start) {
+                        return -1
+                    }
+                    if (a.start > b.start) {
+                        return 1
+                    }
+                    return 0});
+                
+                setStartDate(resEventsData[0].start)
+                setEndDate(resEventsData[resEventsData.length-1].start)
                 setBranches(branchesData);
                 setResEvents(resEventsData);
                 setFilteredResEvents(resEventsData)
