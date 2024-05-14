@@ -1,5 +1,5 @@
 import { Button, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, MenuItem, Select, SelectChangeEvent, Stack, Typography } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Branch, Room, ReservationEvent } from "../../Types";
 import { getAllReservationEvents, getAllRooms, getBranches, getRooms } from "../../firebase/dbHandler";
 import Loading from "./Loading";
@@ -7,6 +7,9 @@ import { ProcessedEvent } from "@aldabil/react-scheduler/types";
 import { Gauge, PieChart, pieArcLabelClasses } from "@mui/x-charts";
 import { BarChart } from "@mui/icons-material";
 import { DatePicker } from "@mui/x-date-pickers";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import { AuthContext } from "../../utils/AuthContext";
 
 export interface PieChartData {
     id: number,
@@ -34,11 +37,10 @@ function Analytics() {
     const [startDate, setStartDate] = useState<Date>(new Date())
     const [endDate, setEndDate] = useState<Date>(new Date())
     const [filteredResEvents, setFilteredResEvents] = useState<ProcessedEvent[]>([]);
-
     const [formState, setFormState] = useState({
         timeGranularity: "All"
     });
-
+    const authContext = useContext(AuthContext);
     const [customStart, setCustomStart] = useState(new Date());
     const [customEnd, setCustomEnd] = useState(new Date());
     const handleClickOpen = () => {
@@ -52,9 +54,26 @@ function Analytics() {
         setTimeGranularity(event.target.value as string)
         setFormState((prev) => { return { ...prev, ["timeGranularity"]: event.target.value }; });
     }
+    const exportAsImage = async () => {
 
+        html2canvas(document.getElementById("analytics")!)
+            .then((canvas) => {
+                const imgData = canvas.toDataURL('image/png', 3);
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                });
+                const imgProps = pdf.getImageProperties(imgData);
+                const pdfWidth = pdf.internal.pageSize.getWidth() - 20
+                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth, pdfHeight);
+                pdf.setFontSize(10);
+                pdf.text(`page 1 of 1`, 180, 285);
+                pdf.save(`DRRS Analytics Report - ${new Date().toLocaleDateString()} - .pdf`);
+            });
+    }
     // ----- CHART DATAs -----
     useEffect(() => {
+
         const fetchData = async () => {
             try {
                 const branchesData = await getBranches().then();
@@ -67,10 +86,11 @@ function Analytics() {
                     if (a.start > b.start) {
                         return 1
                     }
-                    return 0});
-                
+                    return 0
+                });
+
                 setStartDate(resEventsData[0].start)
-                setEndDate(resEventsData[resEventsData.length-1].start)
+                setEndDate(resEventsData[resEventsData.length - 1].start)
                 setBranches(branchesData);
                 setResEvents(resEventsData);
                 setFilteredResEvents(resEventsData)
@@ -184,14 +204,13 @@ function Analytics() {
         const roomReservations: ProcessedEvent[] = filteredResEvents.filter(event =>
             event.room_id == room.roomId
             && event.branchId == branchId
-            && event.title == "Departed"
+            && (event.title == "Departed" || event.title == "Occupied" ) 
         )
         var hours: number = 0
         roomReservations.forEach(resEvent => {
             hours += Math.abs(resEvent.start.getTime() - resEvent.end.getTime()) / 3600000
         })
         const percentage: number = hours / (10 * Math.ceil(Math.abs(startDate.getTime() - endDate.getTime()) / 86400000))
-        console.log(percentage)
         return (Number.isNaN(percentage) || percentage > 100) ? 0 : percentage * 100
     }
 
@@ -211,55 +230,91 @@ function Analytics() {
                     Analytics and Reports
                 </Typography>
                 <Container>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handleClickOpen}
-                        sx={{
-                            marginTop: "20px",
-                            marginBottom: "20px",
-                            textTransform: "none",
-                            "@media (max-width: 600px)": {
-                                margin: "0px 0",
-                            },
-                        }}
-                    >
-                        Change Date Range
-                    </Button>
-                </Container>
-                <Typography variant="h2" sx={{ fontSize: "20px" }}>
-                    Date Start: <strong>{formatDate(startDate)}</strong>
-                </Typography>
-                <Typography variant="h2" sx={{ fontSize: "20px" }}>
-                    Date End: <strong>{formatDate(endDate)}</strong>
-                </Typography>
-                <Typography variant="h2" sx={{ fontSize: "30px" }}>
-                    Total number of reservations: <strong>{filteredResEvents.length}</strong>
-                </Typography>
-            </Container>
-
-            <Container sx={{ marginTop: "20px", marginBottom: "20px" }}>
-                <PieChartGenerator PieChartLabel={"Reservations per branch"} PieChartData={getResPerBranchData()} />
-            </Container>
-
-            <Container sx={{ marginTop: "40px" }} >
-                <Typography variant="h3" sx={{ fontSize: "25px" }}>
-                    Room Analytics
-                </Typography>
-                {branches.map(branch =>
                     <Container>
-                        <Typography variant="h3" sx={{ fontSize: "25px" }}>
-                            {branch.branchTitle}
-                        </Typography>
-                        <Stack direction={"row"}>
-                            {rooms?.filter(room => room.roomBranch == branch.branchId).sort((a, b) => { if (a.roomId < b.roomId) { return -1 } else { return 1 } }).map(room => <GaugeGenerator GaugeLabel={"Room" + room.roomId} GaugeData={getRoomUsage(room, branch.branchId)} />)}
-                        </Stack>
-                    </Container>)}
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleClickOpen}
+                            sx={{
+                                marginTop: "20px",
+                                marginBottom: "20px",
+                                textTransform: "none",
+                                fontSize: "20px",
+                                "@media (max-width: 600px)": {
+                                    margin: "0px 0",
+                                },
+                            }}
+                        >
+                            Change Date Range
+                        </Button>
+                    </Container>
+                    <Container sx={{ marginBottom: "10px" }}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={exportAsImage}
+                            sx={{
+                                marginTop: "20px",
+                                marginBottom: "20px",
+                                textTransform: "none",
+                                fontSize: "20px",
+                                "@media (max-width: 600px)": {
+                                    margin: "0px 0",
+                                },
+                            }}
+                        >
+                            Download Analytics Report
+                        </Button>
+                    </Container>
+                </Container>
+
+            </Container>
+            <Container id={"analytics"}>
+                <Container sx={{ marginBottom: "10px" }}>
+                    <Typography variant="h2" sx={{ fontSize: "30px" }}>
+                        Analytics Report Generated By: <strong>{authContext?.user?.displayName}</strong>
+                    </Typography>
+                    <Typography variant="h2" sx={{ fontSize: "30px" }}>
+                        Analytics Report Generated On: <strong>{(new Date()).toDateString() + ", " + (new Date()).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}</strong>
+                    </Typography>
+
+                </Container>
+                <Container>
+                    <Typography variant="h2" sx={{ fontSize: "30px" }}>
+                        Date Start: <strong>{formatDate(startDate)}</strong>
+                    </Typography>
+                    <Typography variant="h2" sx={{ fontSize: "30px" }}>
+                        Date End: <strong>{formatDate(endDate)}</strong>
+                    </Typography>
+                    <Typography variant="h2" sx={{ fontSize: "30px" }}>
+                        Total number of reservations: <strong>{filteredResEvents.length}</strong>
+                    </Typography>
+                </Container>
+
+                <Container sx={{ marginTop: "20px", marginBottom: "20px" }}>
+                    <PieChartGenerator PieChartLabel={"Reservations per branch"} PieChartData={getResPerBranchData()} />
+                </Container>
+
+                <Container sx={{ marginTop: "40px" }} >
+                    <Typography variant="h3" sx={{ fontSize: "30px", marginBottom: "20px" }}>
+                        Room Analytics
+                    </Typography>
+                    {branches.map(branch =>
+                        <Container>
+                            <Typography variant="h3" sx={{ fontSize: "25px" }}>
+                                {branch.branchTitle}
+                            </Typography>
+                            <Stack direction={"row"}>
+                                {rooms?.filter(room => room.roomBranch == branch.branchId).sort((a, b) => { if (a.roomId < b.roomId) { return -1 } else { return 1 } }).map(room => <GaugeGenerator GaugeLabel={"Room" + room.roomId} GaugeData={getRoomUsage(room, branch.branchId)} />)}
+                            </Stack>
+                        </Container>)}
+                </Container>
+
+                <Container sx={{ marginTop: "20px", marginBottom: "20px" }}>
+                    <PieChartGenerator PieChartLabel={"Utilization Per College"} PieChartData={getResPerCollege()} />
+                </Container>
             </Container>
 
-            <Container sx={{ marginTop: "20px", marginBottom: "20px" }}>
-                <PieChartGenerator PieChartLabel={"Utilization Per College"} PieChartData={getResPerCollege()} />
-            </Container>
 
 
             <Container sx={{ marginTop: "20px", marginBottom: "20px" }}>
@@ -275,7 +330,6 @@ function Analytics() {
                         event.preventDefault();
                         const formData = new FormData(event.currentTarget);
                         const formJson = Object.fromEntries((formData as any).entries());
-                        console.log(formJson)
                         var start = new Date()
                         var end = new Date()
 
@@ -320,15 +374,11 @@ function Analytics() {
 
                         }
                         end.setHours(23, 59, 59)
-                        console.log(start)
-                        console.log(end)
 
                         const events = resEvents.filter((log) => log.start >= start && log.start <= end)
                         setFilteredResEvents(events)
-                        console.log(events)
                         setStartDate(start)
                         setEndDate(end)
-                        console.log(rooms)
                         handleClose();
                     },
                 }}
@@ -353,6 +403,7 @@ function Analytics() {
                         <MenuItem value={"Custom"}>Custom</MenuItem>
                         <MenuItem value={"All"}>All</MenuItem>
                     </Select>
+                    <Button onClick={exportAsImage}></Button>
                     {formState.timeGranularity == "Daily" ?
                         <DatePicker
                             name="day"
@@ -396,7 +447,7 @@ function Analytics() {
                                                     label="End"
                                                     minDate={customStart}
                                                     value={customEnd}
-                                                    defaultValue={new Date()}   
+                                                    defaultValue={new Date()}
                                                     onChange={(newValue) => setCustomEnd(newValue)}
                                                 />
                                             </div>

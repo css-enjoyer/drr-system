@@ -355,52 +355,58 @@ function LibrarianReservationLogs() {
 						<MenuItem value={"All"}>All</MenuItem>
 					</Select>
 					{formState.timeGranularity == "Daily" ?
-						<DatePicker
-							name="day"
-							label={"Day"}
-						/>
-						: formState.timeGranularity == "Weekly" ?
-							<DatePicker
-								name="weekStart"
-								label={"Week Start"}
-							/>
-							: formState.timeGranularity == "Monthly" ?
-								<DatePicker
-									name="month"
-									label={'Month'}
-									views={['month', 'year']}
-								/>
-								: formState.timeGranularity == "Annually" ?
-									<DatePicker
-										name="year"
-										label={"Year"}
-										views={['year']}
-										openTo="year"
-									/>
-									: formState.timeGranularity == "Custom" ?
-										<>
-											<div style={{ display: 'flex', marginTop: '16px'}}>
-											<DatePicker
-												name="customStart"
-												label="Start"
-												value={customStart}
-												onChange={(newValue) => setCustomStart(newValue)}
-											/>
-											<div style={{ marginRight: '10px'}}></div>
-											<DatePicker
-												name="customEnd"
-												label="End"
-												minDate={customStart}
-												value={customEnd}
-												onChange={(newValue) => setCustomEnd(newValue)}
-											/>
-											</div>
-										</>
+                        <DatePicker
+                            name="day"
+                            label={"Day"}
+                            defaultValue={new Date()}
+                        />
+                        : formState.timeGranularity == "Weekly" ?
+                            <DatePicker
+                                name="weekStart"
+                                label={"Week Start"}
+                                defaultValue={new Date()}
+                            />
+                            : formState.timeGranularity == "Monthly" ?
+                                <DatePicker
+                                    name="month"
+                                    label={'Month'}
+                                    views={['month', 'year']}
+                                    defaultValue={new Date()}
+                                />
+                                : formState.timeGranularity == "Annually" ?
+                                    <DatePicker
+                                        name="year"
+                                        label={"Year"}
+                                        views={['year']}
+                                        openTo="year"
+                                        defaultValue={new Date()}
+                                    />
+                                    : formState.timeGranularity == "Custom" ?
+                                        <>
+                                            <div style={{ display: 'flex', marginTop: '16px' }}>
+                                                <DatePicker
+                                                    name="customStart"
+                                                    label="Start"
+                                                    value={customStart}
+                                                    defaultValue={new Date()}
+                                                    onChange={(newValue) => setCustomStart(newValue)}
+                                                />
+                                                <div style={{ marginRight: '10px' }}></div>
+                                                <DatePicker
+                                                    name="customEnd"
+                                                    label="End"
+                                                    minDate={customStart}
+                                                    value={customEnd}
+                                                    defaultValue={new Date()}
+                                                    onChange={(newValue) => setCustomEnd(newValue)}
+                                                />
+                                            </div>
+                                        </>
 
-										:
+                                        :
 
-										null
-					}
+                                        null
+                    }
 
 				</DialogContent>
 				<DialogActions>
