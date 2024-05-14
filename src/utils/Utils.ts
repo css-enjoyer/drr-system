@@ -1,14 +1,14 @@
 import { ProcessedEvent } from "@aldabil/react-scheduler/types";
 
 export function checkReservationTimeOverlap(
-    a_start: Date, 
-    a_end: Date, 
-    b_start: Date, 
+    a_start: Date,
+    a_end: Date,
+    b_start: Date,
     b_end: Date
 ) {
-    if (b_start.getTime() <= a_start.getTime() && a_end.getTime() <= b_end.getTime() 
-        ||b_start.getTime() < a_end.getTime() && a_start.getTime() < b_end.getTime()) {
-    
+    if (b_start.getTime() <= a_start.getTime() && a_end.getTime() <= b_end.getTime()
+        || b_start.getTime() < a_end.getTime() && a_start.getTime() < b_end.getTime()) {
+
         return true;
     }
 
@@ -64,9 +64,9 @@ export function generateRandomSequence() {
 export function isReservationBeyondOpeningHrs(resEnd: Date, closingHour: number): boolean {
     // year/mos/day/hr:min:sec
     const closingHrs = new Date(
-        resEnd.getFullYear(), 
-        resEnd.getMonth(), 
-        resEnd.getDate(), 
+        resEnd.getFullYear(),
+        resEnd.getMonth(),
+        resEnd.getDate(),
         closingHour, 0, 0
     );
 
@@ -78,7 +78,7 @@ export function isReservationBeyondOpeningHrs(resEnd: Date, closingHour: number)
 
 export function isReservationOverlapping(
     eventsState: ProcessedEvent[],
-    dateStart: Date, 
+    dateStart: Date,
     dateEnd: Date,
     roomId: number,
     editOperation?: boolean
@@ -102,7 +102,7 @@ export function isReservationOverlapping(
     const res = filteredEvents.some((e) => {
         return (
             checkReservationTimeOverlap(
-                dateStart, dateEnd, 
+                dateStart, dateEnd,
                 e.start, e.end
             )
         );
@@ -142,4 +142,21 @@ export function toTitleCase(inputString: string | null | undefined) {
         return "";
     }
     return inputString.toLowerCase().replace(/(?:^|\s)\w/g, match => match.toUpperCase());
+}
+
+// TIME FORMATTER FOR 12 HOURS
+export function formatTo12HourTime(date: Date) {
+    let hours = date.getHours();
+    const minutes = date.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+
+    // Convert hours from 24-hour time to 12-hour time
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+
+    // Pad minutes with leading zeros if necessary
+    const minutesStr = minutes < 10 ? '0' + minutes : minutes;
+
+    const formattedTime = `${hours}:${minutesStr} ${ampm}`;
+    return formattedTime;
 }

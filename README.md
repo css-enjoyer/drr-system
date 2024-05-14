@@ -5,6 +5,7 @@ Discussion room reservation system for the UST library. A serverless web app bui
 - Google authentication for security
 - Realtime viewing of reservations
 - Responsive design which allows users to reserve anytime and anywhere
+- Intelligent schedule recommendation when there is an overlap of reservation time
 - Authorization roles: Admin and Librarians for site management
 - Dashboard for branch and room management which allows for easier scalability and maintainability
 - Logs for reservation tracking
