@@ -1,15 +1,20 @@
 # DRRS
-## Latest auto-deployment
-1. Go to [forked-drrs](https://github.com/DRRS-Pegasus/drr-system)
-2. `Sync Fork` if branch is behind
-3. Go to [DRRS Vercel](https://drr-system.vercel.app/)
+Discussion room reservation system for the UST library. A serverless web app built using Firebase, React, and Typescript.
 
-## TODO
-- [ ] Unit and Integration tests using Jest
+## Features
+- Google authentication for security
+- Realtime viewing of reservations
+- Responsive design which allows users to reserve anytime and anywhere
+- Intelligent schedule recommendation when there is an overlap of reservation time
+- Authorization roles: Admin and Librarians for site management
+- Dashboard for branch and room management which allows for easier scalability and maintainability
+- Logs for reservation tracking
+- Analytics and reports to show trends and usage
+- Email notification before reservations (backend)
+- Automated reservation cancellation (backend)
 
 ## DRRS-BE API
-[drrs-be](https://github.com/kudegras/drrs-be)
-backend apis
+Go to [drrs-be](https://github.com/kudegras/drrs-be) to check the backend apis
 
 ## Installation
 1. Install the packages by typing `npm install`
